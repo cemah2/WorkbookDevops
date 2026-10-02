@@ -2,7 +2,7 @@
 chapitre: "fiches/gitops/02-argo-workflows-fondamentaux.md"
 domaine: "gitops"
 niveau: "débutant"
-statut: "validé le 2026-10-02 (recommandations des cinq questions retenues) — rédaction à démarrer après fusion des PR #26 et #28"
+statut: "réalisé le 2026-10-02 — chapitre en brouillon, relecture critique à faire (prompts/04)"
 duree_estimee: "5 h"
 profil_lab: "linux-base (kind sur une VM) ; variante kubernetes-ha"
 versions: "argo_workflows (à créer), kind, kubernetes"
