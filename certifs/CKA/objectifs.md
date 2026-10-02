@@ -41,34 +41,23 @@ K7 RBAC → K10 Helm, Kustomize, CRD, opérateurs → S1 scénario → E1 examen
 
 ## 2. Préalables au premier chapitre
 
-À régler **avant** d'ouvrir la PR du premier chapitre (sinon le gabarit ne peut pas être rempli honnêtement) :
+Réglés le 2026-10-02 (validés dans la PR de cartographie), sauf mention contraire :
 
-- `versions.yaml` : les clés `kubernetes`, `kubeadm`, `containerd`, `etcd`, `cilium`, `helm`, `kind`, `metallb`,
-  `cert_manager`, `longhorn`, `rook`, `envoy_gateway` existent. Manquent, à ajouter par la veille (`prompts/07-veille.md`)
-  ou par la PR du chapitre concerné :
-  - `metrics_server` (`kubernetes-sigs/metrics-server`, datasource `github-releases`) : K8 (HPA) et K11 (`kubectl top`) ;
-  - `gateway_api` (CRD du canal `standard`, `kubernetes-sigs/gateway-api`) : K9, Cilium ne les installe pas lui-même ;
-  - `kube_vip` (`kube-vip/kube-vip`) : K5, VIP de l'API `10.10.40.220` du profil `kubernetes-ha` ;
-  - `cri_tools` (`kubernetes-sigs/cri-tools`, `crictl`) : K5 et K11 ;
-  - une entrée pour la version **précédente** de Kubernetes (par exemple `kubernetes_previous`, ligne `1.36.x` de `supported_lines`) :
-    K6 installe n-1 puis met à niveau vers `kubernetes`. Sans cette clé, l'exercice de mise à niveau écrit une version en dur.
-  - `kustomize` n'a pas besoin de clé : K10 utilise `kubectl kustomize` embarqué dans `kubernetes`, et le signale.
+- `versions.yaml` : clés `metrics_server`, `gateway_api`, `kube_vip`, `cri_tools` ajoutées (K5, K8, K9, K11) ; clé `kubernetes_previous`
+  (ligne n-1, Renovate épinglé sur cette mineure) pour K6 et S1, à avancer à la veille quand `kubernetes` change de mineure.
+  `kustomize` n'a pas de clé : K10 utilise `kubectl kustomize` embarqué dans `kubernetes`, et le signale.
 - `versions.yaml` : `kubernetes` vaut 1.37 alors que l'examen tourne en 1.35 (`exam_note`). Règle pour ces fiches : lab sur la version de
   `versions.yaml`, section « Points de vigilance (versions) » listant ce qui diffère en 1.35 (API, flags kubeadm, champs Gateway API).
   Pas de clé `exam` séparée tant que l'écart reste de deux mineures (à reconsidérer à la veille si l'examen reste en 1.35 quand le lab passe
   en 1.38).
-- `labs/profiles/kubernetes-ha.yaml` : `lab up kubernetes-ha` doit pouvoir livrer les six VM **sans** Kubernetes installé
-  (option `--bare` ou variante `bare` à ajouter) : K5, K6 et S1 construisent le cluster à la main, c'est l'objet de l'examen.
-  Ajouter `metrics_server`, `gateway_api`, `kube_vip` à `components` une fois les clés créées.
-- Décision à proposer dans `DECISIONS.md` (entrée datée, pas de réouverture) : **VIP du control plane par kube-vip**
-  (static pod ARP sur le VLAN 40) plutôt que HAProxy + keepalived. Justification : un seul manifest, pas de VM supplémentaire,
-  c'est la méthode documentée par kubeadm pour la HA « stacked etcd ». HAProxy + keepalived reste cité en lecture dans K5.
-- Décision à proposer : **stockage dynamique par défaut** sur `kubernetes-ha` = Longhorn (profil seul) ; Rook-Ceph quand `ceph-3n`
-  est levé en même temps. Les deux sont des CSI et servent à K4 et K10 ; sur `kind`, le `local-path-provisioner` embarqué suffit.
-- `docs/prerequis.md` : les nœuds de chapitres planifiés sont ajoutés en §6.2 (cette PR). Les nœuds amont `linux_conf`, `reseau_deb`,
-  `proxmox_deb` n'ont encore aucun chapitre rédigé : comme les fiches `gitops`, K1 à K4 citent le nœud et ce que l'apprenant doit déjà
-  savoir, sans chemin de fiche.
-- Décisions déjà prises qui s'appliquent : Gateway API avec Cilium par défaut, Ingress conservé uniquement pour CKA-03-05 ;
+- `labs/profiles/kubernetes-ha.yaml` : variante `bare` ajoutée (VM préparées, aucun cluster) pour K5, K6 et S1 ; `components` complété
+  (`kubernetes_previous`, `cri_tools`, `kube_vip`, `gateway_api`, `metrics_server`, `longhorn`). L'outil `lab up` lui-même reste à écrire
+  (`labs/tofu`, `labs/ansible` : README seulement) ; K5 documente la préparation manuelle des VM en attendant.
+- `DECISIONS.md` (2026-10-02) : VIP du control plane par kube-vip ; stockage dynamique Longhorn seul, Rook-Ceph avec `ceph-3n` ;
+  variante `bare`. Ne pas rouvrir.
+- `docs/prerequis.md` : nœuds de chapitres planifiés en §6.2. Les nœuds amont `linux_conf`, `reseau_deb`, `proxmox_deb` n'ont encore
+  aucun chapitre rédigé : comme les fiches `gitops`, K1 à K4 citent le nœud et ce que l'apprenant doit déjà savoir, sans chemin de fiche.
+- Décisions antérieures qui s'appliquent : Gateway API avec Cilium par défaut, Ingress conservé uniquement pour CKA-03-05 ;
   Helm 4 ; Ubuntu 24.04 LTS pour les nœuds ; fiches numérotées `NN-` dans l'ordre de lecture.
 
 ## 3. Couverture par compétence
@@ -156,7 +145,7 @@ pour les fiches confirmé, le numéro ne bouge pas.
 Les fiches **débutant** (K1 à K4) ont pour chemin principal un cluster `kind` sur une VM du profil `linux-base`
 (1 VM : 4 vCPU / 8 Go / 60 Go, comme les fiches `gitops`) et `kubernetes-ha` en variante.
 Les fiches **confirmé** (K5 à K12) exigent le profil `kubernetes-ha` (16 vCPU / 48 Go / 300 Go, `labs/profiles/kubernetes-ha.yaml`),
-levé **sans** Kubernetes pour K5, K6 et S1 (préalable §2), avec le cluster de K5 ensuite.
+levé en variante `bare` pour K5, K6 et S1, avec le cluster de K5 ensuite.
 Toutes les compétences CKA sont praticables sur le lab : rien n'est `[lecture + simulation]`.
 Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en manipulation), pas de rédaction.
 Chaque fiche se termine par un défi chronométré en conditions d'examen : terminal seul, `kubernetes.io/docs` ouvert, minuteur.
@@ -249,8 +238,9 @@ Chaque fiche se termine par un défi chronométré en conditions d'examen : term
 - **Couvre** : CKA-05-02, CKA-05-03, CKA-05-05, CKA-05-07 (CRI, CNI)
 - **Prérequis** : K1 à K4 ; `linux_conf` (systemd, sysctl, paquets, pare-feu) ; `reseau_conf` (VLAN 10/30/40, VIP) ; `iac_deb` recommandé
   (`lab up`)
-- **Lab** : `kubernetes-ha` levé **sans** Kubernetes (6 VM Ubuntu 24.04). Clés `versions.yaml` : `kubernetes`, `kubeadm`, `containerd`,
-  `cri_tools` (à créer), `etcd`, `cilium`, `kube_vip` (à créer), `ubuntu_lts`.
+- **Lab** : `kubernetes-ha` en variante `bare` (6 VM Ubuntu 24.04 préparées, aucun cluster). Clés `versions.yaml` : `kubernetes`, `kubeadm`,
+  `containerd`,
+  `cri_tools`, `etcd`, `cilium`, `kube_vip`, `ubuntu_lts`.
 - **Temps** : 8 h
 - **3 exercices clés** :
   1. Préparer les six nœuds de façon reproductible (script puis rôle Ansible) : swap, modules `overlay`/`br_netfilter`, sysctl, containerd
@@ -272,8 +262,8 @@ Chaque fiche se termine par un défi chronométré en conditions d'examen : term
 - **Niveau** : confirmé (`kubernetes_conf`)
 - **Couvre** : CKA-05-04 (+ CKA-04-02 pour etcd)
 - **Prérequis** : K5
-- **Lab** : `kubernetes-ha` construit par K5 **en version n-1** (`kubernetes_previous`, préalable §2). Clés `versions.yaml` : `kubernetes`,
-  `kubernetes_previous` (à créer), `kubeadm`, `etcd`, `containerd`.
+- **Lab** : `kubernetes-ha` construit par K5 **en version n-1** (`kubernetes_previous`). Clés `versions.yaml` : `kubernetes`,
+  `kubernetes_previous`, `kubeadm`, `etcd`, `containerd`.
 - **Temps** : 6 h
 - **3 exercices clés** :
   1. `etcdctl snapshot save` avec les certificats du static pod, vérifier (`snapshot status`), détruire un namespace, restaurer
@@ -314,7 +304,7 @@ Chaque fiche se termine par un défi chronométré en conditions d'examen : term
 - **Niveau** : confirmé (`kubernetes_conf`)
 - **Couvre** : CKA-02-03, CKA-02-05
 - **Prérequis** : K2, K5 (plusieurs nœuds réels)
-- **Lab** : `kubernetes-ha`. Clés `versions.yaml` : `kubernetes`, `metrics_server` (à créer), `helm`.
+- **Lab** : `kubernetes-ha`. Clés `versions.yaml` : `kubernetes`, `metrics_server`, `helm`.
 - **Temps** : 6 h
 - **3 exercices clés** :
   1. `LimitRange` et `ResourceQuota` par namespace, classes QoS, `PriorityClass` et préemption ; observer un Pod `Pending` pour quota et
@@ -335,7 +325,7 @@ Chaque fiche se termine par un défi chronométré en conditions d'examen : term
 - **Couvre** : CKA-03-02, CKA-03-04, CKA-03-05
 - **Prérequis** : K3, K5 (Cilium en CNI) ; `reseau_conf` ; `fiches/gitops/01-argo-cd-fondamentaux.md` recommandé (variante Gateway déjà vue)
 - **Lab** : `kubernetes-ha` (Gateway API Cilium par défaut, Envoy Gateway en variante justifiée ; un contrôleur Ingress léger uniquement
-  pour CKA-03-05). Clés `versions.yaml` : `kubernetes`, `cilium`, `gateway_api` (à créer), `cert_manager`, `envoy_gateway`.
+  pour CKA-03-05). Clés `versions.yaml` : `kubernetes`, `cilium`, `gateway_api`, `cert_manager`, `envoy_gateway`.
 - **Temps** : 6 h
 - **3 exercices clés** :
   1. Partir d'un namespace « deny all » (ingress et egress), rouvrir progressivement : par `podSelector`, `namespaceSelector`, `ipBlock`,
@@ -355,7 +345,7 @@ Chaque fiche se termine par un défi chronométré en conditions d'examen : term
 - **Couvre** : CKA-05-06, CKA-05-07 (CSI), CKA-05-08
 - **Prérequis** : K4, K5 ; les deux fiches `gitops` recommandées (CRD déjà rencontrées)
 - **Lab** : `kubernetes-ha`. Clés `versions.yaml` : `kubernetes`, `helm`, `cert_manager`, `longhorn` ou `rook`, `cloudnative_pg`,
-  `metrics_server` (à créer).
+  `metrics_server`.
 - **Temps** : 5 h
 - **3 exercices clés** :
   1. Helm 4 : `repo add`, `search`, `show values`, `install` avec `--set` et `-f`, `upgrade`, `rollback`, `history`, `template`,
@@ -375,8 +365,8 @@ Chaque fiche se termine par un défi chronométré en conditions d'examen : term
 - **Niveau** : confirmé (`kubernetes_conf`)
 - **Couvre** : CKA-04-01, CKA-04-02, CKA-04-03
 - **Prérequis** : K5, K6 ; `linux_conf` (journald, systemd)
-- **Lab** : `kubernetes-ha` (cluster de K5). Clés `versions.yaml` : `kubernetes`, `kubeadm`, `containerd`, `cri_tools` (à créer), `etcd`,
-  `metrics_server` (à créer).
+- **Lab** : `kubernetes-ha` (cluster de K5). Clés `versions.yaml` : `kubernetes`, `kubeadm`, `containerd`, `cri_tools`, `etcd`,
+  `metrics_server`.
 - **Temps** : 7 h
 - **3 exercices clés** :
   1. Méthode de diagnostic d'un nœud `NotReady` : `kubectl describe node` (conditions, pression), `journalctl -u kubelet`,
@@ -416,7 +406,7 @@ Chaque fiche se termine par un défi chronométré en conditions d'examen : term
 - **Titre** : NN — Du nœud vierge au cluster exploité : kubeadm HA, stockage, trafic, pannes en cascade (numéro `NN` attribué à la création)
 - **Niveau** : expert (`kubernetes_exp`) ; prérequis K1 à K12 complets, pas de saut direct
 - **Couvre** : les 25 compétences CKA en situation
-- **Lab** : `kubernetes-ha` levé sans Kubernetes + `ceph-3n` (Rook-Ceph en CSI). Clés `versions.yaml` : `kubernetes`, `kubernetes_previous`,
+- **Lab** : `kubernetes-ha` en variante `bare` + `ceph-3n` (Rook-Ceph en CSI). Clés `versions.yaml` : `kubernetes`, `kubernetes_previous`,
   `kubeadm`, `containerd`, `cilium`, `kube_vip`, `gateway_api`, `helm`, `rook`, `metrics_server`, `cert_manager`.
 - **Temps** : 8 h en deux séances
 - **Livrable** : runbook « construire et mettre à niveau le cluster » + postmortem d'une panne en cascade
@@ -447,7 +437,7 @@ Chaque fiche se termine par un défi chronométré en conditions d'examen : term
 | K2 ConfigMaps, Secrets, probes, ressources | débutant | linux-base (kind) ou kubernetes-ha | 4 h |
 | K3 Services, EndpointSlices, CoreDNS | débutant | linux-base (kind) ou kubernetes-ha | 5 h |
 | K4 Stockage PV/PVC/StorageClass | débutant | linux-base (kind) ; variante kubernetes-ha (+ ceph-3n) | 5 h |
-| K5 Cluster kubeadm HA | confirmé | kubernetes-ha (sans Kubernetes) | 8 h |
+| K5 Cluster kubeadm HA | confirmé | kubernetes-ha (variante bare) | 8 h |
 | K6 Cycle de vie, etcd, upgrade | confirmé | kubernetes-ha | 6 h |
 | K7 RBAC, ServiceAccounts | confirmé | kubernetes-ha | 4 h |
 | K8 Ordonnancement, admission, autoscaling | confirmé | kubernetes-ha | 6 h |
