@@ -1,0 +1,7 @@
+# SQLite sur disque au lieu de la mémoire : les entités enregistrées survivent au redémarrage (section 3, démo guidée).
+# Un fichier par plugin est créé dans le répertoire indiqué (chemin relatif au processus backend, donc packages/backend).
+backend:
+  database:
+    client: better-sqlite3
+    connection:
+      directory: ../../.sqlite

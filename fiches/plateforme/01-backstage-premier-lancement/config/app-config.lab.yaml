@@ -1,0 +1,12 @@
+# Exposer l'app de développement aux autres VM du lab (exercice autonome de la section 3).
+# Usage : yarn start --config app-config.yaml --config fiches/.../app-config.lab.yaml
+# ou copie dans app-config.local.yaml (ignoré par Git) après avoir remplacé le nom DNS.
+app:
+  baseUrl: http://dev01.lab.home.arpa:3000
+backend:
+  baseUrl: http://dev01.lab.home.arpa:7007
+  listen:
+    port: 7007
+    host: 0.0.0.0
+  cors:
+    origin: http://dev01.lab.home.arpa:3000
