@@ -6,4 +6,4 @@ La session de rédaction (`prompts/03-redaction-chapitre.md`) le lit en premier.
 
 | Plan | Chapitre | Statut |
 |---|---|---|
-| `gitops-01-argo-cd-fondamentaux.md` | `fiches/gitops/01-argo-cd-fondamentaux.md` | validé le 2026-10-02 |
+| `gitops-01-argo-cd-fondamentaux.md` | `fiches/gitops/01-argo-cd-fondamentaux.md` | réalisé le 2026-10-02 (brouillon, à relire) |

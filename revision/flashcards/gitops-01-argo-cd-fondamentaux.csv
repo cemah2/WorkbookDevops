@@ -1,0 +1,19 @@
+question;réponse;tags
+Quels sont les trois CRD installés par Argo CD ?;Application, AppProject, ApplicationSet (groupe argoproj.io);argocd,capa-02-01
+Quel composant clone les dépôts et rend les manifests ?;argocd-repo-server;argocd,capa-02-01
+Quel composant compare l'état désiré à l'état vivant et applique ?;argocd-application-controller (un StatefulSet);argocd,capa-02-01
+Si argocd-server est arrêté, la réconciliation continue-t-elle ?;Oui : argocd-server n'est que l'UI/API, le contrôleur travaille seul;argocd,capa-02-01
+Différence entre le statut sync et le statut health ?;sync = Git et cluster disent-ils la même chose (Synced/OutOfSync), health = les objets vivants vont-ils bien (Healthy/Progressing/Degraded/Missing);argocd,capa-02-02
+Que signifie OutOfSync ?;L'état vivant diffère de l'état désiré dans Git (drift manuel ou nouveau commit non appliqué);argocd,capa-02-02
+À quoi sert prune et quelle est sa valeur par défaut ?;Supprimer du cluster ce qui a disparu de Git, désactivé par défaut (sécurité);argocd,capa-02-02
+À quoi sert selfHeal ?;Réappliquer Git quand le cluster est modifié à la main, sans lui un drift manuel reste OutOfSync;argocd,capa-02-02
+Peut-on faire argocd app rollback sur une Application en sync automatique ?;Non, il faut d'abord couper automated (sync-policy manual) sinon le rollback est refusé;argocd,capa-02-02
+Quel champ active ou désactive explicitement la sync automatique en 3.x ?;spec.syncPolicy.automated.enabled (true/false, null = activé);argocd,capa-02-02
+Comment récupérer le mot de passe admin initial ?;argocd admin initial-password -n argocd (secret argocd-initial-admin-secret, à supprimer ensuite);argocd,capa-02-01
+Que contrôle un AppProject ?;Les dépôts sources, les destinations (cluster + namespace) et les kinds autorisés pour ses Applications;argocd,capa-02-03
+Quelle condition apparaît quand la destination n'est pas permise par le projet ?;InvalidSpecError : destination not permitted in project, correction dans spec.destinations du projet;argocd,capa-02-03
+Quelle est la méthode de suivi des ressources par défaut depuis Argo CD 3.0 ?;Annotation (argocd.argoproj.io/tracking-id) au lieu des labels, réglable via application.resourceTrackingMethod;argocd,capa-02-01
+Depuis 3.0, que faut-il pour voir les logs des pods dans l'UI ?;Une permission RBAC explicite logs, get : le RBAC des logs est appliqué par défaut;argocd,capa-02-01
+Que renvoie argocd app diff quand il y a un écart ?;Code de sortie 1 (0 = aucun diff, 2 = erreur);argocd,capa-02-02
+Quelle syncOption crée le namespace cible s'il manque ?;CreateNamespace=true;argocd,capa-02-03
+Pourquoi enregistrer la clé d'hôte SSH avec argocd cert add-ssh ?;Argo CD vérifie known_hosts via argocd-ssh-known-hosts-cm, sans entrée, la connexion SSH au dépôt échoue;argocd,capa-02-03

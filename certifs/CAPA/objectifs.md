@@ -2,17 +2,17 @@
 code: CAPA
 titre: "CAPA — mapping compétences → chapitres"
 programme: "certifs/CAPA/programme.md (converti le 2026-10-02, curriculum CNCF consulté le 2026-03-14)"
-chapitres_existants: 0
+chapitres_existants: 1
 generated: 2026-10-02
-status: "cartographie initiale — tout est à créer ; à mettre à jour à chaque PR de chapitre"
+status: "1 chapitre rédigé (brouillon) sur 8 ; à mettre à jour à chaque PR de chapitre"
 ---
 
 # CAPA — objectifs et couverture
 
 Mapping entre les 16 compétences de [`programme.md`](programme.md) et les chapitres du workbook.
-État au 2026-10-02 : `fiches/` et `scenarios/` ne contiennent aucun chapitre (README seuls).
-**Toutes les compétences sont des trous.** Ce fichier sert de plan de création ; chaque PR de chapitre
-remplit les colonnes « chapitre » et « exercices » et retire la ligne correspondante de la section 4.
+État au 2026-10-02 : une fiche rédigée (`fiches/gitops/01-argo-cd-fondamentaux.md`, statut brouillon),
+les sept autres chapitres sont des trous. Ce fichier sert de plan de création ; chaque PR de chapitre
+remplit les colonnes « chapitre » et « exercices » et marque le chapitre « rédigé » dans la section 4.
 
 ## 1. Lecture rapide
 
@@ -65,9 +65,9 @@ Colonnes « chapitre » et « exercices » : `—` tant que rien n'existe. La co
 
 | ID | Compétence | Poids | Chapitre existant | Exercices existants | Chapitre cible |
 |---|---|---|---|---|---|
-| CAPA-02-01 | Understand Argo CD Fundamentals | 6,8 % | — | — | F1 |
-| CAPA-02-02 | Synchronize Applications Using Argo CD | 6,8 % | — | — | F1 |
-| CAPA-02-03 | Use Argo CD Application | 6,8 % | — | — | F1 |
+| CAPA-02-01 | Understand Argo CD Fundamentals | 6,8 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S1 : démo, autonome 1-3, break-fix repo-server-down, défi 20 min | F1 (rédigé) |
+| CAPA-02-02 | Synchronize Applications Using Argo CD | 6,8 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S3 : démo, autonome 1-3, break-fix app-degraded, défi 10 min | F1 (rédigé) |
+| CAPA-02-03 | Use Argo CD Application | 6,8 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S2 : démo, autonome 1-3, break-fix repo-credentials et destination-forbidden, défi 10 min | F1 (rédigé) |
 | CAPA-02-04 | Configure Argo CD with Helm and Kustomize | 6,8 % | — | — | F2 |
 | CAPA-02-05 | Identify Common Reconciliation Patterns | 6,8 % | — | — | F2 |
 
@@ -110,7 +110,7 @@ confirmé attendent le profil complet. Git du lab : dépôt bare SSH sur `core-j
 (DECISIONS.md, 2026-10-02). Gateway API : Cilium par défaut (DECISIONS.md, 2026-10-02).
 Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en manipulation), pas de rédaction.
 
-### F1 — `fiches/gitops/01-argo-cd-fondamentaux.md`
+### F1 — `fiches/gitops/01-argo-cd-fondamentaux.md` — rédigé (brouillon, 2026-10-02)
 
 - **Titre** : Argo CD — installer, déclarer une Application, synchroniser
 - **Niveau** : débutant (`gitops_deb`)
@@ -261,7 +261,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 
 | Chapitre | Niveau | Profil de lab | Temps |
 |---|---|---|---|
-| F1 Argo CD fondamentaux | débutant | kubernetes-ha (ou kind) | 5 h |
+| F1 Argo CD fondamentaux (rédigé, brouillon) | débutant | linux-base (kind) ou kubernetes-ha | 5 h |
 | F2 Argo CD Helm/Kustomize/réconciliation | confirmé | kubernetes-ha | 6 h |
 | F3 Argo Workflows fondamentaux | débutant | kubernetes-ha (ou kind) | 5 h |
 | F4 Argo Workflows artefacts/templates/DAG | confirmé | kubernetes-ha + ceph-3n | 7 h |
