@@ -510,6 +510,18 @@ components:
     verification_detail: "tags git via proxy.golang.org"
     checked_on: "2026-10-02"
 
+  podinfo:
+    name: "podinfo (application de démonstration)"
+    # renovate: datasource=github-releases depName=stefanprodan/podinfo
+    version: "6.15.0"
+    image: "ghcr.io/stefanprodan/podinfo"
+    note: "application de démonstration des fiches plateforme (promotion dev → prod par tag) ; base Kustomize officielle dans kustomize/ du dépôt"
+    channel: stable
+    source_url: "https://github.com/stefanprodan/podinfo/releases"
+    verification: direct
+    verification_detail: "tags git (git ls-remote) et charts/podinfo/Chart.yaml appVersion ; github.com bloqué, lu via le proxy git et raw.githubusercontent.com"
+    checked_on: "2026-10-02"
+
   # ---------------------------------------------------------------- observabilité
   prometheus:
     name: "Prometheus"
