@@ -118,4 +118,3 @@ activé, programme CCA). Envoy Gateway reste dans le profil comme variante pour 
 fonction absente de Cilium ; la fiche concernée le justifie en une ligne.
 Conséquence : les fiches exposent leurs UI par `Gateway` + `HTTPRoute` Cilium et un certificat cert-manager
 émis par la CA interne ; sur `kind`, l'exposition se fait par `port-forward` et la Gateway est une variante.
-
