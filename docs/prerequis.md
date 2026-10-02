@@ -277,3 +277,77 @@ flowchart TB
 | `gitops/05-argo-rollouts` | confirmé | planifié | CAPA-03-01 à 03-03 | `gitops/01-argo-cd-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
 | `gitops/07-argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/02-argo-workflows-fondamentaux`, `kubernetes_conf` |
 | `scenarios/NN-chaine-argo-bout-en-bout` | expert | planifié | CAPA (16 compétences), CGOA-04-01 à 04-04 | les sept fiches ci-dessus |
+
+### 6.2 ICA (certifs/ICA/objectifs.md, 2026-10-02)
+
+Huit fiches `plateforme`, un scénario et un examen blanc (`exams/ica-01/`, hors graphe). Aucun chapitre rédigé au
+2026-10-02. Arêtes inter-domaines nouvelles, justifiées dans `certifs/ICA/objectifs.md` §4 :
+`securite_deb` ⇢ sécurité mTLS/JWT (TLS, certificats, JWT), `services_deb` ⇢ TLS en bordure (CA interne, cert-manager),
+`observabilite_deb` ⇢ troubleshooting (Prometheus, lecture de métriques Istio), `gitops_deb` ⇢ personnalisation et
+mises à jour (valeurs Helm dans Git), `gitops/05-argo-rollouts` ⇢ scénario (moteur de canary, si la fiche CAPA existe).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  kubernetes_conf[kubernetes_conf]:::ref
+  gitops_deb[gitops_deb]:::ref
+  plateforme_deb[plateforme_deb]:::ref
+  plateforme_conf[plateforme_conf]:::ref
+  plateforme_exp[plateforme_exp]:::ref
+  securite_deb[securite_deb]:::ref
+  services_deb[services_deb]:::ref
+  observabilite_deb[observabilite_deb]:::ref
+  rollouts["gitops/05-argo-rollouts (conf., planifié CAPA)"]:::plan
+
+  i01["plateforme/01-istio-installation-sidecar-ambient (déb.)"]:::plandeb
+  i02["plateforme/02-istio-ingress-et-routage (déb.)"]:::plandeb
+  i03["plateforme/03-istio-traffic-shifting-resilience-fault-injection (conf.)"]:::plan
+  i04["plateforme/04-istio-services-externes-et-egress (conf.)"]:::plan
+  i05["plateforme/05-istio-securite-mtls-jwt-autorisation (conf.)"]:::plan
+  i06["plateforme/06-istio-tls-en-bordure (conf.)"]:::plan
+  i07["plateforme/07-istio-personnalisation-et-mises-a-jour (conf.)"]:::plan
+  i08["plateforme/08-istio-troubleshooting (conf.)"]:::plan
+  s_mesh["scenarios/NN-service-mesh-bout-en-bout (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  kubernetes_conf --> plateforme_deb
+  gitops_deb --> plateforme_deb
+  plateforme_deb --> i01
+  securite_deb -.-> i05
+  services_deb -.-> i06
+  observabilite_deb -.-> i08
+  gitops_deb -.-> i07
+  rollouts -.-> s_mesh
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  i01 --> i02
+  i02 --> i03
+  i02 --> i04
+  i02 --> i05
+  i05 --> i06
+  i01 --> i07
+  i02 --> i07
+  i03 --> i08
+  i04 --> i08
+  i05 --> i08
+  i06 --> i08
+  i07 --> i08
+  i08 --> plateforme_conf
+  plateforme_conf --> s_mesh --> plateforme_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `plateforme/01-istio-installation-sidecar-ambient` | débutant | planifié | ICA-01-01, 01-02, 01-03 ; KCSA-05-04 | `plateforme_deb` (donc `kubernetes_conf`) |
+| `plateforme/02-istio-ingress-et-routage` | débutant | planifié | ICA-02-01, 02-02, 02-03 ; CKA-03-04, CCA-03-01 à 03-03 | `plateforme/01-…` |
+| `plateforme/03-istio-traffic-shifting-resilience-fault-injection` | confirmé | planifié | ICA-02-04, 02-06, 02-07 | `plateforme/02-…` |
+| `plateforme/04-istio-services-externes-et-egress` | confirmé | planifié | ICA-02-05, 02-01 (egress) | `plateforme/02-…` |
+| `plateforme/05-istio-securite-mtls-jwt-autorisation` | confirmé | planifié | ICA-03-01, 03-02 ; CKS-04-04, KCSA-05-04 | `plateforme/02-…` ; `securite_deb` recommandé |
+| `plateforme/06-istio-tls-en-bordure` | confirmé | planifié | ICA-03-03 ; CKA-03-04 | `plateforme/05-…` ; `services_deb` recommandé |
+| `plateforme/07-istio-personnalisation-et-mises-a-jour` | confirmé | planifié | ICA-01-03, 01-04 | `plateforme/01-…`, `plateforme/02-…` ; `gitops_deb` recommandé |
+| `plateforme/08-istio-troubleshooting` | confirmé | planifié | ICA-04-01 à 04-03 | `plateforme/03-…` à `07-…` ; `observabilite_deb` recommandé |
+| `scenarios/NN-service-mesh-bout-en-bout` | expert | planifié | ICA (17 compétences), CKS-04-04, CKA-03-04 ; CAPA-03-02 si Argo Rollouts | les huit fiches ci-dessus ; `gitops/05-argo-rollouts` recommandé |
