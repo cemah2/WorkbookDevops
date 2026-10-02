@@ -4,7 +4,7 @@ titre: "CCA — mapping compétences → chapitres"
 programme: "certifs/CCA/programme.md (converti le 2026-10-02, curriculum CNCF consulté le 2026-03-14)"
 chapitres_existants: 0
 generated: 2026-10-02
-status: "0 chapitre rédigé sur 8 ; une couverture partielle indirecte (variante Gateway API de fiches/gitops/01) ; à mettre à jour à chaque PR de chapitre"
+status: "0 chapitre rédigé sur 8 ; couverture partielle indirecte (variante Gateway API de fiches/gitops/01) ; arbitrages du §2 acceptés le 2026-10-02 ; à mettre à jour à chaque PR de chapitre"
 ---
 
 # CCA — objectifs et couverture
@@ -40,22 +40,22 @@ F1 à F4 cumulent 68 % des points ; F1 et F3 seules en font 38 %.
 
 ## 2. Préalables au premier chapitre
 
-À régler **avant** d'ouvrir la PR du premier chapitre (sinon le gabarit ne peut pas être rempli honnêtement) :
+Les trois arbitrages proposés par cette cartographie ont été acceptés le 2026-10-02 et appliqués dans la même PR :
 
-- `versions.yaml` : la clé `cilium` existe (1.20.x, vérifiée le 2026-10-02). Ajouter `cilium_cli` (dépôt `cilium/cilium-cli`),
-  `hubble` (CLI, dépôt `cilium/hubble`) et `gateway_api` (CRD `kubernetes-sigs/gateway-api` ; Cilium impose une version
-  précise des CRD, à lire dans la documentation de la version `cilium`). `spire` (dépôt `spiffe/spire`) seulement si F5
-  retient l'authentification mutuelle. Passe par la veille (`prompts/07-veille.md`) ou par la PR de F1.
-- `labs/profiles/kubernetes-ha.yaml` : `components` cite `cilium` et `metallb`. F6 remplace MetalLB par le LB-IPAM de Cilium
-  annoncé en BGP vers `core-rtr01` ; proposer à cette PR un ajout daté à `DECISIONS.md` (« LoadBalancer sur `kubernetes-ha` :
-  Cilium LB-IPAM + BGP par défaut, MetalLB en variante ») et ajouter `cilium_cli`, `hubble`, `gateway_api` à `components`.
-- `labs/profiles/core.yaml` / fiche OPNsense : F6 a besoin du plugin `os-frr` (BGP) sur `core-rtr01`. Si la fiche Proxmox/OPNsense
-  n'existe pas encore, F6 contient la mise en place minimale (un AS, un voisin) et la marque `[non testé]` tant que `core` n'est pas levé.
-- Numérotation : la série Cilium prend les numéros `10` à `16` dans `fiches/reseau/`, les numéros `01` à `09` restant aux fiches
-  `reseau_deb` (ip/nftables, VLAN, OPNsense, DNS…) attendues par LFCS, RHCE et CKA. Les fiches confirmé/expert ne peuvent pas
-  ouvrir la série de lecture du domaine ; un numéro attribué ne change plus (DECISIONS.md, 2026-10-02). À confirmer à la PR de F1 ;
-  sinon renuméroter `01` à `07` avant toute rédaction, tant que rien n'existe.
-- `docs/prerequis.md` : les nœuds de chapitres planifiés sont ajoutés en §6 (cette PR). Arête inter-domaines nouvelle :
+- `versions.yaml` : `cilium` existait (1.20.x) ; `cilium_cli`, `hubble` (même numéro que `cilium` depuis la série 1.17) et
+  `gateway_api` (version des CRD imposée par la documentation de la version `cilium`, lue dans `Documentation/conf.py`) sont ajoutés.
+  `spire` (dépôt `spiffe/spire`) reste à créer par la PR de F5 si l'authentification mutuelle est retenue.
+- `DECISIONS.md` (2026-10-02) : LoadBalancer sur `kubernetes-ha` = Cilium LB-IPAM + BGP vers `core-rtr01`, MetalLB en variante ;
+  kube-proxy absent, Cilium en `kubeProxyReplacement`. `labs/profiles/kubernetes-ha.yaml` et `labs/profiles/core.yaml` (plugin `os-frr`)
+  sont alignés.
+- `DECISIONS.md` (2026-10-02) : la série Cilium prend les numéros `10` à `16` dans `fiches/reseau/`, les `01` à `09` restant aux fiches
+  `reseau_deb` (ip/nftables, VLAN, OPNsense, DNS…) attendues par LFCS, RHCE et CKA.
+
+Reste à faire **avant** la PR du premier chapitre :
+
+- Fiche Proxmox/OPNsense : F6 a besoin du plugin `os-frr` configuré (un AS, un voisin). Tant que `core` n'est pas levé, F6 contient
+  la mise en place minimale et la marque `[non testé]`.
+- `docs/prerequis.md` : les nœuds de chapitres planifiés sont en §6.2 (cette PR). Arête inter-domaines nouvelle :
   `kubernetes_deb` → F1 (Cilium s'installe sur un cluster existant ; il faut kubectl, Pods, Services, Deployments).
 - Décisions déjà prises qui s'appliquent : Gateway API Cilium par défaut, Envoy Gateway en variante (DECISIONS.md, 2026-10-02) ;
   ingress-nginx retiré, Ingress gardé pour les objectifs d'examen qui le citent (CCA-03-01, CCA-03-03) ; Helm 4 pour l'installation
@@ -150,7 +150,7 @@ les cartographies CKA, CKS, KCNA, KCSA et ICA restent à faire par leur propre s
 
 ## 4. Trous et chapitres à créer
 
-Les fiches sont numérotées dans l'ordre de rédaction recommandé (DECISIONS.md, 2026-10-02) à partir de `10` (voir §2).
+Les fiches sont numérotées dans l'ordre de rédaction recommandé à partir de `10` (DECISIONS.md, 2026-10-02 ; voir §2).
 Domaine `reseau`, niveaux confirmé puis expert : les fiches Cilium exigent `reseau_deb` (modèle OSI, TCP/UDP, DNS, HTTP,
 routage, VLAN du lab) et `kubernetes_deb` (kubectl, Pods, Services, Deployments, namespaces). Pas de fiche Cilium débutant :
 `reseau_deb` est un prérequis de `kubernetes_deb` dans le graphe, une fiche Cilium ne peut donc pas s'y trouver.
@@ -167,7 +167,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Couvre** : CCA-01-01, CCA-01-02, CCA-01-04, CCA-05-01, CCA-05-02
 - **Prérequis** : `reseau_deb`, `kubernetes_deb` (cluster kubeadm bootstrappé avec `--skip-phases=addon/kube-proxy`, sans CNI)
 - **Lab** : `kubernetes-ha` ; repli `kind` (`disableDefaultCNI: true`, `kubeProxyMode: none`) sur `linux-base`.
-  Clés `versions.yaml` : `cilium`, `cilium_cli` (à créer), `kubernetes`, `kubeadm`, `kind`, `helm`.
+  Clés `versions.yaml` : `cilium`, `cilium_cli`, `kubernetes`, `kubeadm`, `kind`, `helm`.
 - **Temps** : 5 h
 - **3 exercices clés** :
   1. Installer Cilium avec `cilium install` sur le cluster sans CNI, lire `cilium status --wait`, `cilium config view`,
@@ -208,7 +208,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Niveau** : confirmé (`reseau_conf`)
 - **Couvre** : CCA-02-01, CCA-02-02, CCA-02-03, CCA-02-04, CCA-02-05
 - **Prérequis** : F1 ; `securite_deb` recommandé (principe du moindre privilège, zéro confiance)
-- **Lab** : `kubernetes-ha` ; repli `kind`. Clés `versions.yaml` : `cilium`, `cilium_cli`, `hubble` (à créer, pour vérifier les verdicts).
+- **Lab** : `kubernetes-ha` ; repli `kind`. Clés `versions.yaml` : `cilium`, `cilium_cli`, `hubble` (pour vérifier les verdicts).
 - **Temps** : 6 h
 - **3 exercices clés** :
   1. Déployer une application à trois tiers, écrire `NetworkPolicy` Kubernetes puis `CiliumNetworkPolicy` équivalente et montrer ce que
@@ -231,7 +231,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Couvre** : CCA-04-01, CCA-04-02, CCA-04-03
 - **Prérequis** : F3 (les verdicts de policy sont la matière des flux) ; `observabilite_deb` recommandé (Prometheus, Grafana)
 - **Lab** : `kubernetes-ha` (Prometheus et Grafana du profil pour les métriques Hubble) ; repli `kind`.
-  Clés `versions.yaml` : `cilium`, `cilium_cli`, `hubble` (à créer), `prometheus`, `grafana`.
+  Clés `versions.yaml` : `cilium`, `cilium_cli`, `hubble`, `prometheus`, `grafana`.
 - **Temps** : 4 h
 - **3 exercices clés** :
   1. Activer Hubble (`cilium hubble enable --ui`), installer le CLI `hubble`, `hubble status`, `hubble observe` avec filtres
@@ -253,8 +253,8 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Couvre** : CCA-03-01, CCA-03-02, CCA-03-03, CCA-03-04, CCA-03-05
 - **Prérequis** : F3, F4 ; `services_deb` recommandé (PKI interne cert-manager, DNS `*.apps.lab.home.arpa`)
 - **Lab** : `kubernetes-ha` (pool LoadBalancer `10.10.40.200`–`.219`, cert-manager, CA interne) ; repli `kind` avec `port-forward`
-  (DECISIONS.md, 2026-10-02). Clés `versions.yaml` : `cilium`, `cilium_cli`, `gateway_api` (à créer), `cert_manager`, `istio`
-  (comparaison, lecture seule), `spire` (si authentification mutuelle).
+  (DECISIONS.md, 2026-10-02). Clés `versions.yaml` : `cilium`, `cilium_cli`, `gateway_api`, `cert_manager`, `istio`
+  (comparaison, lecture seule), `spire` (à créer si authentification mutuelle).
 - **Temps** : 6 h
 - **3 exercices clés** :
   1. Exposer la même application en `Ingress` (`ingressClassName: cilium`, mode `dedicated` vs `shared`) puis en Gateway API

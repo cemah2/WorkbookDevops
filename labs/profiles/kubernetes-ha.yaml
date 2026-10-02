@@ -9,12 +9,14 @@ vlans: [10, 30, 40]
 images:
   - ubuntu_lts
 variants: [kubeadm, talos, rke2, k3s]
-components: [kubernetes, kubeadm, containerd, cilium, metallb, envoy_gateway, argo_cd, flux, prometheus, grafana, loki, velero]
+components: [kubernetes, kubeadm, containerd, cilium, cilium_cli, hubble, gateway_api, metallb, envoy_gateway, argo_cd, flux, prometheus, grafana, loki, velero]
 network:
   pod_cidr: 10.244.0.0/16
   service_cidr: 10.96.0.0/12
   api_vip: 10.10.40.220
   loadbalancer_pool: 10.10.40.200-10.10.40.219
+  loadbalancer: "Cilium LB-IPAM (CiliumLoadBalancerIPPool) annoncé en BGP vers core-rtr01 (AS 65000, nœuds AS 65001, VLAN 40) ; MetalLB en variante (DECISIONS.md 2026-10-02)"
+  kube_proxy: "absent (kubeadm --skip-phases=addon/kube-proxy) ; Cilium kubeProxyReplacement (DECISIONS.md 2026-10-02)"
 can_run_with: [linux-base, ceph-3n]
 vms:
   - name: kubernetes-ha-cp01
