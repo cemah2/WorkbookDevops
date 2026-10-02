@@ -1,0 +1,710 @@
+# versions.yaml — SEULE source des versions du workbook (DECISIONS.md, 2026-10-02).
+#
+# Règles :
+# - Aucun chapitre n'écrit une version en dur : il référence une clé de `components`.
+# - Chaque entrée est vérifiée sur sa source officielle ; `verification` dit comment :
+#     direct    : page/API officielle lue le jour indiqué
+#     indirect  : source officielle bloquée depuis la session ; version lue sur un miroir
+#                 officiel (git, registre de paquets, image officielle) ou une annonce relayée
+#     unverified: impossible à vérifier ; `version` vaut null, à renseigner avant usage
+# - Les lignes `# renovate:` sont lues par Renovate (customManagers regex, voir renovate.json)
+#   et doivent précéder immédiatement la ligne `version:` qu'elles décrivent.
+# - `channel` : stable | lts | exam (version imposée par un examen, ne pas suivre le dernier).
+
+meta:
+  checked_on: "2026-10-02"
+  checked_by: "session d'amorçage (prompts/00-amorcage-depot.md)"
+  next_review: "veille mensuelle (prompts/07-veille.md)"
+  lab_target_summary: >
+    Proxmox VE 9.2 / Ubuntu 26.04 LTS / Rocky 10.2 / Kubernetes 1.37 / Ceph 20.2 Tentacle /
+    OpenStack 2026.1 Gazpacho (Kolla-Ansible 22) / OpenTofu 1.13 / OpenBao 2.7.
+
+components:
+
+  # ---------------------------------------------------------------- hyperviseur et OS
+  proxmox_ve:
+    name: "Proxmox VE"
+    # renovate: datasource=endoflife-date depName=proxmox-ve
+    version: "9.2"
+    package_version: "pve-manager 9.2.21"
+    channel: stable
+    source_url: "https://pve.proxmox.com/wiki/Roadmap"
+    verification: indirect
+    verification_detail: "pve.proxmox.com et www.proxmox.com bloqués ; lu dans debian/changelog du miroir officiel github.com/proxmox/pve-manager et annonce 9.2 (2026-05-21) relayée"
+    checked_on: "2026-10-02"
+
+  proxmox_backup_server:
+    name: "Proxmox Backup Server"
+    # renovate: datasource=endoflife-date depName=proxmox-backup-server
+    version: null
+    channel: stable
+    source_url: "https://pbs.proxmox.com/wiki/index.php/Roadmap"
+    verification: unverified
+    verification_detail: "site bloqué ; le miroir GitHub proxmox/proxmox-backup est obsolète (3.2.4). À renseigner à la main."
+    checked_on: "2026-10-02"
+
+  ubuntu_lts:
+    name: "Ubuntu LTS"
+    # renovate: datasource=endoflife-date depName=ubuntu
+    version: "26.04"
+    point_release: "26.04.1 LTS (resolute)"
+    previous_supported: "24.04.5 LTS (noble), support standard jusqu'en mai 2029"
+    channel: lts
+    source_url: "https://changelogs.ubuntu.com/meta-release-lts"
+    verification: direct
+    verification_detail: "meta-release-lts officiel + ubuntu.com/about/release-cycle (26.04 LTS publiée avril 2026)"
+    checked_on: "2026-10-02"
+
+  rocky_linux:
+    name: "Rocky Linux"
+    # renovate: datasource=endoflife-date depName=rocky-linux
+    version: "10.2"
+    channel: stable
+    source_url: "https://rockylinux.org/news/rocky-linux-10-2-ga-release"
+    verification: indirect
+    verification_detail: "rockylinux.org bloqué ; tag 10.2 de l'image officielle rockylinux/rockylinux sur Docker Hub + annonce GA 2026-05-28 relayée"
+    checked_on: "2026-10-02"
+
+  rhel:
+    name: "Red Hat Enterprise Linux (abonnement Developer)"
+    # renovate: datasource=endoflife-date depName=rhel
+    version: "10.2"
+    exam_note: "RHCSA EX200 sur RHEL 10 ; RHCE EX294 encore sur RHEL 9 dans certifs/, passage RHEL 10 à vérifier"
+    channel: stable
+    source_url: "https://access.redhat.com/articles/3078"
+    verification: indirect
+    verification_detail: "access.redhat.com et docs.redhat.com bloqués ; tag 10.2 de l'image officielle redhat/ubi10 sur Docker Hub + GA 2026-05-19 relayée"
+    checked_on: "2026-10-02"
+
+  # ---------------------------------------------------------------- Kubernetes et runtime
+  kubernetes:
+    name: "Kubernetes"
+    # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
+    version: "1.37.1"
+    supported_lines: "1.37.1 · 1.36.5 · 1.35.9 · 1.34.12"
+    exam_note: "CKA/CKAD en 1.35, CKS en 1.34 dans certifs/ : les chapitres d'examen suivent la version de l'examen, pas celle-ci"
+    channel: stable
+    source_url: "https://dl.k8s.io/release/stable.txt"
+    verification: direct
+    verification_detail: "dl.k8s.io stable.txt et stable-1.3x.txt ; github.com/kubernetes/kubernetes/releases"
+    checked_on: "2026-10-02"
+
+  kubeadm:
+    name: "kubeadm"
+    # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
+    version: "1.37.1"
+    note: "même numéro que kubernetes ; paquets pkgs.k8s.io core:/stable:/v1.37/"
+    channel: stable
+    source_url: "https://dl.k8s.io/release/stable.txt"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  containerd:
+    name: "containerd"
+    # renovate: datasource=github-releases depName=containerd/containerd extractVersion=^v(?<version>.*)$
+    version: "2.4.1"
+    channel: stable
+    source_url: "https://github.com/containerd/containerd/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  etcd:
+    name: "etcd"
+    # renovate: datasource=github-releases depName=etcd-io/etcd extractVersion=^v(?<version>.*)$
+    version: "3.7.2"
+    channel: stable
+    source_url: "https://github.com/etcd-io/etcd/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  cilium:
+    name: "Cilium"
+    # renovate: datasource=github-releases depName=cilium/cilium extractVersion=^v(?<version>.*)$
+    version: "1.20.2"
+    channel: stable
+    source_url: "https://github.com/cilium/cilium/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  helm:
+    name: "Helm"
+    # renovate: datasource=github-releases depName=helm/helm extractVersion=^v(?<version>.*)$
+    version: "4.3.0"
+    note: "Helm 3.22.0 est la dernière mineure 3.x (fin de vie annoncée)"
+    channel: stable
+    source_url: "https://github.com/helm/helm/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  kind:
+    name: "kind"
+    # renovate: datasource=github-releases depName=kubernetes-sigs/kind extractVersion=^v(?<version>.*)$
+    version: "0.33.0"
+    channel: stable
+    source_url: "https://github.com/kubernetes-sigs/kind/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  talos:
+    name: "Talos Linux"
+    # renovate: datasource=github-releases depName=siderolabs/talos extractVersion=^v(?<version>.*)$
+    version: "1.14.2"
+    channel: stable
+    source_url: "https://github.com/siderolabs/talos/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  k3s:
+    name: "k3s"
+    # renovate: datasource=github-releases depName=k3s-io/k3s versioning=regex:^v(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+k3s(?<build>\d+)$
+    version: "v1.37.1+k3s1"
+    channel: stable
+    source_url: "https://github.com/k3s-io/k3s/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  rke2:
+    name: "RKE2"
+    # renovate: datasource=github-releases depName=rancher/rke2 versioning=regex:^v(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+rke2r(?<build>\d+)$
+    version: "v1.37.1+rke2r1"
+    channel: stable
+    source_url: "https://github.com/rancher/rke2/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  kubespray:
+    name: "Kubespray"
+    # renovate: datasource=github-releases depName=kubernetes-sigs/kubespray extractVersion=^v(?<version>.*)$
+    version: "2.32.0"
+    channel: stable
+    source_url: "https://github.com/kubernetes-sigs/kubespray/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  # ---------------------------------------------------------------- stockage
+  ceph:
+    name: "Ceph"
+    # renovate: datasource=github-tags depName=ceph/ceph extractVersion=^v(?<version>\d+\.2\.\d+)$
+    version: "20.2.4"
+    release_name: "Tentacle"
+    previous: "19.2.6 Squid"
+    note: "21.x Umbrella seulement en release candidate (v21.1.1 le 2026-09-10) ; seules les x.2.z sont stables"
+    channel: stable
+    source_url: "https://docs.ceph.com/en/latest/releases/"
+    verification: indirect
+    verification_detail: "docs.ceph.com bloqué ; tags lus sur github.com/ceph/ceph/tags (dépôt officiel)"
+    checked_on: "2026-10-02"
+
+  rook:
+    name: "Rook"
+    # renovate: datasource=github-releases depName=rook/rook extractVersion=^v(?<version>.*)$
+    version: "1.20.8"
+    channel: stable
+    source_url: "https://github.com/rook/rook/releases"
+    verification: direct
+    verification_detail: "tags git via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  longhorn:
+    name: "Longhorn"
+    # renovate: datasource=github-releases depName=longhorn/longhorn extractVersion=^v(?<version>.*)$
+    version: "1.13.0"
+    channel: stable
+    source_url: "https://github.com/longhorn/longhorn/releases"
+    verification: direct
+    verification_detail: "tags git longhorn-manager via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  velero:
+    name: "Velero"
+    # renovate: datasource=github-releases depName=vmware-tanzu/velero extractVersion=^v(?<version>.*)$
+    version: "1.18.4"
+    channel: stable
+    source_url: "https://github.com/vmware-tanzu/velero/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  cloudnative_pg:
+    name: "CloudNativePG"
+    # renovate: datasource=github-releases depName=cloudnative-pg/cloudnative-pg extractVersion=^v(?<version>.*)$
+    version: "1.30.1"
+    channel: stable
+    source_url: "https://github.com/cloudnative-pg/cloudnative-pg/releases"
+    verification: direct
+    verification_detail: "tags git via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  # ---------------------------------------------------------------- OpenStack
+  openstack:
+    name: "OpenStack (série cible du lab)"
+    # renovate: datasource=endoflife-date depName=openstack
+    version: "2026.1"
+    release_name: "Gazpacho"
+    latest_released: "2026.2 Hibiscus, publiée le 2026-09-30 (maintained) ; 2027.1 Indri en développement"
+    exam_note: "COA annoncé sur 2026.1 Gazpacho dans certifs/ : à confirmer dans le handbook"
+    channel: exam
+    source_url: "https://releases.openstack.org/"
+    verification: indirect
+    verification_detail: "releases.openstack.org bloqué ; data/series_status.yaml lu sur le miroir officiel github.com/openstack/releases ; nova 34.0.0 (2026.2) publié sur PyPI le 2026-09-30"
+    checked_on: "2026-10-02"
+
+  kolla_ansible:
+    name: "Kolla-Ansible"
+    # renovate: datasource=pypi depName=kolla-ansible
+    version: "22.2.0"
+    note: "série 22.x = OpenStack 2026.1 Gazpacho ; la 23.x (Hibiscus) n'est pas encore publiée (release model trailing)"
+    channel: exam
+    source_url: "https://pypi.org/project/kolla-ansible/"
+    verification: direct
+    verification_detail: "PyPI + deliverables/gazpacho/kolla-ansible.yaml du miroir officiel openstack/releases"
+    checked_on: "2026-10-02"
+
+  kolla:
+    name: "Kolla (images)"
+    # renovate: datasource=pypi depName=kolla
+    version: "22.2.0"
+    channel: exam
+    source_url: "https://pypi.org/project/kolla/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  python_openstackclient:
+    name: "python-openstackclient"
+    # renovate: datasource=pypi depName=python-openstackclient
+    version: "10.3.0"
+    channel: stable
+    source_url: "https://pypi.org/project/python-openstackclient/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  sushy_tools:
+    name: "sushy-tools (BMC Redfish virtuel)"
+    # renovate: datasource=pypi depName=sushy-tools
+    version: "2.2.0"
+    channel: stable
+    source_url: "https://pypi.org/project/sushy-tools/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  virtualbmc:
+    name: "VirtualBMC (IPMI virtuel)"
+    # renovate: datasource=pypi depName=virtualbmc
+    version: "3.3.0"
+    channel: stable
+    source_url: "https://pypi.org/project/virtualbmc/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  metal3_baremetal_operator:
+    name: "Metal3 baremetal-operator"
+    # renovate: datasource=github-releases depName=metal3-io/baremetal-operator extractVersion=^v(?<version>.*)$
+    version: "0.14.1"
+    channel: stable
+    source_url: "https://github.com/metal3-io/baremetal-operator/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  # ---------------------------------------------------------------- IaC et secrets
+  opentofu:
+    name: "OpenTofu"
+    # renovate: datasource=github-releases depName=opentofu/opentofu extractVersion=^v(?<version>.*)$
+    version: "1.13.1"
+    channel: stable
+    source_url: "https://github.com/opentofu/opentofu/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  terraform:
+    name: "Terraform (certifs/TFA uniquement)"
+    # renovate: datasource=github-releases depName=hashicorp/terraform extractVersion=^v(?<version>.*)$
+    version: "1.16.5"
+    exam_note: "TFA 004 annoncé sur Terraform 1.12 dans certifs/ ; 1.17.0 en bêta"
+    channel: exam
+    source_url: "https://releases.hashicorp.com/terraform/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  terraform_provider_proxmox:
+    name: "Provider bpg/proxmox (OpenTofu/Terraform)"
+    # renovate: datasource=github-releases depName=bpg/terraform-provider-proxmox extractVersion=^v(?<version>.*)$
+    version: "0.114.0"
+    channel: stable
+    source_url: "https://github.com/bpg/terraform-provider-proxmox/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  packer:
+    name: "Packer"
+    # renovate: datasource=github-releases depName=hashicorp/packer extractVersion=^v(?<version>.*)$
+    version: "1.16.1"
+    channel: stable
+    source_url: "https://releases.hashicorp.com/packer/"
+    verification: direct
+    verification_detail: "tags git via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  openbao:
+    name: "OpenBao"
+    # renovate: datasource=github-releases depName=openbao/openbao extractVersion=^v(?<version>.*)$
+    version: "2.7.1"
+    channel: stable
+    source_url: "https://github.com/openbao/openbao/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  vault:
+    name: "Vault (certifs/VA uniquement)"
+    # renovate: datasource=github-releases depName=hashicorp/vault extractVersion=^v(?<version>.*)$
+    version: "2.1.1"
+    exam_note: "VA 003 annoncé sur Vault 1.16.x dans certifs/ ; Vault 2.0.0 publié le 2026-04-14, ligne 1.21.x en maintenance"
+    channel: exam
+    source_url: "https://releases.hashicorp.com/vault/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  ansible:
+    name: "Ansible (paquet communautaire)"
+    # renovate: datasource=pypi depName=ansible
+    version: "14.4.0"
+    channel: stable
+    source_url: "https://pypi.org/project/ansible/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  ansible_core:
+    name: "ansible-core"
+    # renovate: datasource=pypi depName=ansible-core
+    version: "2.21.4"
+    exam_note: "RHCE EX294 utilise Ansible Automation Platform ; version d'examen à confirmer"
+    channel: stable
+    source_url: "https://pypi.org/project/ansible-core/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  ansible_lint:
+    name: "ansible-lint"
+    # renovate: datasource=pypi depName=ansible-lint
+    version: "26.9.0"
+    channel: stable
+    source_url: "https://pypi.org/project/ansible-lint/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  # ---------------------------------------------------------------- GitOps et plateforme
+  argo_cd:
+    name: "Argo CD"
+    # renovate: datasource=github-releases depName=argoproj/argo-cd extractVersion=^v(?<version>.*)$
+    version: "3.5.3"
+    channel: stable
+    source_url: "https://github.com/argoproj/argo-cd/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  flux:
+    name: "Flux"
+    # renovate: datasource=github-releases depName=fluxcd/flux2 extractVersion=^v(?<version>.*)$
+    version: "2.9.6"
+    channel: stable
+    source_url: "https://github.com/fluxcd/flux2/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  harbor:
+    name: "Harbor"
+    # renovate: datasource=github-releases depName=goharbor/harbor extractVersion=^v(?<version>.*)$
+    version: "2.15.2"
+    note: "2.15.3 en release candidate"
+    channel: stable
+    source_url: "https://github.com/goharbor/harbor/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  gitlab:
+    name: "GitLab (CE/EE auto-hébergé)"
+    # renovate: datasource=gitlab-tags depName=gitlab-org/gitlab extractVersion=^v(?<version>.*)-ee$
+    version: "19.4.1"
+    channel: stable
+    source_url: "https://gitlab.com/api/v4/projects/gitlab-org%2Fgitlab/repository/tags"
+    verification: direct
+    verification_detail: "about.gitlab.com bloqué ; tags lus via l'API officielle gitlab.com"
+    checked_on: "2026-10-02"
+
+  nexus:
+    name: "Sonatype Nexus Repository (miroir air-gap)"
+    # renovate: datasource=github-releases depName=sonatype/nexus-public extractVersion=^release-(?<version>.*)$
+    version: "3.96.4-01"
+    channel: stable
+    source_url: "https://github.com/sonatype/nexus-public/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  backstage:
+    name: "Backstage"
+    # renovate: datasource=github-releases depName=backstage/backstage extractVersion=^v(?<version>.*)$
+    version: "1.55.3"
+    channel: stable
+    source_url: "https://github.com/backstage/backstage/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  kyverno:
+    name: "Kyverno"
+    # renovate: datasource=github-releases depName=kyverno/kyverno extractVersion=^v(?<version>.*)$
+    version: "1.19.1"
+    channel: stable
+    source_url: "https://github.com/kyverno/kyverno/releases"
+    verification: direct
+    verification_detail: "tags git via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  istio:
+    name: "Istio"
+    # renovate: datasource=github-releases depName=istio/istio
+    version: "1.31.1"
+    channel: stable
+    source_url: "https://github.com/istio/istio/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  envoy_gateway:
+    name: "Envoy Gateway (Gateway API)"
+    # renovate: datasource=github-releases depName=envoyproxy/gateway extractVersion=^v(?<version>.*)$
+    version: "1.9.2"
+    channel: stable
+    source_url: "https://github.com/envoyproxy/gateway/releases"
+    verification: direct
+    verification_detail: "tags git via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  cert_manager:
+    name: "cert-manager"
+    # renovate: datasource=github-releases depName=cert-manager/cert-manager extractVersion=^v(?<version>.*)$
+    version: "1.21.2"
+    channel: stable
+    source_url: "https://github.com/cert-manager/cert-manager/releases"
+    verification: direct
+    verification_detail: "tags git via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  metallb:
+    name: "MetalLB"
+    # renovate: datasource=github-releases depName=metallb/metallb extractVersion=^v(?<version>.*)$
+    version: "0.16.1"
+    channel: stable
+    source_url: "https://github.com/metallb/metallb/releases"
+    verification: direct
+    verification_detail: "tags git via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  # ---------------------------------------------------------------- observabilité
+  prometheus:
+    name: "Prometheus"
+    # renovate: datasource=github-releases depName=prometheus/prometheus extractVersion=^v(?<version>.*)$
+    version: "3.15.0"
+    lts: "3.13.4"
+    channel: stable
+    source_url: "https://github.com/prometheus/prometheus/releases"
+    verification: direct
+    verification_detail: "prometheus.io bloqué ; page releases du dépôt officiel"
+    checked_on: "2026-10-02"
+
+  grafana:
+    name: "Grafana"
+    # renovate: datasource=github-releases depName=grafana/grafana extractVersion=^v(?<version>.*)$
+    version: "13.2.3"
+    channel: stable
+    source_url: "https://github.com/grafana/grafana/releases"
+    verification: direct
+    verification_detail: "grafana.com bloqué ; page releases du dépôt officiel"
+    checked_on: "2026-10-02"
+
+  loki:
+    name: "Loki"
+    # renovate: datasource=github-releases depName=grafana/loki extractVersion=^v(?<version>.*)$
+    version: "3.7.8"
+    channel: stable
+    source_url: "https://github.com/grafana/loki/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  opentelemetry_collector:
+    name: "OpenTelemetry Collector"
+    # renovate: datasource=github-releases depName=open-telemetry/opentelemetry-collector-releases extractVersion=^v(?<version>.*)$
+    version: "0.162.0"
+    channel: stable
+    source_url: "https://github.com/open-telemetry/opentelemetry-collector-releases/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  # ---------------------------------------------------------------- sécurité et conformité
+  keycloak:
+    name: "Keycloak"
+    # renovate: datasource=github-releases depName=keycloak/keycloak
+    version: "26.8.0"
+    channel: stable
+    source_url: "https://github.com/keycloak/keycloak/releases"
+    verification: direct
+    verification_detail: "keycloak.org bloqué ; page releases du dépôt officiel + tags Docker Hub keycloak/keycloak"
+    checked_on: "2026-10-02"
+
+  falco:
+    name: "Falco"
+    # renovate: datasource=github-releases depName=falcosecurity/falco
+    version: "0.45.0"
+    channel: stable
+    source_url: "https://github.com/falcosecurity/falco/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  tetragon:
+    name: "Tetragon"
+    # renovate: datasource=github-releases depName=cilium/tetragon extractVersion=^v(?<version>.*)$
+    version: "1.7.1"
+    channel: stable
+    source_url: "https://github.com/cilium/tetragon/releases"
+    verification: direct
+    verification_detail: "tags git via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  step_ca:
+    name: "step-ca (PKI interne)"
+    # renovate: datasource=github-releases depName=smallstep/certificates extractVersion=^v(?<version>.*)$
+    version: "0.30.2"
+    channel: stable
+    source_url: "https://github.com/smallstep/certificates/releases"
+    verification: direct
+    verification_detail: "tags git via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  compliance_as_code:
+    name: "ComplianceAsCode content (OpenSCAP)"
+    # renovate: datasource=github-releases depName=ComplianceAsCode/content extractVersion=^v(?<version>.*)$
+    version: "0.1.82"
+    channel: stable
+    source_url: "https://github.com/ComplianceAsCode/content/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  # ---------------------------------------------------------------- services de base
+  netbox:
+    name: "NetBox"
+    # renovate: datasource=github-releases depName=netbox-community/netbox extractVersion=^v(?<version>.*)$
+    version: "4.7.2"
+    channel: stable
+    source_url: "https://github.com/netbox-community/netbox/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  powerdns:
+    name: "PowerDNS Authoritative / Recursor"
+    # renovate: datasource=github-tags depName=PowerDNS/pdns extractVersion=^auth-(?<version>.*)$
+    version: null
+    channel: stable
+    source_url: "https://www.powerdns.com/downloads"
+    verification: unverified
+    verification_detail: "site bloqué, pas de releases GitHub (tags seulement, non lus). À renseigner."
+    checked_on: "2026-10-02"
+
+  freeipa:
+    name: "FreeIPA"
+    # renovate: datasource=github-tags depName=freeipa/freeipa extractVersion=^release-(?<version>.*)$
+    version: null
+    channel: stable
+    source_url: "https://www.freeipa.org/page/Releases"
+    verification: unverified
+    verification_detail: "site bloqué, pas de releases GitHub (tags seulement, non lus). À renseigner."
+    checked_on: "2026-10-02"
+
+  vyos:
+    name: "VyOS (routeur virtuel)"
+    # renovate: datasource=github-tags depName=vyos/vyos-1x
+    version: null
+    channel: lts
+    source_url: "https://vyos.io/"
+    verification: unverified
+    verification_detail: "site bloqué, pas de releases GitHub. Alternative : OPNsense, également non vérifié."
+    checked_on: "2026-10-02"
+
+  opnsense:
+    name: "OPNsense (pare-feu virtuel)"
+    # renovate: datasource=github-tags depName=opnsense/core
+    version: null
+    channel: stable
+    source_url: "https://opnsense.org/"
+    verification: unverified
+    verification_detail: "site bloqué, pas de releases GitHub. À renseigner."
+    checked_on: "2026-10-02"
+
+  maas:
+    name: "MAAS"
+    version: null
+    channel: stable
+    source_url: "https://maas.io/docs/release-notes-and-upgrade-instructions"
+    verification: unverified
+    verification_detail: "non vérifié (snap/launchpad inaccessibles). À renseigner."
+    checked_on: "2026-10-02"
+
+  # ---------------------------------------------------------------- IA sur CPU (module en deux temps)
+  ollama:
+    name: "Ollama"
+    # renovate: datasource=github-releases depName=ollama/ollama extractVersion=^v(?<version>.*)$
+    version: "0.35.0"
+    channel: stable
+    source_url: "https://github.com/ollama/ollama/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  open_webui:
+    name: "Open WebUI"
+    # renovate: datasource=pypi depName=open-webui
+    version: "0.11.4"
+    channel: stable
+    source_url: "https://pypi.org/project/open-webui/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  litellm:
+    name: "LiteLLM"
+    # renovate: datasource=pypi depName=litellm
+    version: "1.103.2"
+    channel: stable
+    source_url: "https://pypi.org/project/litellm/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  kserve:
+    name: "KServe"
+    # renovate: datasource=github-releases depName=kserve/kserve extractVersion=^v(?<version>.*)$
+    version: "0.21.0"
+    channel: stable
+    source_url: "https://github.com/kserve/kserve/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  # ---------------------------------------------------------------- outillage du dépôt
+  mkdocs_material:
+    name: "MkDocs Material"
+    # renovate: datasource=pypi depName=mkdocs-material
+    version: "9.7.7"
+    channel: stable
+    source_url: "https://pypi.org/project/mkdocs-material/"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  kubeconform:
+    name: "kubeconform"
+    # renovate: datasource=github-releases depName=yannh/kubeconform extractVersion=^v(?<version>.*)$
+    version: "0.8.0"
+    channel: stable
+    source_url: "https://github.com/yannh/kubeconform/releases"
+    verification: direct
+    checked_on: "2026-10-02"
+
+  yamllint:
+    name: "yamllint"
+    # renovate: datasource=pypi depName=yamllint
+    version: "1.38.0"
+    channel: stable
+    source_url: "https://pypi.org/project/yamllint/"
+    verification: direct
+    checked_on: "2026-10-02"
