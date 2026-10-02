@@ -1,5 +1,5 @@
 ---
-chapitre: "fiches/gitops/08-flux-et-flagger.md"
+chapitre: "fiches/gitops/13-flux-et-flagger.md"
 domaine: "gitops"
 niveau: "confirmé"
 statut: "proposé le 2026-10-02 — en attente de validation (prompts/02), rien n'est rédigé"
@@ -15,8 +15,8 @@ certifications:
 
 # Plan — 08 Flux et Flagger : GitOps multi-sources et livraison progressive
 
-Chapitre `P3` de `certifs/CNPE/objectifs.md` §4, nœud `gitops/08-flux-et-flagger` de `docs/prerequis.md` §6.2
-(numéro 08 à la suite de la série CAPA 01–07, DECISIONS.md 2026-10-02 « fiches numérotées par série »).
+Chapitre `P3` de `certifs/CNPE/objectifs.md` §4, nœud `gitops/13-flux-et-flagger` de `docs/prerequis.md` §6.5
+(numéro 13 à la suite des séries CAPA 01–07 et CGOA 08–12, DECISIONS.md 2026-10-02 « fiches numérotées par série »).
 Pourquoi lui en premier : CNPE-02 pèse 25 % de l'examen (le domaine le plus lourd avec CNPE-03), Flux et Flagger
 sont deux des quinze projets cités par le programme, et aucun chapitre du workbook ne les touche. Le chapitre
 donne aussi le second moteur GitOps que CGOA-05-03 demande de comparer à Argo CD (fiche 01).
@@ -47,8 +47,11 @@ jamais `latest`.
 
 ## Niveau et prérequis
 
-- Confirmé, nœud `gitops_conf`. Première fiche confirmé du workbook.
-- Obligatoires : `fiches/gitops/01-argo-cd-fondamentaux.md` (réflexes GitOps, dépôt du lab, comparaison) ;
+- Confirmé, nœud `gitops_conf`.
+- Obligatoires : `fiches/gitops/09-flux-fondamentaux.md` (CGOA G2, débutant, planifiée : `flux install`, `GitRepository`,
+  `Kustomization`, `OCIRepository`, `Bucket`, `flux get` / `reconcile` / `suspend`) — tant qu'elle n'est pas rédigée, la
+  section 1 ouvre par un rappel de 20 lignes et la démo 1.2 reste ; `fiches/gitops/01-argo-cd-fondamentaux.md` (réflexes
+  GitOps, dépôt du lab, comparaison) ;
   `kubernetes_conf` (Helm 4, Kustomize, Gateway API, RBAC, `kubectl apply --server-side`) ;
   `observabilite_deb` (Prometheus installé ou installable, PromQL `rate` et `histogram_quantile`).
   Aucun chapitre rédigé pour ces deux nœuds au 2026-10-02 : le front matter cite les nœuds, comme les fiches 01 et 02.
@@ -59,11 +62,12 @@ jamais `latest`.
 
 | Section | CNPE | CGOA (à confirmer) | CNPA (à confirmer) |
 |---|---|---|---|
-| 1 Bootstrap et modèle de Flux | CNPE-02-01 | CGOA-05-03, CGOA-05-04 | CNPA-01-07 |
+| 1 Bootstrap et modèle de Flux | CNPE-02-01 | CGOA-05-04 (CGOA-05-03 est porté par `gitops/09`) | CNPA-01-07 |
 | 2 Chaîne infra → apps, Helm/OCI, automatisation d'image | CNPE-02-01 | CGOA-04-01, CGOA-05-03 | CNPA-03-04, CNPA-03-05 |
 | 3 Flagger : canary, analyse, blue/green | CNPE-02-03 | CGOA-04-02 | CNPA-01-07 |
 
-Hors périmètre, renvoyé ailleurs : Argo Rollouts (CAPA F6, `gitops/05`), Argo CD Helm/Kustomize/ApplicationSet
+Hors périmètre, renvoyé ailleurs : fondamentaux Flux et magasins d'état `Bucket`/OCI (CGOA G2, `gitops/09`), architectures
+de dépôts et notifications (CGOA `gitops/10` et `12`), Argo Rollouts (CAPA F6, `gitops/05`), Argo CD Helm/Kustomize/ApplicationSet
 (CAPA F2, `gitops/04`), GitOps de l'infrastructure Crossplane (CNPE P7 : ici « infrastructure » = la couche d'add-ons du
 cluster), Tekton et la chaîne CI amont (CNPE P4, `gitops/09`), notifications Flux vers un chat (lecture, flashcard).
 
@@ -74,18 +78,18 @@ cluster), Tekton et la chaîne CI amont (CNPE P4, `gitops/09`), notifications Fl
 | 1.1 | 1 | guidé | Lire `flux` dans `versions.yaml`, installer le CLI à la même version, `flux check --pre`, `flux bootstrap git --url=ssh://git@git.lab.home.arpa/... --branch=main --path=clusters/lab --private-key-file=... --components-extra=image-reflector-controller,image-automation-controller` ; lire ce que Flux a commité (`flux-system/gotk-components.yaml`, `gotk-sync.yaml`) | `flux check` OK, `flux get all -A` tout `Ready`, commit visible dans le dépôt |
 | 1.2 | 1 | guidé | Les contrôleurs : `source`, `kustomize`, `helm`, `notification`, `image-reflector`, `image-automation` ; schéma Mermaid source → artefact → réconciliation ; lecture d'une `GitRepository` et d'une `Kustomization` (`interval`, `ref`, `path`, `prune`) ; `flux events`, `flux logs` | schéma complété, chaque contrôleur relié à son CRD |
 | 1.3 | 1 | autonome | Mettre un `Deployment` sous Flux depuis un second dépôt (`GitRepository` + `Kustomization`), le modifier à la main, observer la correction au prochain `interval`, forcer avec `flux reconcile`, suspendre, réparer, reprendre ; comparer avec `argocd app sync` et `selfHeal` de la fiche 01 en 5 lignes | drift corrigé, tableau Flux / Argo CD rempli |
-| 1.4 | 1 | break-fix | `break/gitops/08-flux-source-auth.sh` | `GitRepository` repasse `Ready`, cause expliquée |
+| 1.4 | 1 | break-fix | `break/gitops/13-flux-source-auth.sh` | `GitRepository` repasse `Ready`, cause expliquée |
 | 1.5 | 1 | chronométré | Cluster vierge → Flux bootstrapé avec contrôleurs d'image, première app synchronisée | 15 min |
 | 2.1 | 2 | guidé | Chaîne en deux `Kustomization` : `infra` (cert-manager par `HelmRepository` + `HelmRelease`, `ClusterIssuer` CA interne, Gateway API CRDs, `Gateway` partagée) puis `apps` avec `dependsOn`, `wait`, `healthChecks`, `timeout` ; `flux diff kustomization` avant push | `apps` ne démarre qu'après `infra` `Ready`, `flux tree` cohérent |
 | 2.2 | 2 | guidé | `OCIRepository` (chart podinfo depuis `oci://ghcr.io/stefanprodan/charts`) + `HelmRelease` : `chartRef`, `valuesFrom` (ConfigMap par environnement), `install.remediation`, `upgrade.remediation.retries`, `test.enable` ; valeurs `dev` / `prod` par overlay Kustomize | deux `HelmRelease` `Ready` avec des valeurs différentes, `helm list -A` (Helm 4) les voit |
 | 2.3 | 2 | guidé | Automatisation d'image : `ImageRepository` sur `ghcr.io/stefanprodan/podinfo`, `ImagePolicy` semver `6.x`, marqueur `# {"$imagepolicy": "flux-system:podinfo"}` dans le manifest, `ImageUpdateAutomation` (`git.checkout`, `git.push.branch`, `commit.messageTemplate`), clé de déploiement en écriture | Flux committe un tag, `flux get image all` cohérent |
 | 2.4 | 2 | autonome | Reproduire la structure `clusters/<cluster>` → `infra` → `apps` → `overlays/{dev,prod}` du dépôt officiel d'exemple sur le dépôt du lab, y ajouter une `Kustomization` qui livre des `ClusterPolicy` Kyverno **ou** des `CiliumNetworkPolicy` (infrastructure de gouvernance, pas une app), avec `postBuild.substituteFrom` pour les variables d'environnement | `flux tree kustomization apps` montre la hiérarchie, une variable substituée est visible dans le cluster |
-| 2.5 | 2 | break-fix | `break/gitops/08-flux-kustomization-stuck.sh` | `Kustomization` repasse `Ready`, aucune ressource orpheline |
+| 2.5 | 2 | break-fix | `break/gitops/13-flux-kustomization-stuck.sh` | `Kustomization` repasse `Ready`, aucune ressource orpheline |
 | 2.6 | 2 | chronométré | Déployer une app depuis un dépôt vierge via `HelmRelease` + overlay `dev`, puis faire committer un nouveau tag par Flux | 15 min |
 | 3.1 | 3 | guidé | Installer Flagger par Flux (`OCIRepository` `oci://ghcr.io/fluxcd/charts/flagger` + `HelmRelease`, `meshProvider: gatewayapi:v1`, `metricsServer` vers le Prometheus du lab) et le load tester (`OCIRepository` `flagger-manifests` + `Kustomization` `./tester`) ; lire les CRD `Canary`, `MetricTemplate`, `AlertProvider` | `flagger` et `flagger-loadtester` `Ready`, `kubectl explain canary.spec` fonctionne |
 | 3.2 | 3 | guidé | Convertir podinfo en `Canary` : `targetRef`, `service.port/hosts/gatewayRefs`, `analysis` (`interval`, `threshold`, `maxWeight`, `stepWeight`), deux `MetricTemplate` Prometheus (succès et latence p99 sur les métriques de podinfo), `webhooks` `load-test` ; lire la `HTTPRoute` générée et les Services `-primary` / `-canary` ; promotion d'une version saine suivie avec `kubectl describe canary` et `kubectl get canary -w` | pondérations 10 → 50 → 100 observées dans la `HTTPRoute`, `Promoting` puis `Succeeded` |
 | 3.3 | 3 | autonome | Pousser une version qui renvoie 50 % d'erreurs (podinfo `--random-error`) : observer `Failed`, le rollback et `canary.status.failedChecks` ; puis passer la stratégie en blue/green (`iterations`, sans `stepWeight`), avec `mirror: true` si Cilium accepte le filtre `RequestMirror` sinon sans (Q4) ; terminer par un A/B sur en-tête (`match`) | rollback automatique constaté, blue/green promu, A/B routé par en-tête |
-| 3.4 | 3 | break-fix | `break/gitops/08-flagger-metric-no-data.sh` | analyse repart, cause expliquée |
+| 3.4 | 3 | break-fix | `break/gitops/13-flagger-metric-no-data.sh` | analyse repart, cause expliquée |
 | 3.5 | 3 | chronométré | Depuis un `Deployment` existant : `Canary` + `MetricTemplate` + webhook, nouvelle image poussée, promotion complète | 15 min |
 | 3.6 | 3 | chronométré « outil inconnu » | Installer Argo Rollouts (ou Flagger si la fiche 05 existe déjà) depuis sa seule documentation et faire une promotion manuelle d'un `Rollout` canary à 2 étapes | 15 min |
 
@@ -98,12 +102,13 @@ nginx, kubernetes), `AlertProvider`, les quatre stratégies (canary, blue/green,
 
 | Script | Injection | Symptôme montré à l'apprenant |
 |---|---|---|
-| `08-flux-source-auth.sh` | clé privée du Secret `flux-system` remplacée (même technique que `01-argocd-repo-credentials.sh`) | `GitRepository/flux-system` `Ready: False` (auth), les `Kustomization` restent sur le dernier artefact, aucune nouvelle révision |
-| `08-flux-kustomization-stuck.sh` | `Kustomization/apps` patchée avec un `dependsOn` vers une `Kustomization` inexistante, ou `healthChecks` sur un Deployment qui n'existera jamais | `apps` en `DependencyNotReady` ou `HealthCheckFailed`, `flux get kustomizations` l'affiche mais `kubectl get events` est muet |
-| `08-flagger-metric-no-data.sh` | `MetricTemplate` dont la requête PromQL vise un label renommé, ou `metricsServer` pointé vers un port fermé | chaque itération d'analyse échoue `no values found`, `Canary` finit `Failed` et revient en arrière alors que l'application est saine |
-| `08-flagger-gateway-missing.sh` (optionnel) | `Gateway` référencée supprimée ou `gatewayRefs` renommée | `HTTPRoute` générée sans parent accepté, `Canary` `Initializing` ou `Progressing` sans trafic, load test en erreur 404 |
+| `13-flux-source-auth.sh` | clé privée du Secret `flux-system` remplacée (même technique que `01-argocd-repo-credentials.sh`) | `GitRepository/flux-system` `Ready: False` (auth), les `Kustomization` restent sur le dernier artefact, aucune nouvelle révision |
+| `13-flux-kustomization-stuck.sh` | `Kustomization/apps` patchée avec un `dependsOn` vers une `Kustomization` inexistante, ou `healthChecks` sur un Deployment qui n'existera jamais | `apps` en `DependencyNotReady` ou `HealthCheckFailed`, `flux get kustomizations` l'affiche mais `kubectl get events` est muet |
+| `13-flagger-metric-no-data.sh` | `MetricTemplate` dont la requête PromQL vise un label renommé, ou `metricsServer` pointé vers un port fermé | chaque itération d'analyse échoue `no values found`, `Canary` finit `Failed` et revient en arrière alors que l'application est saine |
+| `13-flagger-gateway-missing.sh` (optionnel) | `Gateway` référencée supprimée ou `gatewayRefs` renommée | `HTTPRoute` générée sans parent accepté, `Canary` `Initializing` ou `Progressing` sans trafic, load test en erreur 404 |
 
-Chaque script : idempotent, `--undo`, `--reveal`, shellcheck, même convention que `01-argocd-*.sh` et `02-argo-workflows-*.sh`.
+Chaque script : idempotent, `--undo`, `--reveal`, shellcheck, même convention que `01-argocd-*.sh`, `02-argo-workflows-*.sh`
+et `08-opengitops-*.sh`.
 
 ## Profil de lab et budget
 
@@ -130,7 +135,7 @@ Chaque script : idempotent, `--undo`, `--reveal`, shellcheck, même convention q
   `cilium` ; monter avec Cilium ». Mettre `verification: direct` (tags git du dépôt officiel) ou `indirect` selon la
   convention retenue pour `argo_workflows`.
 - `labs/profiles/kubernetes-ha.yaml` : ajouter `flagger`, `gateway_api`, `cert_manager` à `components` (`flux` y est déjà).
-- `certifs/CNPE/objectifs.md` §3 (CNPE-02-01, 02-03) et §4 (P3 → rédigé), `docs/prerequis.md` §6.2 (nœud `rédigé`) :
+- `certifs/CNPE/objectifs.md` §3 (CNPE-02-01, 02-03) et §4 (P3 → rédigé), `docs/prerequis.md` §6.5 (nœud `rédigé`) :
   portés par la PR #42, à fusionner avant la PR du chapitre.
 - Pas d'entrée `DECISIONS.md` nécessaire : Gateway API Cilium et Git du lab sont déjà tranchés. Si Q2 retient
   `kube_prometheus_stack`, la clé entre par cette PR.
@@ -177,13 +182,13 @@ section 1 ≈ 1 h 30, section 2 ≈ 2 h 15, section 3 ≈ 2 h 15, dont 60 min de
 
 ## Livrables attendus de la session de rédaction
 
-- `fiches/gitops/08-flux-et-flagger.md` (gabarit `templates/fiche.md`) et `fiches/gitops/08-flux-et-flagger/manifests/`
+- `fiches/gitops/13-flux-et-flagger.md` (gabarit `templates/fiche.md`) et `fiches/gitops/13-flux-et-flagger/manifests/`
   (arborescence `clusters/lab`, `infra`, `apps`, overlays, `Canary`, `MetricTemplate`, variante `kind`)
-- `solutions/fiches/gitops/08-flux-et-flagger.md` (3 indices puis correction commentée par exercice)
-- `break/gitops/08-flux-*.sh` et `08-flagger-*.sh` (3 scripts, 1 optionnel)
-- `revision/flashcards/gitops-08-flux-et-flagger.csv` (15 à 20 cartes)
+- `solutions/fiches/gitops/13-flux-et-flagger.md` (3 indices puis correction commentée par exercice)
+- `break/gitops/13-flux-*.sh` et `13-flagger-*.sh` (3 scripts, 1 optionnel)
+- `revision/flashcards/gitops-13-flux-et-flagger.csv` (15 à 20 cartes)
 - mises à jour : `versions.yaml` (`flagger`, `gateway_api`), `labs/profiles/kubernetes-ha.yaml`, `certifs/CNPE/objectifs.md`,
-  `docs/prerequis.md` §6.2, ce plan avec `statut: validé`
+  `docs/prerequis.md` §6.5, `docs/plans/README.md`, ce plan avec `statut: validé`
 
 ## Questions ouvertes (réponses attendues avant rédaction)
 

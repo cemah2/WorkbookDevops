@@ -13,7 +13,7 @@ Mapping entre les 18 compétences de [`programme.md`](programme.md) et les chapi
 État au 2026-10-02 : aucun chapitre n'a été écrit pour CNPE. Deux fiches `gitops` rédigées pour CAPA
 (`fiches/gitops/01-argo-cd-fondamentaux.md`, `fiches/gitops/02-argo-workflows-fondamentaux.md`, brouillons)
 couvrent partiellement le domaine CNPE-02, et cinq chapitres planifiés par `certifs/CAPA/objectifs.md`
-en couvriront une part de plus. Tout le reste est un trou.
+en couvriront une part de plus, de même que la fiche CGOA `gitops/09-flux-fondamentaux` (planifiée). Tout le reste est un trou.
 Ce fichier sert de plan de création ; chaque PR de chapitre remplit les colonnes « chapitre » et « exercices »
 et marque le chapitre « rédigé » dans la section 4.
 
@@ -62,14 +62,15 @@ SBOM et conformité (P14) → SLO et DORA (P10) → Backstage (P8) → scénario
   créées ci-dessus au fil des chapitres. Le budget RAM (48 Go) tient pour un chapitre à la fois ; le scénario S1
   qui empile tout exige `kubernetes-ha` + `ceph-3n` (stockage persistant Prometheus/Loki/Harbor via Rook) et une
   vérification du budget dans la PR du scénario.
-- `docs/prerequis.md` : les nœuds de chapitres planifiés sont ajoutés en §6.2 (cette PR). Les fiches **débutant**
+- `docs/prerequis.md` : les nœuds de chapitres planifiés sont ajoutés en §6.5 (cette PR). Les fiches **débutant**
   dont dépendent ces chapitres (Prometheus, OpenTelemetry, Kyverno, Istio, Backstage, RBAC Kubernetes) ne sont
   pas planifiées ici : elles relèvent des cartographies PCA, OTCA, KCA, ICA, CBA, CKA/CKS. Tant qu'elles n'existent
   pas, chaque fiche CNPE ouvre par un rappel de 20 lignes maximum et renvoie au nœud `<domaine>_deb`.
-- Numérotation : les fiches `gitops` prennent les numéros `08` et `09` (la série `01`–`07` est fixée par CAPA,
-  DECISIONS.md 2026-10-02). Dans `plateforme`, `observabilite`, `securite` et `kubernetes`, aucune série n'est encore
-  numérotée et les fiches débutant appartiendront à d'autres certifications : les chemins ci-dessous portent `NN`,
-  attribué à la PR du chapitre en prenant le numéro suivant de la série du domaine, sans changer le slug.
+- Numérotation : les fiches `gitops` prennent les numéros `13` et `14` (la série `01`–`07` est fixée par CAPA,
+  `08`–`12` par CGOA, DECISIONS.md 2026-10-02). Dans `plateforme`, `01`–`05` sont fixés par CBA (Backstage) et
+  `06`–`13` par ICA (Istio). Dans `plateforme`, `observabilite`, `securite` et `kubernetes`, les fiches débutant
+  appartiennent à d'autres certifications : les chemins ci-dessous portent `NN`, attribué à la PR du chapitre en
+  prenant le numéro suivant de la série du domaine, sans changer le slug.
 - Décisions à proposer (entrée datée dans `DECISIONS.md`, pas de réouverture d'un arbitrage existant) :
   1. *Mesh de référence* : Istio en mode ambient (programme ICA, projet cité par CNPE) pour le mTLS service à service,
      Cilium gardant Gateway API et le chiffrement WireGuard nœud à nœud ; Linkerd en lecture comparée.
@@ -140,16 +141,16 @@ cartographie de chaque certification les confirme ou les corrige.
 |---|---|---|
 | P1 multi-tenancy | 01-01, 01-03 | CKA-02-05, CKS-04-01, CKS-04-03, CNPA-01-03, CNPA-01-04 |
 | P2 OpenCost | 01-02, 01-03 | CKA-02-03, CNPA-06-01 |
-| P3 Flux + Flagger | 02-01, 02-03 | CGOA-04-01, CGOA-04-02, CGOA-05-03, CGOA-05-04, CNPA-01-07, CNPA-03-04, CNPA-03-05 |
+| P3 Flux + Flagger | 02-01, 02-03 | CGOA-04-02 (Flagger en pratique ; CGOA-05-03 est porté par `gitops/09`), CNPA-01-07, CNPA-03-04, CNPA-03-05 |
 | P4 Tekton | 02-02, 05-05 | CGOA-03-04, CNPA-01-06, CNPA-03-01, CNPA-03-03, CNPA-02-05, CKS-05-03, CKS-05-04 |
 | P5 CRD | 03-01 | CKA-05-08, CNPA-04-02 |
 | P6 opérateurs | 03-03 | CKA-05-08, CNPA-04-01, CNPA-04-04 |
 | P7 Crossplane | 03-02, 03-04 | CNPA-04-03, CNPA-01-01 |
-| P8 Backstage scaffolder | 03-04, 03-02 | CNPA-05-01, CNPA-05-02, CNPA-05-03, CBA (cartographie à faire) |
+| P8 Backstage scaffolder | 03-04, 03-02 | CNPA-05-01, CNPA-05-02, CNPA-05-03 ; CBA : voir `certifs/CBA/objectifs.md` |
 | P9 pile d'observabilité | 04-01 | PCA-02-02, PCA-04-01 à 04-03, OTCA-03-01, OTCA-03-02, OTCA-03-04, CNPA-02-01 |
 | P10 SLO et DORA | 04-02 | PCA-03-06, PCA-04-02, CNPA-06-01, CNPA-06-02 |
 | P11 identité et RBAC | 05-02, 05-03 (audit) | CKS-02-01, CKS-02-02, CKS-02-03, CKS-06-05, CKA-05-01, CNPA-02-04 |
-| P12 mTLS | 05-01 | ICA-03-01, ICA-03-02, CKS-04-04, CCA (cartographie à faire), CNPA-02-02 |
+| P12 mTLS | 05-01 | ICA-03-01, ICA-03-02 (déjà couverts par `plateforme/10`), CKS-04-04, CCA (cartographie à faire), CNPA-02-02 |
 | P13 admission | 05-04 | KCA-01-03, KCA-04-01, KCA-05-01, KCA-05-04, KCA-05-06, CNPA-02-03 |
 | P14 SBOM et conformité | 05-03, 05-05 | CKS-05-02, CKS-05-03, KCA-06-01, CKS-01-02 |
 | S1 plateforme bout en bout | les 18 | CNPA-01-04, CNPA-01-05 |
@@ -217,32 +218,34 @@ documentation en 15 min, pour entraîner la posture demandée par l'examen.
 - **Défi chronométré** : identifier les trois workloads les plus surdimensionnés du cluster et proposer les requests
   corrigées, chiffrées, en moins de 15 min.
 
-### P3 — `fiches/gitops/08-flux-et-flagger.md`
+### P3 — `fiches/gitops/13-flux-et-flagger.md`
 
 - **Titre** : Flux et Flagger — GitOps multi-sources et livraison progressive
 - **Niveau** : confirmé (`gitops_conf`)
 - **Couvre** : CNPE-02-01, CNPE-02-03
-- **Prérequis** : `fiches/gitops/01-argo-cd-fondamentaux.md` (comparaison des deux moteurs), `kubernetes_conf`
-  (Helm 4, Kustomize, Gateway API), `observabilite_deb` (Prometheus pour les analyses Flagger)
+- **Prérequis** : `fiches/gitops/09-flux-fondamentaux.md` (CGOA G2, débutant : `flux install`, `GitRepository`,
+  `Kustomization`, `OCIRepository`, `Bucket`), `fiches/gitops/01-argo-cd-fondamentaux.md` (comparaison des deux moteurs),
+  `kubernetes_conf` (Helm 4, Kustomize, Gateway API), `observabilite_deb` (Prometheus pour les analyses Flagger)
 - **Lab** : `kubernetes-ha` (Gateway API Cilium). Clés `versions.yaml` : `flux`, `flagger` (à créer), `helm`,
   `prometheus`, `cilium`, `harbor`.
 - **Temps** : 6 h
 - **3 exercices clés** :
-  1. `flux bootstrap` sur le dépôt du lab, `GitRepository`, `OCIRepository` (chart poussé sur Harbor), `Kustomization`
-     avec `dependsOn`, `HelmRelease` avec `valuesFrom`, `ImageRepository`/`ImagePolicy`/`ImageUpdateAutomation`
-     qui committe le nouveau tag ; lire `flux get all`, `flux events`, `flux reconcile` — CNPE-02-01.
+  1. `flux bootstrap git` sur le dépôt du lab (différence avec `flux install` de la fiche 09), contrôleurs d'image en
+     `--components-extra`, `Kustomization` avec `dependsOn`, `HelmRelease` avec `valuesFrom`,
+     `ImageRepository`/`ImagePolicy`/`ImageUpdateAutomation` qui committe le nouveau tag ; `flux diff`, `flux trace`
+     — CNPE-02-01.
   2. GitOps pour l'infrastructure : la même `Kustomization` déploie des ressources Crossplane (P7) et des policies
      Kyverno, avec `healthChecks` et `wait` ; suspendre/reprendre une réconciliation ; comparer avec un
      `ApplicationSet` Argo CD (CAPA F2) sur les mêmes sources — CNPE-02-01.
   3. Flagger : `Canary` avec `provider: gatewayapi`, `HTTPRoute` pilotée, étapes `stepWeight`/`maxWeight`,
      `metrics` Prometheus (taux d'erreur, latence), `webhooks` de test de charge ; puis stratégie blue/green
      (`mirror`, `iterations`) et rollback automatique sur échec d'analyse — CNPE-02-03.
-- **Break-fix** : `break/gitops/08-flux-kustomization-stuck.sh` (secret d'accès au dépôt révoqué, `Kustomization`
+- **Break-fix** : `break/gitops/13-flux-kustomization-stuck.sh` (secret d'accès au dépôt révoqué, `Kustomization`
   en `ReconciliationFailed`, aucune mise à jour appliquée).
 - **Défi chronométré** : déployer une application depuis un dépôt vierge avec Flux et la passer en canary Flagger
   jusqu'à promotion en moins de 15 min.
 
-### P4 — `fiches/gitops/09-tekton-pipelines-securisees.md`
+### P4 — `fiches/gitops/14-tekton-pipelines-securisees.md`
 
 - **Titre** : Tekton — pipelines CI natifs Kubernetes, du build à la livraison GitOps
 - **Niveau** : confirmé (`gitops_conf`)
@@ -264,7 +267,7 @@ documentation en 15 min, pour entraîner la posture demandée par l'examen.
   3. Portes de sécurité dans le pipeline : scan Trivy bloquant sur CVE critiques, SBOM Syft attaché à l'image,
      signature Cosign (keyless ou clé du lab), vérification de politique Kyverno par `kyverno apply` sur les manifests
      avant commit ; côté cluster, règle `verifyImages` qui refuse les images non signées — CNPE-05-05.
-- **Break-fix** : `break/gitops/09-tekton-workspace-pvc.sh` (PVC du workspace en `Pending`, `PipelineRun` bloqué sans
+- **Break-fix** : `break/gitops/14-tekton-workspace-pvc.sh` (PVC du workspace en `Pending`, `PipelineRun` bloqué sans
   erreur dans les logs de tâche).
 - **Défi chronométré** : construire, scanner, signer et pousser une image puis la voir déployée par GitOps en moins de
   20 min.
@@ -350,7 +353,8 @@ documentation en 15 min, pour entraîner la posture demandée par l'examen.
 - **Titre** : Backstage — templates de scaffolding qui déclenchent le provisionnement
 - **Niveau** : confirmé (`plateforme_conf`)
 - **Couvre** : CNPE-03-04, CNPE-03-02
-- **Prérequis** : P7, P3 ou `fiches/gitops/01-argo-cd-fondamentaux.md`, `services_deb` (Keycloak OIDC) recommandé
+- **Prérequis** : P7, `fiches/plateforme/01-backstage-premier-lancement.md` (série CBA), P3 ou
+  `fiches/gitops/01-argo-cd-fondamentaux.md`, `services_deb` (Keycloak OIDC) recommandé
 - **Lab** : `kubernetes-ha` + PostgreSQL (CloudNativePG) + serveur Git avec API (GitLab, même décision que P4).
   Clés `versions.yaml` : `backstage`, `keycloak`, `cloudnative_pg`, `argo_cd`.
 - **Temps** : 5 h
@@ -366,8 +370,8 @@ documentation en 15 min, pour entraîner la posture demandée par l'examen.
   `publish` échoue, l'entité reste orpheline dans le catalogue).
 - **Défi chronométré** : créer un service via le template, voir son dépôt, son claim et son Application apparaître,
   en moins de 12 min.
-- **Note** : ce chapitre est partagé avec la série CBA (cartographie à faire) ; la cartographie CBA peut le
-  renuméroter ou le scinder, en gardant les IDs CNPE cités.
+- **Note** : ce chapitre prolonge la série CBA (`plateforme/01` à `05`, `certifs/CBA/objectifs.md`) ; si une fiche CBA
+  couvre déjà le Scaffolder, P8 se réduit au couplage Scaffolder → Crossplane → Argo CD et cite les IDs CNPE.
 
 ### P9 — `fiches/observabilite/NN-pile-observabilite-plateforme.md`
 
@@ -448,14 +452,15 @@ documentation en 15 min, pour entraîner la posture demandée par l'examen.
 - **Titre** : Communication sécurisée entre services — mTLS Istio, autorisation, chiffrement Cilium
 - **Niveau** : confirmé (`securite_conf`)
 - **Couvre** : CNPE-05-01
-- **Prérequis** : `plateforme_deb` (Istio installé et notions de mesh : fiche ICA à venir), `reseau_conf` (Cilium),
-  P9 (observer le mesh)
+- **Prérequis** : `fiches/plateforme/10-istio-securite-mtls-jwt-autorisation.md` (série ICA : mTLS, JWT, autorisation
+  en pratique), `reseau_conf` (Cilium), P9 (observer le mesh)
 - **Lab** : `kubernetes-ha`. Clés `versions.yaml` : `istio`, `cilium`, `cert_manager`, `linkerd` (lecture, optionnel).
 - **Temps** : 5 h
 - **3 exercices clés** :
-  1. Istio ambient sur deux namespaces : `PeerAuthentication` `STRICT` progressif (PERMISSIVE → STRICT), vérifier le
-     mTLS avec `istioctl` et les traces, `AuthorizationPolicy` par identité SPIFFE et par méthode HTTP, refus
-     observés dans les logs du ztunnel/waypoint — CNPE-05-01.
+  1. Rejouer en conditions d'examen ce que la fiche ICA 10 enseigne : `PeerAuthentication` `STRICT` progressif
+     (PERMISSIVE → STRICT) sur deux namespaces, vérification du mTLS avec `istioctl` et les traces,
+     `AuthorizationPolicy` par identité SPIFFE et par méthode HTTP, refus lus dans les logs ztunnel/waypoint ;
+     la fiche ne réexplique pas, elle chronomètre — CNPE-05-01.
   2. Trafic entrant et sortant : TLS au bord via Gateway API avec certificat cert-manager de la CA interne,
      `ServiceEntry` et politique d'egress, `RequestAuthentication` JWT Keycloak sur une route — CNPE-05-01.
   3. Sans mesh : chiffrement WireGuard Cilium entre nœuds, authentification mutuelle Cilium (SPIRE) en

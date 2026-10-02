@@ -1,0 +1,38 @@
+# Le « pipeline CI » qui pousse : applique toutes les 2 min le contenu de la ConfigMap push-manifests
+# (créée depuis le dossier push/ du dépôt par kubectl create configmap --from-file). Image alpine/k8s au tag
+# de la clé kubernetes de versions.yaml (tag vérifié sur Docker Hub le 2026-10-02).
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ci-push
+  namespace: ci-legacy
+spec:
+  schedule: "*/2 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          serviceAccountName: ci-push
+          restartPolicy: Never
+          containers:
+            - name: kubectl
+              image: alpine/k8s:1.37.1
+              command: [kubectl, apply, -n, demo-push, -f, /manifests]
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 128Mi
+              volumeMounts:
+                - name: manifests
+                  mountPath: /manifests
+                  readOnly: true
+          volumes:
+            - name: manifests
+              configMap:
+                name: push-manifests
