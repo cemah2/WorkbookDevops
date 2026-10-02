@@ -93,7 +93,7 @@ Les chapitres ci-dessous citent les deux programmes dans leur front matter pour 
 
 | Chapitre | IDs CAPA | IDs CGOA réutilisables |
 |---|---|---|
-| F1 Argo CD fondamentaux | CAPA-02-01, 02-02, 02-03 | CGOA-01-03, 01-04, 01-05, 02-03, 02-04 |
+| F1 Argo CD fondamentaux | CAPA-02-01, 02-02, 02-03 | CGOA-01-02, 01-03, 01-04, 01-05, 01-06, 01-09, 02-03, 02-04 |
 | F2 Argo CD Helm/Kustomize/réconciliation | CAPA-02-04, 02-05 | CGOA-04-04, 05-01, 05-02 |
 | F6 Argo Rollouts | CAPA-03-01 à 03-03 | CGOA-04-01, 04-02 |
 | F7 Argo Events | CAPA-04-01, 04-02 | CGOA-04-03 |
@@ -115,7 +115,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Titre** : Argo CD — installer, déclarer une Application, synchroniser
 - **Niveau** : débutant (`gitops_deb`)
 - **Couvre** : CAPA-02-01, CAPA-02-02, CAPA-02-03
-- **Prérequis** : `kubernetes_deb` (kubectl, Deployments, namespaces), `iac_deb` (Git, dépôt distant sur le GitLab du lab)
+- **Prérequis** : `kubernetes_deb` (kubectl, Deployments, namespaces), `iac_deb` (Git, dépôt bare SSH du lab sur `core-jump01`)
 - **Lab** : `kind` sur `linux-base` (chemin principal tant que le profil n'est pas levé), variante `kubernetes-ha`.
   Clés `versions.yaml` : `argo_cd`, `kind`, `cilium`, `cert_manager`.
 - **Plan validé** : `docs/plans/gitops-01-argo-cd-fondamentaux.md` (2026-10-02).
@@ -145,7 +145,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
      hooks `PreSync`/`PostSync`, `ignoreDifferences` et `syncOptions` (`CreateNamespace`, `ServerSideApply`, `Replace`) — CAPA-02-05.
   3. Diagnostiquer les patterns de réconciliation : drift permanent (HPA vs replicas), boucle de sync due à un webhook mutant,
      `ComparisonError` sur un CRD manquant, timeouts de refresh ; mesurer l'effet de `timeout.reconciliation` — CAPA-02-05.
-- **Break-fix** : `break/gitops/argocd-sync-loop.sh` (champ muté par un contrôleur, Application jamais `Synced`).
+- **Break-fix** : `break/gitops/04-argocd-sync-loop.sh` (champ muté par un contrôleur, Application jamais `Synced`).
 - **Défi chronométré** : passer une app Kustomize de `dev` à `prod` par PR, sync vérifiée, en moins de 15 min.
 
 ### F3 — `fiches/gitops/02-argo-workflows-fondamentaux.md`
@@ -163,7 +163,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
      séquentiels / parallèles ; passer des `parameters` d'entrée et de sortie — CAPA-01-04.
   3. Ajouter `retryStrategy`, `activeDeadlineSeconds`, `ttlStrategy`, `podGC`, limites de ressources, ServiceAccount dédié ;
      observer l'effet de chaque champ avec `argo get` et `kubectl get pods` — CAPA-01-04.
-- **Break-fix** : `break/gitops/argo-workflows-rbac.sh` (ServiceAccount sans droit `workflowtaskresults`, pods en `Error`).
+- **Break-fix** : `break/gitops/02-argo-workflows-rbac.sh` (ServiceAccount sans droit `workflowtaskresults`, pods en `Error`).
 - **Défi chronométré** : écrire et faire passer un workflow à trois étapes avec paramètres en moins de 10 min.
 
 ### F4 — `fiches/gitops/03-argo-workflows-artefacts-templates-dag.md`
@@ -182,7 +182,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
      planifier un `CronWorkflow` avec `concurrencyPolicy` — CAPA-01-03.
   3. Réécrire un enchaînement `steps` en `dag` : `dependencies`, expression `depends` (`A.Succeeded && !B.Failed`),
      `continueOn`, `failFast`, cible `--entrypoint` partielle ; visualiser le graphe dans l'UI — CAPA-01-05.
-- **Break-fix** : `break/gitops/argo-workflows-artifact-repo.sh` (clé S3 invalide, étape bloquée en `Pending` puis `Error`).
+- **Break-fix** : `break/gitops/03-argo-workflows-artifact-repo.sh` (clé S3 invalide, étape bloquée en `Pending` puis `Error`).
 - **Défi chronométré** : transformer un workflow linéaire de 4 étapes en DAG à 2 branches parallèles avec artefact partagé,
   en moins de 15 min.
 
@@ -201,7 +201,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
      `memoize` sur une étape coûteuse, `volumeClaimTemplates` pour un espace de travail partagé — CAPA-01-06.
   3. Lancer un lot de 50 fichiers (découpage → traitement → fusion), mesurer la durée selon `parallelism`,
      lire les métriques du contrôleur dans Prometheus, archiver les workflows terminés — CAPA-01-06.
-- **Break-fix** : `break/gitops/argo-workflows-parallelism.sh` (sémaphore à 0, lot figé en `Pending`).
+- **Break-fix** : `break/gitops/06-argo-workflows-parallelism.sh` (sémaphore à 0, lot figé en `Pending`).
 - **Défi chronométré** : traiter 20 éléments en parallèle avec agrégation finale en moins de 12 min.
 
 ### F6 — `fiches/gitops/05-argo-rollouts.md`
@@ -210,8 +210,8 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Niveau** : confirmé (`gitops_conf`)
 - **Couvre** : CAPA-03-01, CAPA-03-02, CAPA-03-03
 - **Prérequis** : F1 ; `observabilite_deb` (Prometheus installé, PromQL de base) ; `kubernetes_conf` (Gateway API)
-- **Lab** : `kubernetes-ha` (Gateway API via `envoy_gateway` ou Cilium, Prometheus). Clés `versions.yaml` :
-  `argo_rollouts` (à créer), `argo_cd`, `prometheus`, `envoy_gateway`.
+- **Lab** : `kubernetes-ha` (Gateway API Cilium par défaut, Envoy Gateway en variante justifiée, Prometheus). Clés `versions.yaml` :
+  `argo_rollouts` (à créer), `argo_cd`, `prometheus`, `cilium`.
 - **Temps** : 6 h
 - **3 exercices clés** :
   1. Convertir un `Deployment` en `Rollout`, installer le plugin `kubectl argo rollouts`, suivre `get rollout --watch`,
@@ -220,7 +220,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
      (`activeService`, `previewService`, `autoPromotionEnabled`, `scaleDownDelaySeconds`) — CAPA-03-02.
   3. Écrire un `AnalysisTemplate` Prometheus (taux d'erreur), l'attacher en `analysis` de step et en `backgroundAnalysis`,
      provoquer un échec d'`AnalysisRun` et observer le rollback automatique ; comparer avec un `Experiment` — CAPA-03-03.
-- **Break-fix** : `break/gitops/argo-rollouts-analysis-fail.sh` (requête PromQL qui échoue toujours, Rollout `Degraded`).
+- **Break-fix** : `break/gitops/05-argo-rollouts-analysis-fail.sh` (requête PromQL qui échoue toujours, Rollout `Degraded`).
 - **Défi chronométré** : publier une nouvelle image en canary 20 % → 50 % → 100 % avec analyse en moins de 15 min.
 
 ### F7 — `fiches/gitops/07-argo-events.md`
@@ -238,7 +238,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
      `dependencies` multiples et logique de déclenchement — CAPA-04-02.
   3. Schématiser l'architecture (EventSource → EventBus → Sensor → trigger) en Mermaid, mesurer la résilience :
      tuer le pod EventBus, observer la reprise ; comparer avec un `EventSource` `minio`/`resource` — CAPA-04-02.
-- **Break-fix** : `break/gitops/argo-events-eventbus-down.sh` (EventBus absent, Sensor en `Pending`, aucun trigger).
+- **Break-fix** : `break/gitops/07-argo-events-eventbus-down.sh` (EventBus absent, Sensor en `Pending`, aucun trigger).
 - **Défi chronométré** : du webhook au Workflow déclenché avec un paramètre extrait du payload en moins de 10 min.
 
 ### S1 — `scenarios/NN-chaine-argo-bout-en-bout/README.md`

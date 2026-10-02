@@ -10,9 +10,12 @@ certifications:
   - "CAPA-02-01"
   - "CAPA-02-02"
   - "CAPA-02-03"
+  - "CGOA-01-02"
   - "CGOA-01-03"
   - "CGOA-01-04"
   - "CGOA-01-05"
+  - "CGOA-01-06"
+  - "CGOA-01-09"
   - "CGOA-02-03"
   - "CGOA-02-04"
 ---
