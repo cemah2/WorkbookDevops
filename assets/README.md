@@ -1,1 +1,1 @@
-# assets/ — icônes CNCF (`icons/`) et sources Excalidraw (`excalidraw/`) des schémas.
+# assets/ — icônes CNCF (`icons/`) et sources Excalidraw (`excalidraw/`) des schémas

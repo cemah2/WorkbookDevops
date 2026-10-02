@@ -1,1 +1,1 @@
-# solutions/fiches/ — solutions des fiches, un sous-dossier par domaine, un fichier par fiche.
+# solutions/fiches/ — solutions des fiches, un sous-dossier par domaine, un fichier par fiche

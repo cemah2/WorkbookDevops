@@ -1,1 +1,1 @@
-# fiches/observabilite/ — fiches du domaine `observabilite` (niveaux débutant → confirmé → expert).
+# fiches/observabilite/ — fiches du domaine `observabilite` (niveaux débutant → confirmé → expert)

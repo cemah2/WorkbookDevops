@@ -9,24 +9,29 @@ Ces identifiants sont la clé du mapping objectifs → chapitres (`objectifs.md`
 et de la veille : un diff de `programme.md` montre exactement ce qui a changé entre deux versions.
 
 ## Conventions
+
 - Le texte des compétences est **en anglais, tel quel** : c'est la formulation de l'examen.
 - Une compétence supprimée par l'éditeur est conservée **barrée** avec la mention `(retiré vX)` pendant un cycle,
   pour ne pas casser les références ; un ajout prend le numéro suivant, jamais un numéro libéré.
 - `status` reste « à revérifier » tant que la veille mensuelle n'a pas confirmé la version.
 
 ## Sources et licences
-- CNCF : https://github.com/cncf/curriculum (PDF officiels, CC-BY 4.0), consultés le 2026-09-28.
+
+- CNCF : <https://github.com/cncf/curriculum> (PDF officiels, CC-BY 4.0), consultés le 2026-09-28.
 - Red Hat, HashiCorp, OpenInfra, Linux Foundation (LFCS) : objectifs publics retranscrits depuis les pages officielles le 2026-09-28.
 - Conversion en Markdown : 2026-10-02.
 
 ## Golden Kubestronaut
+
 KCNA, KCSA, CKA, CKAD, CKS, PCA, ICA, CCA, CAPA, CGOA, CBA, OTCA, KCA, CNPA, CNPE + LFCS, toutes valides simultanément.
 
 ## Points à vérifier avant chaque jalon
+
 - CKS : programme en 1.34 dans le dépôt alors que CKA/CKAD sont en 1.35.
 - RHCE EX294 : passage annoncé à RHEL 10.
 - COA : version 2026.1 Gazpacho à confirmer dans le handbook.
-- Durées, nombre de questions et validité : non reprises des PDF (absentes), à confirmer sur la page de chaque examen et à consigner dans `examen.md`.
+- Durées, nombre de questions et validité : non reprises des PDF (absentes), à confirmer sur la page de chaque examen et à consigner dans
+  `examen.md`.
 
 ## Index
 

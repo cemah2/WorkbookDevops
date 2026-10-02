@@ -15,6 +15,7 @@ Ordre d'utilisation :
 | Après plusieurs fiches d'un domaine | `09-scenario-multi-technos.md` → `03` → `04` → `05` | nouvelle |
 
 Règles :
+
 - Remplacer les `<…>` avant d'envoyer.
 - Une session par chapitre ; la session qui rédige ne relit jamais.
 - Quand un résultat déçoit : corriger l'instruction (gabarit, CLAUDE.md, prompt), puis régénérer.

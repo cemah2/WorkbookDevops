@@ -1,1 +1,1 @@
-# fiches/securite/ — fiches du domaine `securite` (niveaux débutant → confirmé → expert).
+# fiches/securite/ — fiches du domaine `securite` (niveaux débutant → confirmé → expert)

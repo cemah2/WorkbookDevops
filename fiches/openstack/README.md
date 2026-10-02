@@ -1,1 +1,1 @@
-# fiches/openstack/ — fiches du domaine `openstack` (niveaux débutant → confirmé → expert).
+# fiches/openstack/ — fiches du domaine `openstack` (niveaux débutant → confirmé → expert)

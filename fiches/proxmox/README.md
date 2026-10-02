@@ -1,1 +1,1 @@
-# fiches/proxmox/ — fiches du domaine `proxmox` (niveaux débutant → confirmé → expert).
+# fiches/proxmox/ — fiches du domaine `proxmox` (niveaux débutant → confirmé → expert)

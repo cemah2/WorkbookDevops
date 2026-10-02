@@ -1,1 +1,1 @@
-# fiches/services/ — fiches du domaine `services` (niveaux débutant → confirmé → expert).
+# fiches/services/ — fiches du domaine `services` (niveaux débutant → confirmé → expert)

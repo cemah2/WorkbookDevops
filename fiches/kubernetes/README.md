@@ -1,1 +1,1 @@
-# fiches/kubernetes/ — fiches du domaine `kubernetes` (niveaux débutant → confirmé → expert).
+# fiches/kubernetes/ — fiches du domaine `kubernetes` (niveaux débutant → confirmé → expert)
