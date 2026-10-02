@@ -61,7 +61,7 @@ tout le reste est au niveau confirmé et suppose le bloc CKA (`kubernetes_conf`)
   Harbor reste porté par `core-mirror01` du profil `airgap` (`can_run_with: kubernetes-ha`, budget RAM cumulé
   48 + 24 + 8 + 8 = 88 Go ≤ 128 Go).
 - `break/securite/` : dossier à créer (un `README.md` d'une ligne, comme `break/kubernetes/`).
-- `docs/prerequis.md` §6.2 : nœuds planifiés ajoutés par cette PR.
+- `docs/prerequis.md` §6.5 : nœuds planifiés ajoutés par cette PR.
 - Décisions à proposer dans la PR du chapitre concerné (pas ici) :
   - F5 : contrôleur Ingress pour l'objectif CKS-01-03. ingress-nginx est retiré (DECISIONS.md 2026-10-02) ; proposer le
     contrôleur Ingress intégré à Cilium (`ingressController.enabled=true`) et garder Gateway API en chemin principal.
