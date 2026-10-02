@@ -102,7 +102,7 @@ ne se chevauchent pas pour permettre de les combiner quand le budget le permet (
   `mirror.lab.home.arpa`, `registry.lab.home.arpa`, `git.lab.home.arpa`, `api.k8s.lab.home.arpa` (VIP),
   `*.apps.lab.home.arpa` (wildcard vers le pool MetalLB / Gateway API), `*.os.lab.home.arpa` (OpenStack).
 - Reverse DNS (`PTR`) maintenu pour `10.10.0.0/16`.
-- Serveur : `core-dns01` (`10.10.10.2`, PowerDNS ou BIND, à décider ; OPNsense ne porte que le relais DHCP/DNS).
+- Serveur : `core-dns01` (`10.10.10.2`, BIND 9, décision du 2026-10-02 ; OPNsense ne porte que le relais DHCP/DNS).
   Récurseur vers le LAN pour Internet,
   sauf dans le VLAN `airgap` où `core-mirror01` fait autorité sans récursion.
 - Le routeur virtuel distribue `10.10.10.2` comme DNS en DHCP ; le LAN domestique n'est pas modifié.
@@ -123,5 +123,4 @@ ne se chevauchent pas pour permettre de les combiner quand le budget le permet (
 
 ## 8. Ce qui n'est pas tranché
 
-- Serveur DNS : PowerDNS (API, NetBox) ou BIND (classique, LFCS/RHCE).
 - Un second NIC physique pour `vmbr1` si un switch managé est disponible (non requis).

@@ -20,7 +20,7 @@ vms:
     ip: {lan: 192.168.0.250, mgmt: 10.10.10.1}
   - name: core-dns01
     vmid: 1002
-    role: DNS interne faisant autorité + récurseur (PowerDNS ou BIND)
+    role: DNS interne faisant autorité + récurseur (BIND 9, DECISIONS.md 2026-10-02)
     vcpu: 1
     ram_gb: 1
     disk_gb: 20

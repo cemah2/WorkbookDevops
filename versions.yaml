@@ -17,7 +17,7 @@ meta:
   next_review: "veille mensuelle (prompts/07-veille.md)"
   lab_target_summary: >
     Proxmox VE 9.2 / Ubuntu 24.04 LTS / Rocky 10.2 / Kubernetes 1.37 / Ceph 20.2 Tentacle /
-    OpenStack 2026.1 Gazpacho (Kolla-Ansible 22) / OpenTofu 1.13 / OpenBao 2.7 / Helm 4 / OPNsense 26.7.
+    OpenStack 2026.1 Gazpacho (Kolla-Ansible 22) / OpenTofu 1.13 / OpenBao 2.7 / Helm 4 / OPNsense 26.7 / BIND 9.20.
 
 components:
 
@@ -598,8 +598,17 @@ components:
     verification: direct
     checked_on: "2026-10-02"
 
+  bind9:
+    name: "BIND 9 (DNS interne du lab)"
+    version: "9.20.29"
+    channel: lts
+    source_url: "https://www.isc.org/bind/"
+    verification: indirect
+    verification_detail: "isc.org bloqué ; 9.20.29 (septembre 2026, branche ESV 9.20 supportée jusqu'en juillet 2028) relayée par recherche web. À confirmer."
+    checked_on: "2026-10-02"
+
   powerdns:
-    name: "PowerDNS Authoritative Server"
+    name: "PowerDNS Authoritative Server (non retenu : BIND 9 est le DNS du lab, DECISIONS.md 2026-10-02)"
     # renovate: datasource=github-tags depName=PowerDNS/pdns extractVersion=^auth-(?<version>.*)$
     version: "5.1.4"
     recursor: "5.4.7"

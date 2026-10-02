@@ -16,7 +16,7 @@ can_run_with: [linux-base, kubernetes-ha]
 vms:
   - name: core-mirror01
     vmid: 5005
-    role: miroirs (apt-mirror, Harbor proxy cache, Nexus) + DNS faisant autorité pour airgap.lab.home.arpa
+    role: miroirs (apt-mirror, Harbor proxy cache, Nexus) + BIND 9 faisant autorité pour airgap.lab.home.arpa, sans récursion
     vcpu: 4
     ram_gb: 16
     disk_gb: 60

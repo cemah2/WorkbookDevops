@@ -58,7 +58,7 @@ Conséquence : la CI tourne sur `main` et les PR ; GitHub Pages et Renovate rest
 ## 2026-10-02 — Routeur virtuel : OPNsense
 
 `core-rtr01` est une VM OPNsense : routage inter-VLAN, NAT vers le LAN, filtrage, coupure du VLAN air-gap.
-VyOS n'est pas retenu (au plus une fiche de comparaison). Le serveur DNS interne (PowerDNS ou BIND) reste à trancher.
+VyOS n'est pas retenu (au plus une fiche de comparaison).
 
 ## 2026-10-02 — Image Linux de référence : Ubuntu 24.04 LTS
 
@@ -87,3 +87,9 @@ par la veille. Le reste du workbook utilise OpenTofu et OpenBao.
 `labs/network.md` (agrégat `10.10.0.0/16`, VLAN 10 à 60, zone `lab.home.arpa`), les six profils de `labs/profiles/`
 et `docs/prerequis.md` (13 domaines, 3 niveaux, 4 parcours) sont la référence. Toute modification passe par une
 nouvelle entrée ici.
+
+## 2026-10-02 — DNS interne : BIND 9
+
+`core-dns01` fait tourner BIND 9 (zone `lab.home.arpa`, sous-zones par VLAN, reverse `10.10.0.0/16`, récurseur).
+Choix cohérent avec LFCS et RHCE, qui citent BIND. PowerDNS n'est pas retenu ; NetBox pourra générer les
+fichiers de zone BIND plus tard. Dans le VLAN air-gap, `core-mirror01` porte une seconde instance BIND sans récursion.
