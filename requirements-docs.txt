@@ -1,0 +1,3 @@
+# Dépendances de rendu MkDocs ; version pilotée par versions.yaml (mkdocs_material).
+mkdocs-material==9.7.7
+mkdocs-same-dir==0.1.5

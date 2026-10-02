@@ -1,0 +1,78 @@
+site_name: Workbook DevOps cloud privé
+site_description: Workbook d'autoformation DevOps cloud privé (Proxmox, Kubernetes, OpenStack, Ceph, IaC, GitOps, sécurité)
+site_url: https://cemah2.github.io/WorkbookDevops/
+repo_url: https://github.com/cemah2/WorkbookDevops
+edit_uri: edit/main/
+docs_dir: .
+site_dir: site
+copyright: >
+  Texte CC-BY-SA 4.0 · code Apache-2.0 · programmes CNCF CC-BY 4.0 (voir LICENSE)
+
+theme:
+  name: material
+  language: fr
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Mode sombre
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Mode clair
+
+plugins:
+  - same-dir   # autorise docs_dir: . (dépôt entier rendu, exclusions ci-dessous)
+  - search:
+      lang: fr
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+exclude_docs: |
+  node_modules/
+  site/
+  certifs/_sources_pdf/
+  .github/
+  LICENSES/
+  requirements-docs.txt
+
+nav:
+  - Accueil: docs/index.md
+  - Feuille de route: docs/roadmap.md
+  - Prérequis entre chapitres: docs/prerequis.md
+  - Glossaire: docs/glossaire.md
+  - Décisions: DECISIONS.md
+  - Lab:
+      - Plan d'adressage: labs/network.md
+      - Profils: labs/profiles/README.md
+  - Gabarits:
+      - Fiche: templates/fiche.md
+      - Scénario: templates/scenario.md
+  - Certifications: certifs/README.md
+  - Prompts: prompts/README.md
