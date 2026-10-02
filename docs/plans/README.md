@@ -8,4 +8,4 @@ La session de rédaction (`prompts/03-redaction-chapitre.md`) le lit en premier.
 |---|---|---|
 | `gitops-01-argo-cd-fondamentaux.md` | `fiches/gitops/01-argo-cd-fondamentaux.md` | réalisé le 2026-10-02 (brouillon, à relire) |
 | `gitops-02-argo-workflows-fondamentaux.md` | `fiches/gitops/02-argo-workflows-fondamentaux.md` | réalisé le 2026-10-02 (brouillon, à relire) |
-| `securite-01-kyverno-fondamentaux.md` | `fiches/securite/01-kyverno-fondamentaux.md` | proposé le 2026-10-02, en attente de validation |
+| `securite-01-kyverno-fondamentaux.md` | `fiches/securite/01-kyverno-fondamentaux.md` | validé le 2026-10-02, rédaction à lancer |
