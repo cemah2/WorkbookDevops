@@ -19,7 +19,7 @@ certifications:
 
 # Plan — 10 Cilium : installer avec le CLI, lire l'architecture, tester la connectivité
 
-Chapitre `F1` de `certifs/CCA/objectifs.md` §4, nœud `reseau/10-cilium-installation-architecture` de `docs/prerequis.md` §6.2
+Chapitre `F1` de `certifs/CCA/objectifs.md` §4, nœud `reseau/10-cilium-installation-architecture` de `docs/prerequis.md` §6.5
 (numéro `10` attribué par la cartographie CCA, DECISIONS.md 2026-10-02 « série Cilium numérotée 10 à 16 »).
 Pourquoi lui en premier : il couvre 5 compétences dont les deux d'Installation and Configuration (5 % chacune, le poids
 le plus élevé du programme), et les six autres fiches Cilium en dépendent.
@@ -49,7 +49,7 @@ pour exposer les UI (pas d'UI dans cette fiche, Hubble UI arrive en fiche 13).
 
 ## 2. Niveau et prérequis
 
-- Confirmé, nœud `reseau_conf` (`docs/prerequis.md` §6.2). Pas de fiche Cilium débutant : `reseau_deb` est un prérequis
+- Confirmé, nœud `reseau_conf` (`docs/prerequis.md` §6.5). Pas de fiche Cilium débutant : `reseau_deb` est un prérequis
   de `kubernetes_deb`, dont Cilium a besoin.
 - Prérequis : nœuds `reseau_deb` (modèle OSI, TCP/UDP, DNS, HTTP, routage, VLAN du lab) et `kubernetes_deb` (kubectl, Pods,
   Deployments, Services, namespaces, DaemonSet, ConfigMap). Aucun chapitre n'existe pour ces nœuds au 2026-10-02 :
@@ -146,7 +146,7 @@ Le `--undo` de la panne CNI redémarre l'agent du nœud, qui réécrit le fichie
 - `solutions/fiches/reseau/10-cilium-installation-architecture.md` (3 indices puis correction)
 - `break/reseau/10-*.sh` (2 scripts, 1 optionnel)
 - `revision/flashcards/reseau-10-cilium-installation-architecture.csv` (10 à 20 cartes)
-- mise à jour de `certifs/CCA/objectifs.md` §3 et §4, de `docs/prerequis.md` §6.2 (nœud `rédigé`), de `docs/plans/README.md`
+- mise à jour de `certifs/CCA/objectifs.md` §3 et §4, de `docs/prerequis.md` §6.5 (nœud `rédigé`), de `docs/plans/README.md`
   et de ce plan (`statut: réalisé`)
 
 ## 10. Questions dont la réponse change le plan

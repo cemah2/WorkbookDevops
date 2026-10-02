@@ -1,0 +1,32 @@
+# Accès à l'UI et à l'API d'argo-server en mode --auth-mode=client (défaut depuis la 3.0) :
+# un ServiceAccount, un RoleBinding sur le ClusterRole admin (les CRD Argo y sont agrégées par
+# argo-aggregate-to-admin, livré dans install.yaml) et un Secret de jeton longue durée.
+# Le jeton ne vaut que dans le namespace argo : c'est voulu.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: lab-ui
+  namespace: argo
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: lab-ui-admin
+  namespace: argo
+subjects:
+  - kind: ServiceAccount
+    name: lab-ui
+    namespace: argo
+roleRef:
+  kind: ClusterRole
+  name: admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: lab-ui.service-account-token
+  namespace: argo
+  annotations:
+    kubernetes.io/service-account.name: lab-ui
+type: kubernetes.io/service-account-token

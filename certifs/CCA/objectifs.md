@@ -55,7 +55,7 @@ Reste à faire **avant** la PR du premier chapitre :
 
 - Fiche Proxmox/OPNsense : F6 a besoin du plugin `os-frr` configuré (un AS, un voisin). Tant que `core` n'est pas levé, F6 contient
   la mise en place minimale et la marque `[non testé]`.
-- `docs/prerequis.md` : les nœuds de chapitres planifiés sont en §6.2 (cette PR). Arête inter-domaines nouvelle :
+- `docs/prerequis.md` : les nœuds de chapitres planifiés sont en §6.5 (cette PR). Arête inter-domaines nouvelle :
   `kubernetes_deb` → F1 (Cilium s'installe sur un cluster existant ; il faut kubectl, Pods, Services, Deployments).
 - Décisions déjà prises qui s'appliquent : Gateway API Cilium par défaut, Envoy Gateway en variante (DECISIONS.md, 2026-10-02) ;
   ingress-nginx retiré, Ingress gardé pour les objectifs d'examen qui le citent (CCA-03-01, CCA-03-03) ; Helm 4 pour l'installation
