@@ -27,7 +27,9 @@ KCNA, KCSA, CKA, CKAD, CKS, PCA, ICA, CCA, CAPA, CGOA, CBA, OTCA, KCA, CNPA, CNP
 
 ## Points à vérifier avant chaque jalon
 
-- CKS : programme en 1.34 dans le dépôt alors que CKA/CKAD sont en 1.35.
+- CKS : programme en 1.34 dans le dépôt alors que CKA/CKAD sont en 1.35 ; la page d'examen annonce « v1.35 » (`CKS/examen.md`).
+- CKA/CKAD : le dépôt `cncf/curriculum` a passé CKAD en v1.37 et ajouté une certification CKNE le 2026-10-01
+  (constaté le 2026-10-02 lors de la cartographie CKS) : à traiter à la veille.
 - RHCE EX294 : passage annoncé à RHEL 10.
 - COA : version 2026.1 Gazpacho à confirmer dans le handbook.
 - Durées, nombre de questions et validité : non reprises des PDF (absentes), à confirmer sur la page de chaque examen et à consigner dans
