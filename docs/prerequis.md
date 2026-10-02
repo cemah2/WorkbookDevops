@@ -501,7 +501,8 @@ plateforme : il ne planifie aucune fiche débutant et s'appuie sur les nœuds `*
 (PCA/OTCA, KCA, CKA/CKS), sur les chapitres CAPA de §6.1 (F2, F6, F7, S1), CGOA de §6.2 (`gitops/09-flux-fondamentaux`),
 CBA de §6.3 et ICA de §6.4.
 Les chemins `NN` sont numérotés à la PR du chapitre (numéro suivant de la série du domaine),
-sauf `gitops/13` et `14` qui prolongent la série fixée par CAPA (01–07) et CGOA (08–12). Arêtes inter-domaines nouvelles, justifiées dans `certifs/CNPE/objectifs.md` §4 :
+sauf `gitops/13` et `14` qui prolongent la série fixée par CAPA (01–07) et CGOA (08–12).
+Arêtes inter-domaines nouvelles, justifiées dans `certifs/CNPE/objectifs.md` §4 :
 `iac_conf` → Crossplane (provider OpenTofu vers Proxmox), `services_deb` → identité et RBAC (Keycloak OIDC),
 `ceph_deb` ⇢ multi-tenancy et observabilité (StorageClass, stockage persistant).
 
