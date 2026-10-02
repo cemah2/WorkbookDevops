@@ -1,0 +1,22 @@
+# Le côté « pull » : Argo CD tire le dossier pull/ du dépôt du lab. Sur la VM kind, remplace l'hôte par l'adresse
+# de la VM (forme ssh:// pour pouvoir préciser un port, ex. ssh://git@10.10.10.11:2222/srv/git/gitops-principes.git).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-pull
+  namespace: argocd
+spec:
+  project: lab
+  source:
+    repoURL: ssh://git@git.lab.home.arpa/srv/git/gitops-principes.git
+    targetRevision: main
+    path: pull
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo-pull
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

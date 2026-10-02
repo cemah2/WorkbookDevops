@@ -278,7 +278,84 @@ flowchart TB
 | `gitops/07-argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/02-argo-workflows-fondamentaux`, `kubernetes_conf` |
 | `scenarios/NN-chaine-argo-bout-en-bout` | expert | planifié | CAPA (16 compétences), CGOA-04-01 à 04-04 | les sept fiches ci-dessus |
 
-### 6.2 CBA (certifs/CBA/objectifs.md, 2026-10-02)
+### 6.2 CGOA (certifs/CGOA/objectifs.md, 2026-10-02)
+
+Cinq fiches `gitops` numérotées `08` à `12`, à la suite des sept fiches CAPA (la `08` est rédigée, brouillon) ; la révision
+(quiz, examen blanc) et le scénario expert sont partagés avec CAPA. Arêtes inter-domaines nouvelles, justifiées dans
+`certifs/CGOA/objectifs.md` §4 :
+`iac_deb` → G4 (OpenTofu et Ansible pilotés par Git), `securite_deb` ⇢ G4 (Kyverno, cosign, sops),
+`observabilite_deb` → G5 (métriques et alertes des moteurs GitOps), `ceph_deb` ⇢ G2 (`Bucket` Flux sur RGW).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef deb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+  classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  kubernetes_deb[kubernetes_deb]:::ref
+  kubernetes_conf[kubernetes_conf]:::ref
+  iac_deb[iac_deb]:::ref
+  gitops_deb[gitops_deb]:::ref
+  gitops_conf[gitops_conf]:::ref
+  gitops_exp[gitops_exp]:::ref
+  observabilite_deb[observabilite_deb]:::ref
+  securite_deb[securite_deb]:::ref
+  ceph_deb[ceph_deb]:::ref
+
+  argocd_fond["gitops/01-argo-cd-fondamentaux (déb., rédigé, CAPA)"]:::deb
+  wf_fond["gitops/02-argo-workflows-fondamentaux (déb., rédigé, CAPA)"]:::deb
+  argocd_helm["gitops/04-argo-cd-helm-kustomize-reconciliation (conf., CAPA)"]:::plan
+  g1["gitops/08-opengitops-principes-et-vocabulaire (déb., rédigé)"]:::deb
+  g2["gitops/09-flux-fondamentaux (déb.)"]:::plandeb
+  g3["gitops/10-architectures-gitops-depots-reconciliateurs (conf.)"]:::plan
+  g4["gitops/11-pratiques-associees-iac-cac-devsecops (conf.)"]:::plan
+  g5["gitops/12-notifications-observabilite-ci (conf.)"]:::plan
+  s_argo["scenarios/NN-chaine-argo-bout-en-bout (exp., CAPA)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  kubernetes_deb --> gitops_deb
+  iac_deb --> gitops_deb
+  gitops_deb --> argocd_fond
+  gitops_deb --> wf_fond
+  gitops_deb --> g1
+  kubernetes_conf --> g3
+  kubernetes_conf --> g4
+  kubernetes_conf --> g5
+  iac_deb --> g4
+  securite_deb -.-> g4
+  observabilite_deb --> g5
+  ceph_deb -.-> g2
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  argocd_fond --> g1
+  argocd_fond --> g2
+  g1 -.-> g2
+  argocd_fond --> argocd_helm
+  g2 --> g3
+  argocd_helm --> g3
+  g2 --> g4
+  wf_fond --> g4
+  g2 --> g5
+  wf_fond --> g5
+  g3 --> gitops_conf
+  g4 --> gitops_conf
+  g5 --> gitops_conf
+  gitops_conf --> s_argo --> gitops_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `gitops/08-opengitops-principes-et-vocabulaire` | débutant | rédigé (brouillon) | CGOA-01-01, 01-06, 01-07, 01-08, 02-01, 02-02 (+ consolidation CGOA-01-02 à 01-05, 01-09, 02-03, 02-04) | `gitops/01-argo-cd-fondamentaux`, `gitops_deb` ; `iac_deb` recommandé |
+| `gitops/09-flux-fondamentaux` | débutant | planifié | CGOA-05-03, 05-02, 05-01, 01-05, 01-07, 02-03, 02-04 | `gitops/01-argo-cd-fondamentaux`, `kubernetes_deb` ; `gitops/08-…` et `ceph_deb` recommandés |
+| `gitops/10-architectures-gitops-depots-reconciliateurs` | confirmé | planifié | CGOA-04-04, 04-03, 04-01, 01-07, 05-02, CAPA-02-05 | `gitops/09-flux-fondamentaux`, `gitops/04-argo-cd-helm-kustomize-reconciliation`, `kubernetes_conf` |
+| `gitops/11-pratiques-associees-iac-cac-devsecops` | confirmé | planifié | CGOA-03-01, 03-02, 03-03 | `gitops/09-flux-fondamentaux`, `gitops/02-argo-workflows-fondamentaux`, `iac_deb`, `kubernetes_conf` ; `securite_deb` recommandé |
+| `gitops/12-notifications-observabilite-ci` | confirmé | planifié | CGOA-05-04, 01-08, 03-04, CAPA-02-02 | `gitops/09-flux-fondamentaux`, `gitops/02-argo-workflows-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
+
+Les nœuds CAPA cités (`01`, `02`, `04`, scénario) sont définis en §6.1 ; leurs IDs CGOA y sont confirmés par `certifs/CGOA/objectifs.md` §3.
+
+### 6.3 CBA (certifs/CBA/objectifs.md, 2026-10-02)
 
 Cinq fiches `plateforme` et un scénario. Première cartographie du domaine : la série `fiches/plateforme/NN-` démarre
 à `01`. Arêtes inter-domaines nouvelles, justifiées ici : `linux_deb` → premier lancement et `iac_deb` → premier lancement

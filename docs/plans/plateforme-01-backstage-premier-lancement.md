@@ -17,7 +17,7 @@ certifications:
 
 # Plan — 01 Backstage : créer une app, la lancer, comprendre ce qui tourne
 
-Chapitre `F1` de `certifs/CBA/objectifs.md` §4, nœud `plateforme/01-backstage-premier-lancement` de `docs/prerequis.md` §6.2
+Chapitre `F1` de `certifs/CBA/objectifs.md` §4, nœud `plateforme/01-backstage-premier-lancement` de `docs/prerequis.md` §6.3
 (numéro attribué par la cartographie CBA, PR #32, DECISIONS.md 2026-10-02 « fiches numérotées par série »).
 Pourquoi lui : c'est la première fiche du domaine `plateforme`, la seule qui ne dépend d'aucun autre chapitre Backstage,
 et les cinq autres chapitres CBA en partent. Elle couvre 6 des 19 compétences, dont deux du domaine Infrastructure (22 %).
@@ -48,7 +48,7 @@ VM de développement dédiée sur `linux-base` (objectifs.md §2) ; pas de Kuber
 
 ## Niveau et prérequis
 
-- Débutant, nœud `plateforme_deb`. Arêtes `linux_deb` → fiche et `iac_deb` → fiche (prerequis.md §6.2) : shell, paquets,
+- Débutant, nœud `plateforme_deb`. Arêtes `linux_deb` → fiche et `iac_deb` → fiche (prerequis.md §6.3) : shell, paquets,
   ports, `systemd`, Git (clone, commit). Aucun chapitre rédigé pour ces nœuds au 2026-10-02 : le front matter cite les nœuds.
 - Aucune compétence Kubernetes, conteneur, React ni TypeScript exigée. Une page de lecture « lire du TypeScript et du JSX
   sans paniquer » ouvre la section 2 (comptée dans les 20 % de lecture) ; la vraie pratique React est en fiche 03.
@@ -115,12 +115,12 @@ Création du dossier `break/plateforme/` et de son `README.md` dans la PR du cha
 
 ## Préalables à régler dans la PR du chapitre
 
-- Fusion de la PR #32 (cartographie CBA) : `certifs/CBA/objectifs.md` et `docs/prerequis.md` §6.2 n'existent que sur sa branche.
+- Fusion de la PR #32 (cartographie CBA) : `certifs/CBA/objectifs.md` et `docs/prerequis.md` §6.3 n'existent que sur sa branche.
 - `versions.yaml` : ajouter `nodejs` (datasource `node-version`, canal `lts`). Au 2026-10-02 : Node **24** est l'Active LTS
   (fin de vie 2028-04-30), Node 22 est en maintenance (fin 2027-04-30), Node 20 est en fin de vie depuis le 2026-04-30 ;
   le gabarit `create-app` de Backstage 1.55.3 déclare `engines.node: "22 || 24"` (lu sur le dépôt officiel, tag `v1.55.3`).
   Valeur retenue : `24` (arbitrage 2).
-- `certifs/CBA/objectifs.md` §3 (six IDs) et §4 (F1 → rédigé), `docs/prerequis.md` §6.2 (nœud `rédigé`), `docs/plans/README.md`.
+- `certifs/CBA/objectifs.md` §3 (six IDs) et §4 (F1 → rédigé), `docs/prerequis.md` §6.3 (nœud `rédigé`), `docs/plans/README.md`.
 - Dossier de ressources de la fiche : `fiches/plateforme/01-backstage-premier-lancement/config/` (exemples d'`app-config.local.yaml`,
   schéma Mermaid source). Pas de dossier `manifests/` : la CI y lancerait `kubeconform` sur des fichiers qui ne sont pas des manifests.
 
@@ -163,7 +163,7 @@ section 1 ≈ 1 h 30 (dont téléchargements), section 2 ≈ 1 h 45, section 3 �
 - `solutions/fiches/plateforme/01-backstage-premier-lancement.md` (3 indices puis correction commentée par exercice)
 - `break/plateforme/README.md` et `break/plateforme/01-backstage-*.sh` (4 scripts)
 - `revision/flashcards/plateforme-01-backstage-premier-lancement.csv` (15 à 20 cartes)
-- mises à jour : `versions.yaml` (`nodejs`), `certifs/CBA/objectifs.md`, `docs/prerequis.md` §6.2, `docs/plans/README.md`,
+- mises à jour : `versions.yaml` (`nodejs`), `certifs/CBA/objectifs.md`, `docs/prerequis.md` §6.3, `docs/plans/README.md`,
   ce plan avec `statut: validé`
 - Exécution réelle attendue : la session dispose de Node 22, de `corepack` et du registre npm ; `create-app`, `yarn install`,
   `tsc`, `lint`, `test`, démarrage du backend et `curl` de l'API peuvent être exécutés pour de vrai. Sans navigateur,
