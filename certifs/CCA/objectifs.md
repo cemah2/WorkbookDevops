@@ -2,16 +2,17 @@
 code: CCA
 titre: "CCA — mapping compétences → chapitres"
 programme: "certifs/CCA/programme.md (converti le 2026-10-02, curriculum CNCF consulté le 2026-03-14)"
-chapitres_existants: 0
+chapitres_existants: 1
 generated: 2026-10-02
-status: "0 chapitre rédigé sur 8 ; couverture partielle indirecte (variante Gateway API de fiches/gitops/01) ; arbitrages du §2 acceptés le 2026-10-02 ; à mettre à jour à chaque PR de chapitre"
+status: "1 chapitre rédigé (brouillon) sur 8 : fiches/reseau/10-cilium-installation-architecture.md ; arbitrages du §2 acceptés le 2026-10-02 ; à mettre à jour à chaque PR de chapitre"
 ---
 
 # CCA — objectifs et couverture
 
 Mapping entre les 28 compétences de [`programme.md`](programme.md) et les chapitres du workbook.
-État au 2026-10-02 : aucun chapitre Cilium n'existe. La seule trace est la variante Gateway API Cilium de
-`fiches/gitops/01-argo-cd-fondamentaux.md` (un manifest `Gateway` + `HTTPRoute`, `[non testé]`), qui effleure CCA-03-01.
+État au 2026-10-02 : une fiche rédigée (`fiches/reseau/10-cilium-installation-architecture.md`, statut brouillon, exécutée
+sur un cluster `kind` 1.37 avec Cilium 1.20.2), les sept autres chapitres sont des trous. La variante Gateway API Cilium de
+`fiches/gitops/01-argo-cd-fondamentaux.md` (un manifest `Gateway` + `HTTPRoute`, `[non testé]`) effleure CCA-03-01.
 Ce fichier sert de plan de création ; chaque PR de chapitre remplit les colonnes « chapitre » et « exercices »
 et marque le chapitre « rédigé » dans la section 4.
 
@@ -69,10 +70,10 @@ Colonnes « chapitre » et « exercices » : `—` tant que rien n'existe. La co
 
 | ID | Compétence | Poids | Chapitre existant | Exercices existants | Chapitre cible |
 |---|---|---|---|---|---|
-| CCA-01-01 | Understand the Role of Cilium in Kubernetes Environments | 4,0 % | — | — | F1 |
-| CCA-01-02 | Cilium Architecture | 4,0 % | — | — | F1 |
+| CCA-01-01 | Understand the Role of Cilium in Kubernetes Environments | 4,0 % | `fiches/reseau/10-cilium-installation-architecture.md` (brouillon) | S1 : démo (cluster sans CNI → Cilium), autonome 1 (trafic sans kube-proxy), défi 15 min | F1 (rédigé) |
+| CCA-01-02 | Cilium Architecture | 4,0 % | `fiches/reseau/10-cilium-installation-architecture.md` (brouillon) | S3 : démo (composants, CRD, CNI sur le nœud), autonome 3 (operator et agent arrêtés), défi oral 5 min | F1 (rédigé) |
 | CCA-01-03 | IP Address Management (IPAM) with Cilium | 4,0 % | — | — | F2 |
-| CCA-01-04 | Cilium Component Roles | 4,0 % | — | — | F1 |
+| CCA-01-04 | Cilium Component Roles | 4,0 % | `fiches/reseau/10-cilium-installation-architecture.md` (brouillon) | S3 : démo, autonome 3, break-fix operator-down, défi oral 5 min | F1 (rédigé) |
 | CCA-01-05 | Datapath Models | 4,0 % | — | — | F2 |
 
 ### CCA-02 — Network Policy (18 %)
@@ -107,8 +108,8 @@ Colonnes « chapitre » et « exercices » : `—` tant que rien n'existe. La co
 
 | ID | Compétence | Poids | Chapitre existant | Exercices existants | Chapitre cible |
 |---|---|---|---|---|---|
-| CCA-05-01 | Know How to Use Cilium CLI to Query and Modify the Configuration | 5,0 % | — | — | F1 |
-| CCA-05-02 | Using Cilium CLI to Install Cilium, Run Connectivity Tests, and Monitor its Status | 5,0 % | — | — | F1 |
+| CCA-05-01 | Know How to Use Cilium CLI to Query and Modify the Configuration | 5,0 % | `fiches/reseau/10-cilium-installation-architecture.md` (brouillon) | S2 : démo (config view/set, Helm, dry-run), autonome 2 (variante Helm), break-fix agent-crashloop, défi 10 min | F1 (rédigé) |
+| CCA-05-02 | Using Cilium CLI to Install Cilium, Run Connectivity Tests, and Monitor its Status | 5,0 % | `fiches/reseau/10-cilium-installation-architecture.md` (brouillon) | S1 : démo (cilium install, status --wait), S2 : démo (sysdump, connectivity test), break-fix cni-plugin-absent, défi 15 min | F1 (rédigé) |
 
 ### CCA-06 — Cluster Mesh (10 %)
 
@@ -160,7 +161,7 @@ chemin de repli un ou deux clusters `kind` sur une VM du profil `linux-base` (4 
 F6 exige les vraies VM (BGP vers `core-rtr01`, egress gateway sur un nœud).
 Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en manipulation), pas de rédaction.
 
-### F1 — `fiches/reseau/10-cilium-installation-architecture.md`
+### F1 — `fiches/reseau/10-cilium-installation-architecture.md` — rédigé (brouillon, 2026-10-02)
 
 - **Titre** : Cilium — installer avec le CLI, lire l'architecture, tester la connectivité
 - **Niveau** : confirmé (`reseau_conf`)
@@ -168,6 +169,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Prérequis** : `reseau_deb`, `kubernetes_deb` (cluster kubeadm bootstrappé avec `--skip-phases=addon/kube-proxy`, sans CNI)
 - **Lab** : `kubernetes-ha` ; repli `kind` (`disableDefaultCNI: true`, `kubeProxyMode: none`) sur `linux-base`.
   Clés `versions.yaml` : `cilium`, `cilium_cli`, `kubernetes`, `kubeadm`, `kind`, `helm`.
+- **Plan validé** : `docs/plans/reseau-10-cilium-installation-architecture.md` (2026-10-02, recommandations des six questions retenues).
 - **Temps** : 5 h
 - **3 exercices clés** :
   1. Installer Cilium avec `cilium install` sur le cluster sans CNI, lire `cilium status --wait`, `cilium config view`,
@@ -177,8 +179,8 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
      continue de fonctionner (nouveaux Pods, Pods existants, allocation d'IP) — CCA-01-01, CCA-01-02, CCA-01-04.
   3. Lancer `cilium connectivity test`, lire un échec provoqué (nœud sans route vers le VLAN 30), modifier la configuration
      avec `cilium config set` puis par Helm `--set`, mesurer l'impact d'un rollout de l'agent — CCA-05-01, CCA-05-02.
-- **Break-fix** : `break/reseau/10-cilium-agent-crashloop.sh` (ConfigMap `cilium-config` avec une clé invalide, agents en `CrashLoopBackOff`,
-  Pods bloqués en `ContainerCreating`).
+- **Break-fix** : `break/reseau/10-cilium-cni-plugin-absent.sh` (binaire CNI retiré d'un nœud), `10-cilium-agent-crashloop.sh`
+  (adresse d'API fausse dans le DaemonSet, agents bloqués en `Init:0/6`), `10-cilium-operator-down.sh` (panne silencieuse).
 - **Défi chronométré** : cluster sans CNI → Cilium installé, `cilium status` vert, `connectivity test` passé en moins de 15 min.
 
 ### F2 — `fiches/reseau/11-cilium-ipam-datapath-ebpf.md`
@@ -338,7 +340,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 
 | Chapitre | Niveau | Profil de lab | Temps |
 |---|---|---|---|
-| F1 Installation et architecture | confirmé | kubernetes-ha (ou kind sur linux-base) | 5 h |
+| F1 Installation et architecture (rédigé, brouillon) | confirmé | kubernetes-ha (ou kind sur linux-base) | 5 h |
 | F2 IPAM, datapath et eBPF | confirmé | kubernetes-ha (kind partiel) | 6 h |
 | F3 Network Policy | confirmé | kubernetes-ha (ou kind) | 6 h |
 | F4 Hubble | confirmé | kubernetes-ha (ou kind) | 4 h |
