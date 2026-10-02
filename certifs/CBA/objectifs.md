@@ -38,12 +38,12 @@ scénario de bout en bout.
 
 À régler **avant** d'ouvrir la PR du premier chapitre (sinon le gabarit ne peut pas être rempli honnêtement) :
 
-- `versions.yaml` : la clé `backstage` existe (1.55.3, vérifiée le 2026-10-02). Il manque le runtime et l'outillage
-  que Backstage impose : ajouter `nodejs` (datasource `node-version`, canal LTS actif supporté par la version `backstage`),
-  `yarn` (Yarn Berry, installé par `corepack` ; datasource `npm`, depName `yarn`), et un moteur de conteneurs pour la
-  VM de développement : `docker_engine` ou `podman` (le choix n'est pas tranché dans `DECISIONS.md` ; proposer une entrée
-  datée dans la PR de F1). Pour la base de données : `postgresql` (image officielle, conteneur local en F5 et sur `linux-base`)
-  en plus de `cloudnative_pg` déjà présent (déploiement Kubernetes en F5). Passe par la veille (`prompts/07-veille.md`)
+- `versions.yaml` : la clé `backstage` existe (1.55.3, vérifiée le 2026-10-02). Il manque le runtime que Backstage impose :
+  ajouter `nodejs` (datasource `node-version`, canal LTS actif dans la plage `engines` de la version `backstage`) dans la PR de F1.
+  Pas de clé `yarn` : le champ `packageManager` de l'app fait foi, lu par `corepack` (plan de F1, arbitrage du 2026-10-02).
+  Pour F5 seulement : un moteur de conteneurs pour la VM de développement, `docker_engine` ou `podman` (le choix n'est pas
+  tranché dans `DECISIONS.md` ; proposer une entrée datée dans la PR de F5), et `postgresql` (image officielle, conteneur local)
+  en plus de `cloudnative_pg` déjà présent (déploiement Kubernetes). Passe par la veille (`prompts/07-veille.md`)
   ou par la PR du chapitre concerné.
 - `labs/profiles/linux-base.yaml` : les VM font 2 vCPU / 4 Go. `yarn install` + `yarn tsc` + `yarn build` d'une app
   Backstage dépassent 4 Go. Les fiches F1 à F4 déclarent une **VM dédiée 4 vCPU / 8 Go / 60 Go** sur ce profil
@@ -150,8 +150,7 @@ peut encore apparaître dans les questions. Chaque fiche concernée garde une se
 - **Couvre** : CBA-01-01, CBA-01-02, CBA-01-03, CBA-01-04, CBA-03-01, CBA-03-04
 - **Prérequis** : `linux_deb` (shell, paquets, systemd, ports), `iac_deb` (Git : clone, commit, push).
   Aucune compétence Kubernetes : voir la justification de l'arête dans `docs/prerequis.md` §6.2.
-- **Lab** : VM de développement sur `linux-base` (Ubuntu LTS). Clés `versions.yaml` : `backstage`, `nodejs` (à créer),
-  `yarn` (à créer), `ubuntu_lts`.
+- **Lab** : VM de développement sur `linux-base` (Ubuntu LTS). Clés `versions.yaml` : `backstage`, `nodejs` (à créer), `ubuntu_lts`.
 - **Temps** : 5 h
 - **3 exercices clés** :
   1. Installer Node.js LTS et Yarn via `corepack`, créer l'app avec `npx @backstage/create-app@latest`, lire l'arborescence
@@ -198,7 +197,7 @@ peut encore apparaître dans les questions. Chaque fiche concernée garde une se
 - **Couvre** : CBA-04-01, CBA-04-02, CBA-04-03, CBA-04-04 (+ CBA-01-02, CBA-01-03 en pratique quotidienne)
 - **Prérequis** : F1, F2 ; aucune expérience React exigée mais une heure de lecture TypeScript/JSX est prévue dans
   le chapitre (comptée dans les 20 % de lecture)
-- **Lab** : VM de développement sur `linux-base`. Clés `versions.yaml` : `backstage`, `nodejs` (à créer), `yarn` (à créer).
+- **Lab** : VM de développement sur `linux-base`. Clés `versions.yaml` : `backstage`, `nodejs` (à créer).
 - **Temps** : 8 h (le domaine pèse 32 %)
 - **3 exercices clés** :
   1. Créer un plugin frontend et un plugin backend avec `yarn new`, lire ce qui est généré (`plugin.ts`, `routes.ts`,

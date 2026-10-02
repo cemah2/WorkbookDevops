@@ -2,7 +2,7 @@
 chapitre: "fiches/plateforme/01-backstage-premier-lancement.md"
 domaine: "plateforme"
 niveau: "débutant"
-statut: "proposé le 2026-10-02 — en attente de validation (six questions en fin de plan)"
+statut: "validé le 2026-10-02 (recommandations des six questions retenues) — rédaction à démarrer après fusion de la PR #32"
 duree_estimee: "5 h"
 profil_lab: "linux-base (VM de développement 4 vCPU / 8 Go / 60 Go)"
 versions: "backstage, nodejs (à créer), ubuntu_lts"
@@ -107,7 +107,7 @@ Création du dossier `break/plateforme/` et de son `README.md` dans la PR du cha
 - Chemin principal : `linux-base`, **VM de développement 4 vCPU / 8 Go RAM / 60 Go** (sur les 8 vCPU / 16 Go / 180 Go du profil ;
   la documentation Backstage exige 6 Go de RAM et 20 Go de disque minimum ; `yarn install` + `tsc` + `start` tiennent dans 8 Go).
   Ubuntu 24.04 LTS (`ubuntu_lts`). Le profil ne décrit que des VM 2 vCPU / 4 Go : la fiche déclare la VM dédiée dans
-  `budget_lab` comme `fiches/gitops/01` ; la modification durable du profil est une question (Q6).
+  `budget_lab` comme `fiches/gitops/01` ; le profil n'est pas modifié (arbitrage 6).
 - Seconde VM `linux-base` quelconque pour l'exercice 3.3 (client `curl` / navigateur).
 - Aucun conteneur, aucun Kubernetes, aucune base externe : SQLite embarqué. Pas d'appel à `core-jump01` ni à Keycloak.
 - Réseau : NAT vers le registre npm (`registry.npmjs.org`, `repo.yarnpkg.com`, `nodejs.org`). Variante air-gap
@@ -119,7 +119,7 @@ Création du dossier `break/plateforme/` et de son `README.md` dans la PR du cha
 - `versions.yaml` : ajouter `nodejs` (datasource `node-version`, canal `lts`). Au 2026-10-02 : Node **24** est l'Active LTS
   (fin de vie 2028-04-30), Node 22 est en maintenance (fin 2027-04-30), Node 20 est en fin de vie depuis le 2026-04-30 ;
   le gabarit `create-app` de Backstage 1.55.3 déclare `engines.node: "22 || 24"` (lu sur le dépôt officiel, tag `v1.55.3`).
-  Proposition : `24` (Q2).
+  Valeur retenue : `24` (arbitrage 2).
 - `certifs/CBA/objectifs.md` §3 (six IDs) et §4 (F1 → rédigé), `docs/prerequis.md` §6.2 (nœud `rédigé`), `docs/plans/README.md`.
 - Dossier de ressources de la fiche : `fiches/plateforme/01-backstage-premier-lancement/config/` (exemples d'`app-config.local.yaml`,
   schéma Mermaid source). Pas de dossier `manifests/` : la CI y lancerait `kubeconform` sur des fichiers qui ne sont pas des manifests.
@@ -128,10 +128,10 @@ Création du dossier `break/plateforme/` et de son `README.md` dans la PR du cha
 
 - **Cadence mensuelle de Backstage** : `npx @backstage/create-app@latest` (create-app 0.9.2 au 2026-10-02) génère une app sur la
   dernière release, pas sur 1.55.3. Deux options : pinner la version de `create-app` qui correspond à 1.55.3 (à retrouver dans
-  le changelog du paquet), ou créer puis `versions:bump --release 1.55.3`. La seconde est plus robuste à la veille (Q3).
+  le changelog du paquet), ou créer puis `versions:bump --release 1.55.3`. La seconde est retenue (arbitrage 3).
 - **Yarn** : la page « Getting started » de la documentation parle encore de Yarn 4.4.1 alors que le gabarit `create-app` 1.55.3
   pinne `packageManager: yarn@4.13.0` et que la dernière Yarn est 4.18.1 (2026-09-24). La version utile est celle du
-  `packageManager` de l'app, lue par `corepack` : pas de clé `yarn` dans `versions.yaml` (Q4), mais une flashcard et une ligne
+  `packageManager` de l'app, lue par `corepack` : pas de clé `yarn` dans `versions.yaml` (arbitrage 4), mais une flashcard et une ligne
   d'explication dans la fiche.
 - **Node 22 ou 24** : si la clé `nodejs` vaut 24 et que la session de rédaction tourne en 22 (c'est le cas de la session qui a
   produit ce plan : Node 22.22.0, `corepack` 0.34.0, registre npm joignable), les sorties affichées porteront `v22.x` ;
@@ -140,7 +140,7 @@ Création du dossier `break/plateforme/` et de son `README.md` dans la PR du cha
   d'octobre 2024 (1.32 environ) et peut citer l'ancien. Section « à connaître pour l'examen » en lecture seule.
 - **Nouveau système de frontend** : non activé par défaut en 1.55.3 ; cité en flashcard, pas enseigné.
 - **Ubuntu 24.04** : le paquet `nodejs` des dépôts (18.x) est hors plage ; la fiche doit interdire `apt install nodejs`
-  sans dépôt tiers et choisir une méthode d'installation (Q1).
+  sans dépôt tiers et imposer `nvm` (arbitrage 1).
 - Matrice create-app / Backstage : à relire dans les notes de version 1.55.x avant rédaction ; `config:check` et
   `versions:check` existent-ils sous ce nom exact dans le CLI 1.55.3 : `[à vérifier]` pendant la rédaction (la page de référence
   du CLI n'a pas pu être lue cette session).
@@ -169,17 +169,16 @@ section 1 ≈ 1 h 30 (dont téléchargements), section 2 ≈ 1 h 45, section 3 �
   `tsc`, `lint`, `test`, démarrage du backend et `curl` de l'API peuvent être exécutés pour de vrai. Sans navigateur,
   les vérifications de l'UI se font par `curl` sur le port 3000 et sont marquées `[non testé : pas de navigateur]`.
 
-## Questions ouvertes (réponse attendue avant rédaction)
+## Arbitrages validés le 2026-10-02
 
-1. **Installation de Node.js** : `nvm` par utilisateur (recommandation de la documentation Backstage, simple pour l'apprenant)
-   ou dépôt apt NodeSource à l'échelle système (cohérent avec un provisionnement Ansible de la VM) ? Recommandation : `nvm`
-   dans la fiche, NodeSource cité en variante pour `labs/ansible/`.
-2. **Valeur de la clé `nodejs`** : 24 (Active LTS, recommandé) ou 22 (maintenance, version de la session de rédaction) ?
-3. **Alignement de version** : `create-app@latest` puis `versions:bump --release <backstage>` (recommandé), ou pinner `create-app`
-   à la version correspondant à 1.55.3 ?
-4. **Clé `yarn` dans `versions.yaml`** : ne pas la créer, le `packageManager` de l'app fait foi (recommandé), ou la créer pour
-   la veille ? `objectifs.md` §2 la prévoyait ; à corriger dans la PR du chapitre si tu retiens la recommandation.
-5. **Moteur de conteneurs** : cette fiche n'en a pas besoin. Reporter le choix `docker_engine` / `podman` et l'entrée `DECISIONS.md`
-   à la fiche 05 (recommandé), ou l'installer dès la fiche 01 pour préparer la VM ?
-6. **Profil `linux-base`** : déclarer la VM de développement 4 vCPU / 8 Go seulement dans le front matter (comme `gitops/01`,
-   recommandé), ou ajouter une cinquième VM `linux-base-dev01` au profil avec une entrée `DECISIONS.md` ?
+1. Node.js installé par `nvm` par utilisateur (recommandation de la documentation Backstage) ; le dépôt apt NodeSource est
+   cité en variante pour un provisionnement Ansible de la VM (`labs/ansible/`).
+2. Clé `nodejs` de `versions.yaml` : **24** (Active LTS jusqu'en 2028-04-30, dans la plage `engines` de Backstage 1.55.3).
+3. Création par `npx @backstage/create-app@latest` puis alignement par `yarn backstage-cli versions:bump --release <backstage>` ;
+   la fiche vérifie `backstage.json` après coup.
+4. Pas de clé `yarn` dans `versions.yaml` : le champ `packageManager` de l'app fait foi, lu par `corepack`.
+   `certifs/CBA/objectifs.md` §2 est corrigé en conséquence dans la PR #32.
+5. Aucun moteur de conteneurs dans cette fiche ; le choix Docker / Podman et son entrée `DECISIONS.md` sont reportés à la
+   fiche 05. `certifs/CBA/objectifs.md` §2 est corrigé en conséquence dans la PR #32.
+6. La VM de développement 4 vCPU / 8 Go / 60 Go est déclarée dans le front matter de la fiche, comme `fiches/gitops/01` ;
+   le profil `linux-base` n'est pas modifié.
