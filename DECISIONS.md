@@ -48,3 +48,42 @@ et ne gardent Ingress que pour les objectifs d'examen qui le citent encore.
 
 Une compétence retirée par l'éditeur reste barrée un cycle avec `(retiré vX)` ; un ajout prend le numéro
 suivant, jamais un numéro libéré.
+
+## 2026-10-02 — Dépôt GitHub `cemah2/WorkbookDevops`, branche `main`
+
+Le workbook vit dans le dépôt existant `cemah2/WorkbookDevops` (public), pas dans un nouveau dépôt privé.
+`main` est la branche de référence ; chaque chapitre arrive par une branche et une PR.
+Conséquence : la CI tourne sur `main` et les PR ; GitHub Pages et Renovate restent à activer.
+
+## 2026-10-02 — Routeur virtuel : OPNsense
+
+`core-rtr01` est une VM OPNsense : routage inter-VLAN, NAT vers le LAN, filtrage, coupure du VLAN air-gap.
+VyOS n'est pas retenu (au plus une fiche de comparaison). Le serveur DNS interne (PowerDNS ou BIND) reste à trancher.
+
+## 2026-10-02 — Image Linux de référence : Ubuntu 24.04 LTS
+
+Tant que Kolla-Ansible de la série cible (2026.1 Gazpacho) ne supporte pas 26.04, les VM du lab partent de 24.04 LTS.
+26.04.1 LTS existe et sera adoptée à la bascule vers la série OpenStack qui la supporte (à vérifier à la veille).
+Conséquence : `versions.yaml` garde 24.04 en `ubuntu_lts` et note la version plus récente.
+
+## 2026-10-02 — Helm 4 partout
+
+Les chapitres Kubernetes utilisent Helm 4 (Helm 3 est en fin de vie). Les différences utiles pour un examen qui
+tournerait encore en Helm 3 sont signalées dans le chapitre concerné, pas enseignées à part.
+
+## 2026-10-02 — Ceph 20 Tentacle
+
+Le lab et les chapitres Ceph ciblent la série 20 (Tentacle). Pas de release candidate (21 Umbrella) sur le lab
+avant sa première version stable x.2.0.
+
+## 2026-10-02 — Terraform et Vault : version d'examen
+
+Les chapitres `certifs/TFA` et `certifs/VA` sont préparés sur la version annoncée par l'examen
+(`exam_version` dans `versions.yaml`), avec une section « différences avec la version courante » tenue à jour
+par la veille. Le reste du workbook utilise OpenTofu et OpenBao.
+
+## 2026-10-02 — Plan d'adressage, zone DNS et graphe de prérequis validés
+
+`labs/network.md` (agrégat `10.10.0.0/16`, VLAN 10 à 60, zone `lab.home.arpa`), les six profils de `labs/profiles/`
+et `docs/prerequis.md` (13 domaines, 3 niveaux, 4 parcours) sont la référence. Toute modification passe par une
+nouvelle entrée ici.
