@@ -16,6 +16,9 @@ praticable_sur_le_lab: "<oui | partiellement : sections marquées [lecture + sim
 solutions: "solutions/fiches/<domaine>/<nom-de-la-fiche>.md"
 break_fix: "break/<domaine>/<NN>-<nom-de-la-panne>.sh"
 flashcards: "revision/flashcards/<domaine>-<NN>-<nom-de-la-fiche>.csv"
+# Optionnel (fiches hors Kubernetes, ou dont l'état de départ n'est pas une VM neuve) : état initial scripté et vérification.
+etat_initial: "fiches/<domaine>/<NN>-<nom-de-la-fiche>/scripts/host-livre.sh (idempotent, --undo)"
+verification: "fiches/<domaine>/<NN>-<nom-de-la-fiche>/scripts/check.sh (un contrôle par ligne, code de retour non nul si un échec)"
 statut: "<brouillon | relu | validé en conditions réelles le AAAA-MM-JJ>"
 ---
 
@@ -74,6 +77,7 @@ Script : `break/<domaine>/<NN>-<nom-de-la-panne>.sh` — injecte la panne, `--un
 
 - Solutions (3 indices puis correction commentée) : `solutions/fiches/<domaine>/<nom-de-la-fiche>.md`
 - Pannes scriptées : `break/<domaine>/`
+- État initial scripté et vérification (si la fiche en a) : `fiches/<domaine>/<NN>-<nom-de-la-fiche>/scripts/`
 - Flashcards (10 à 20, CSV `question;réponse;tags`) : `revision/flashcards/<domaine>-<NN>-<nom-de-la-fiche>.csv`
 - Mapping certification : `certifs/<CODE>/objectifs.md`
 - Rappel espacé : séances J+1, J+7, J+30 à noter dans `journal/`

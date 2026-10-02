@@ -1,0 +1,16 @@
+# lecteur.service — version « livrée » : aucun durcissement (fiche securite/01, section 4).
+# Le durcissement se fait par un drop-in /etc/systemd/system/lecteur.service.d/hardening.conf (voir etc/systemd/).
+[Unit]
+Description=Lecteur de fichiers (service d'exemple de la fiche securite/01)
+After=network.target
+
+[Service]
+Type=simple
+User=lecteur
+Group=lecteur
+Environment=LECTEUR_DIR=/var/lib/lecteur
+ExecStart=/usr/local/bin/lecteur --daemon
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
