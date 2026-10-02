@@ -452,6 +452,17 @@ components:
     verification: direct
     checked_on: "2026-10-02"
 
+  nodejs:
+    name: "Node.js (runtime de Backstage ; plage engines \"22 || 24\" du gabarit create-app 1.55)"
+    # renovate: datasource=node-version depName=node versioning=node
+    version: "24"
+    channel: lts
+    note: "Active LTS jusqu'au 2028-04-30 ; 22 en maintenance jusqu'au 2027-04-30 ; 20 en fin de vie depuis le 2026-04-30 (plan plateforme/01, 2026-10-02)"
+    source_url: "https://github.com/nodejs/Release"
+    verification: direct
+    verification_detail: "calendrier officiel nodejs/Release lu sur GitHub ; nodejs.org non ouvert"
+    checked_on: "2026-10-02"
+
   backstage:
     name: "Backstage"
     # renovate: datasource=github-releases depName=backstage/backstage extractVersion=^v(?<version>.*)$
