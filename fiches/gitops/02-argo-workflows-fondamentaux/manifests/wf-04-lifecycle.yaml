@@ -1,0 +1,57 @@
+# Cycle de vie : deux étapes lentes pour avoir le temps de suspend / resume / stop / terminate,
+# un paramètre `fail` pour provoquer un échec (retry vs resubmit), un exit handler (onExit)
+# qui s'exécute avec `stop` mais pas avec `terminate`.
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: lifecycle-
+  namespace: argo
+  labels:
+    workbook/fiche: gitops-02
+spec:
+  entrypoint: main
+  onExit: notify
+  serviceAccountName: wf-runner
+  arguments:
+    parameters:
+      - name: fail
+        value: "false"
+  templates:
+    - name: main
+      steps:
+        - - name: step-a
+            template: slow
+            arguments:
+              parameters:
+                - name: seconds
+                  value: "20"
+        - - name: step-b
+            template: maybe-fail
+            arguments:
+              parameters:
+                - name: fail
+                  value: "{{workflow.parameters.fail}}"
+
+    - name: slow
+      inputs:
+        parameters:
+          - name: seconds
+      container:
+        image: busybox:1.37
+        command: [sh, -c]
+        args: ["echo travail long; sleep {{inputs.parameters.seconds}}; echo fini"]
+
+    - name: maybe-fail
+      inputs:
+        parameters:
+          - name: fail
+      container:
+        image: busybox:1.37
+        command: [sh, -c]
+        args: ["sleep 60; if [ '{{inputs.parameters.fail}}' = 'true' ]; then echo échec demandé; exit 1; fi; echo ok"]
+
+    - name: notify
+      container:
+        image: busybox:1.37
+        command: [sh, -c]
+        args: ["echo \"exit handler : {{workflow.name}} a fini en {{workflow.status}} après {{workflow.duration}}\""]
