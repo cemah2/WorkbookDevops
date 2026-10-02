@@ -277,3 +277,76 @@ flowchart TB
 | `gitops/05-argo-rollouts` | confirmé | planifié | CAPA-03-01 à 03-03 | `gitops/01-argo-cd-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
 | `gitops/07-argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/02-argo-workflows-fondamentaux`, `kubernetes_conf` |
 | `scenarios/NN-chaine-argo-bout-en-bout` | expert | planifié | CAPA (16 compétences), CGOA-04-01 à 04-04 | les sept fiches ci-dessus |
+
+### 6.2 COA (certifs/COA/objectifs.md, 2026-10-02)
+
+Dix fiches `openstack` et un scénario, tous sur le profil `openstack-kolla`. Une arête inter-domaines nouvelle,
+justifiée dans `certifs/COA/objectifs.md` §3 : `iac_deb` ⇢ déploiement Kolla-Ansible (inventaire, variables et
+playbooks Ansible lus et modifiés dès la première fiche). Les arêtes `linux_conf`, `reseau_conf`, `proxmox_conf` →
+`openstack_deb` et `iac_conf` → `openstack_conf` sont celles du graphe de référence (§2).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  linux_conf[linux_conf]:::ref
+  reseau_conf[reseau_conf]:::ref
+  proxmox_conf[proxmox_conf]:::ref
+  iac_deb[iac_deb]:::ref
+  iac_conf[iac_conf]:::ref
+  openstack_deb[openstack_deb]:::ref
+  openstack_conf[openstack_conf]:::ref
+  openstack_exp[openstack_exp]:::ref
+
+  os01["openstack/01-deployer-openstack-kolla-ansible (déb.)"]:::plandeb
+  os02["openstack/02-keystone-domaines-projets-utilisateurs-roles (déb.)"]:::plandeb
+  os03["openstack/03-glance-images (déb.)"]:::plandeb
+  os04["openstack/04-neutron-reseaux-sous-reseaux-routeurs (déb.)"]:::plandeb
+  os05["openstack/05-nova-flavors-instances-acces-ssh (déb.)"]:::plandeb
+  os06["openstack/06-neutron-security-groups-ports-quotas (conf.)"]:::plan
+  os07["openstack/07-nova-consoles-snapshots-quotas (conf.)"]:::plan
+  os08["openstack/08-cinder-volumes-snapshots-sauvegardes (conf.)"]:::plan
+  os09["openstack/09-swift-conteneurs-et-acl (conf.)"]:::plan
+  os10["openstack/10-keystone-policies-et-regles-d-acces (conf.)"]:::plan
+  s_coa["scenarios/NN-coa-livrer-un-projet-locataire (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  linux_conf --> openstack_deb
+  reseau_conf --> openstack_deb
+  proxmox_conf --> openstack_deb
+  openstack_deb --> os01
+  iac_deb -.-> os01
+  iac_conf --> openstack_conf
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  os01 --> os02 --> os03 --> os04 --> os05
+  os05 --> os06
+  os05 --> os07
+  os05 --> os08
+  os05 --> os09
+  os05 --> os10
+  os02 --> os10
+  os06 --> openstack_conf
+  os07 --> openstack_conf
+  os08 --> openstack_conf
+  os09 --> openstack_conf
+  os10 --> openstack_conf
+  openstack_conf --> s_coa --> openstack_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `openstack/01-deployer-openstack-kolla-ansible` | débutant | planifié | COA-01-05 (socle des 39 autres) | `linux_conf`, `reseau_conf`, `proxmox_conf` ; `iac_deb` recommandé |
+| `openstack/02-keystone-domaines-projets-utilisateurs-roles` | débutant | planifié | COA-01-01, 01-02, 01-03, 01-05 | `openstack/01-deployer-openstack-kolla-ansible` |
+| `openstack/03-glance-images` | débutant | planifié | COA-06-01 à 06-05 | `openstack/02-keystone-domaines-projets-utilisateurs-roles` |
+| `openstack/04-neutron-reseaux-sous-reseaux-routeurs` | débutant | planifié | COA-03-01 à 03-05, 03-11 | `openstack/03-glance-images` |
+| `openstack/05-nova-flavors-instances-acces-ssh` | débutant | planifié | COA-02-01 à 02-06, 03-10 à 03-13 | `openstack/04-neutron-reseaux-sous-reseaux-routeurs` |
+| `openstack/06-neutron-security-groups-ports-quotas` | confirmé | planifié | COA-03-06 à 03-10, 02-06 | `openstack/05-nova-flavors-instances-acces-ssh` |
+| `openstack/07-nova-consoles-snapshots-quotas` | confirmé | planifié | COA-02-02, 02-07, 02-08, 02-09 | `openstack/05-nova-flavors-instances-acces-ssh` |
+| `openstack/08-cinder-volumes-snapshots-sauvegardes` | confirmé | planifié | COA-04-01 à 04-06 | `openstack/05-nova-flavors-instances-acces-ssh` ; Swift activé |
+| `openstack/09-swift-conteneurs-et-acl` | confirmé | planifié | COA-05-01, 05-02 | `openstack/05-nova-flavors-instances-acces-ssh` ; Swift activé |
+| `openstack/10-keystone-policies-et-regles-d-acces` | confirmé | planifié | COA-01-04 | `openstack/02-keystone-domaines-projets-utilisateurs-roles`, `openstack/05-nova-flavors-instances-acces-ssh` |
+| `scenarios/NN-coa-livrer-un-projet-locataire` | expert | planifié | COA (40 compétences) | les dix fiches ci-dessus |
