@@ -1,0 +1,30 @@
+# Profil AppArmor du service lecteur (fiche securite/01).
+# Installé dans /etc/apparmor.d/usr.local.bin.lecteur ; chargé en complain par host-livre.sh, à passer en enforce.
+# Le script est interprété par bash : l'interpréteur hérite du profil (ix), les outils aussi.
+abi <abi/4.0>,
+include <tunables/global>
+
+/usr/local/bin/lecteur {
+  include <abstractions/base>
+  include <abstractions/bash>
+
+  # le script lui-même et son interpréteur
+  /usr/local/bin/lecteur r,
+  /{usr/,}bin/bash ix,
+
+  # outils appelés par le script, confinés avec lui
+  /{usr/,}bin/wc ix,
+  /{usr/,}bin/cat ix,
+  /{usr/,}bin/basename ix,
+  /{usr/,}bin/sleep ix,
+
+  # données légitimes : lecture seule du répertoire de travail
+  /var/lib/lecteur/ r,
+  /var/lib/lecteur/*.txt r,
+
+  # tout le reste est implicitement refusé ; on rend le refus explicite et journalisé pour la démo
+  deny /etc/shadow r,
+  deny /etc/gshadow r,
+  deny /root/** rw,
+  deny /home/** rw,
+}

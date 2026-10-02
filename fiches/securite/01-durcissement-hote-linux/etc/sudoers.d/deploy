@@ -1,0 +1,5 @@
+# Droit sudo de deploy, et rien d'autre (fiche securite/01, section 2).
+# À installer avec : install -m 0440 deploy /etc/sudoers.d/deploy ; vérifier : visudo -cf /etc/sudoers.d/deploy
+# Chemin absolu obligatoire, argument exact : `systemctl restart demo-app.service` passe, `systemctl restart ssh` ne passe pas.
+Cmnd_Alias DEMO_APP = /usr/bin/systemctl restart demo-app.service, /usr/bin/systemctl status demo-app.service
+deploy ALL=(root) NOPASSWD: DEMO_APP

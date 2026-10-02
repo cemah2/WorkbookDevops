@@ -566,3 +566,109 @@ flowchart TB
 | `reseau/15-cilium-bgp-egress-gateway` | expert | planifié | CCA-08-01, 08-02 | `reseau_conf` (les quatre fiches confirmé), `proxmox_conf` (recommandé) |
 | `reseau/16-cilium-cluster-mesh` | expert | planifié | CCA-06-01, 06-02 | `reseau_conf`, `reseau/15-cilium-bgp-egress-gateway` (recommandé) |
 | `scenarios/NN-plateforme-reseau-cilium` | expert | planifié | CCA (28 compétences), CKA-03-02, 03-04, CKS-01-01, 04-04 (à confirmer) | les sept fiches ci-dessus |
+
+### 6.6 CKS (certifs/CKS/objectifs.md, 2026-10-02)
+
+Quatorze fiches `securite` et un scénario. Une seule fiche débutant (`securite_deb`, hôte Linux), treize fiches
+confirmé sous `securite_conf` (bloc CKA acquis), le scénario sous `securite_exp`.
+Arêtes inter-domaines nouvelles, justifiées dans `certifs/CKS/objectifs.md` §4 : `services_deb` → F5 (PKI interne
+step-ca et cert-manager pour l'Ingress TLS), `reseau_conf` ⇢ F4 et F10 (sélecteurs réseau, capture sur le VLAN overlay),
+`observabilite_deb` ⇢ F13 (sorties Falco vers Loki/Prometheus), `gitops_deb` ⇢ F11 (pipeline de build Argo Workflows).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef deb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  linux_deb[linux_deb]:::ref
+  reseau_deb[reseau_deb]:::ref
+  reseau_conf[reseau_conf]:::ref
+  kubernetes_conf[kubernetes_conf]:::ref
+  services_deb[services_deb]:::ref
+  observabilite_deb[observabilite_deb]:::ref
+  gitops_deb[gitops_deb]:::ref
+  securite_deb[securite_deb]:::ref
+  securite_conf[securite_conf]:::ref
+  securite_exp[securite_exp]:::ref
+
+  s01["securite/01-durcissement-hote-linux (déb., rédigé)"]:::deb
+  s02["securite/02-rbac-serviceaccounts-moindre-privilege (conf.)"]:::plan
+  s03["securite/03-api-server-acces-restreint-upgrade (conf.)"]:::plan
+  s04["securite/04-network-policies-deny-par-defaut (conf.)"]:::plan
+  s05["securite/05-ingress-tls-metadata-binaires (conf.)"]:::plan
+  s06["securite/06-cis-benchmark-kube-bench (conf.)"]:::plan
+  s07["securite/07-pod-security-standards-securitycontext (conf.)"]:::plan
+  s08["securite/08-apparmor-seccomp-pods (conf.)"]:::plan
+  s09["securite/09-secrets-chiffrement-etcd (conf.)"]:::plan
+  s10["securite/10-isolation-sandbox-chiffrement-pod-a-pod (conf.)"]:::plan
+  s11["securite/11-images-minimales-sbom-signature-registres (conf.)"]:::plan
+  s12["securite/12-analyse-statique-kubesec-kubelinter (conf.)"]:::plan
+  s13["securite/13-falco-detection-runtime (conf.)"]:::plan
+  s14["securite/14-audit-logs-immutabilite (conf.)"]:::plan
+  s_cks["scenarios/NN-durcir-un-cluster-livre (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  linux_deb --> securite_deb
+  securite_deb --> s01
+  reseau_deb -.-> s01
+  kubernetes_conf --> s02
+  kubernetes_conf --> s03
+  kubernetes_conf --> s04
+  kubernetes_conf --> s05
+  kubernetes_conf --> s07
+  kubernetes_conf --> s09
+  services_deb --> s05
+  reseau_conf -.-> s04
+  reseau_conf -.-> s10
+  observabilite_deb -.-> s13
+  gitops_deb -.-> s11
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  s01 -.-> s02
+  s01 --> s06
+  s01 --> s08
+  s02 --> s03
+  s02 --> s07
+  s02 --> s09
+  s03 --> s06
+  s03 --> s09
+  s03 --> s14
+  s04 --> s05
+  s04 --> s10
+  s07 --> s08
+  s07 --> s10
+  s07 --> s11
+  s07 --> s12
+  s07 --> s14
+  s08 --> s10
+  s08 --> s13
+  s11 --> s12
+  s05 --> securite_conf
+  s06 --> securite_conf
+  s09 --> securite_conf
+  s10 --> securite_conf
+  s12 --> securite_conf
+  s13 --> securite_conf
+  s14 --> securite_conf
+  securite_conf --> s_cks --> securite_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `securite/01-durcissement-hote-linux` | débutant | rédigé (brouillon) | CKS-03-01 à 03-04 (hôte), KCSA-02-04, 02-05 | `linux_deb` ; `reseau_deb` recommandé |
+| `securite/02-rbac-serviceaccounts-moindre-privilege` | confirmé | planifié | CKS-02-01, 02-02, KCSA-03-03, 02-10, CKA-05-01 | `kubernetes_conf` ; `securite/01` recommandé |
+| `securite/03-api-server-acces-restreint-upgrade` | confirmé | planifié | CKS-02-03, 02-04, KCSA-02-01, 02-10, CKA-05-04 | `securite/02`, `kubernetes_conf` |
+| `securite/04-network-policies-deny-par-defaut` | confirmé | planifié | CKS-01-01, KCSA-03-07, 03-05, 02-09, CKA-03-02 | `kubernetes_conf` ; `reseau_conf` recommandé |
+| `securite/05-ingress-tls-metadata-binaires` | confirmé | planifié | CKS-01-03 à 01-05, KCSA-05-05, 05-06, CKA-03-04, 03-05 | `securite/04`, `kubernetes_conf`, `services_deb` |
+| `securite/06-cis-benchmark-kube-bench` | confirmé | planifié | CKS-01-02, KCSA-02-01 à 02-08, 06-01, 06-04, CKA-04-02 | `securite/03`, `securite/01` |
+| `securite/07-pod-security-standards-securitycontext` | confirmé | planifié | CKS-04-01, 06-04, KCSA-03-01, 03-02, 05-07, CKA-02-05 | `securite/02`, `kubernetes_conf` |
+| `securite/08-apparmor-seccomp-pods` | confirmé | planifié | CKS-03-04, KCSA-02-05, 02-07 | `securite/01`, `securite/07` |
+| `securite/09-secrets-chiffrement-etcd` | confirmé | planifié | CKS-04-02, KCSA-03-04, 02-08, 04-06, CKA-02-02 | `securite/02`, `securite/03`, `kubernetes_conf` |
+| `securite/10-isolation-sandbox-chiffrement-pod-a-pod` | confirmé | planifié | CKS-04-03, 04-04, KCSA-01-04, 03-05, 05-04, 04-05 | `securite/04`, `securite/07`, `securite/08` ; `reseau_conf` recommandé |
+| `securite/11-images-minimales-sbom-signature-registres` | confirmé | planifié | CKS-05-01 à 05-03, KCSA-01-05, 05-01, 05-02, 06-03 | `securite/07` ; `gitops_deb` recommandé |
+| `securite/12-analyse-statique-kubesec-kubelinter` | confirmé | planifié | CKS-05-04, KCSA-01-06, 06-04 | `securite/07`, `securite/11` |
+| `securite/13-falco-detection-runtime` | confirmé | planifié | CKS-06-01 à 06-03, KCSA-04-04, 04-07, 05-03 | `securite/08`, `securite/07` ; `observabilite_deb` recommandé |
+| `securite/14-audit-logs-immutabilite` | confirmé | planifié | CKS-06-04, 06-05, KCSA-03-06, 04-02, CKA-04-04 | `securite/03`, `securite/07` |
+| `scenarios/NN-durcir-un-cluster-livre` | expert | planifié | CKS (26 compétences), KCSA-04-01 à 04-07 | les quatorze fiches ci-dessus |
