@@ -8,8 +8,31 @@ budget:
 vlans: [10, 30, 40]
 images:
   - ubuntu_lts
-variants: [kubeadm, talos, rke2, k3s]
-components: [kubernetes, kubeadm, containerd, cilium, metallb, envoy_gateway, argo_cd, argo_workflows, flux, prometheus, grafana, loki, velero]
+variants: [kubeadm, talos, rke2, k3s, bare]
+variant_notes:
+  bare: >-
+    VM Ubuntu préparées par cloud-init (paquets, sysctl, containerd, kubeadm installé mais jamais lancé), aucun cluster :
+    les fiches kubernetes/05, 06 et le scénario CKA construisent le cluster à la main (certifs/CKA/objectifs.md §2).
+components:
+  - kubernetes
+  - kubernetes_previous
+  - kubeadm
+  - cri_tools
+  - containerd
+  - kube_vip
+  - cilium
+  - gateway_api
+  - metrics_server
+  - metallb
+  - envoy_gateway
+  - longhorn
+  - argo_cd
+  - argo_workflows
+  - flux
+  - prometheus
+  - grafana
+  - loki
+  - velero
 network:
   pod_cidr: 10.244.0.0/16
   service_cidr: 10.96.0.0/12

@@ -118,3 +118,25 @@ activé, programme CCA). Envoy Gateway reste dans le profil comme variante pour 
 fonction absente de Cilium ; la fiche concernée le justifie en une ligne.
 Conséquence : les fiches exposent leurs UI par `Gateway` + `HTTPRoute` Cilium et un certificat cert-manager
 émis par la CA interne ; sur `kind`, l'exposition se fait par `port-forward` et la Gateway est une variante.
+
+## 2026-10-02 — VIP du control plane : kube-vip
+
+Sur `kubernetes-ha`, la VIP de l'API (`api_vip: 10.10.40.220`) est portée par kube-vip en static pod (mode ARP, VLAN 40),
+déposé dans `/etc/kubernetes/manifests` avant `kubeadm init`. C'est la méthode documentée par kubeadm pour la HA « stacked etcd »,
+sans VM ni service supplémentaire. HAProxy + keepalived est cité en lecture dans la fiche `kubernetes/05`, pas pratiqué.
+Conséquence : clé `kube_vip` dans `versions.yaml` ; le profil liste `kube_vip` dans `components`.
+
+## 2026-10-02 — Stockage dynamique sur `kubernetes-ha` : Longhorn seul, Rook-Ceph avec `ceph-3n`
+
+StorageClass par défaut du cluster `kubernetes-ha` levé seul : Longhorn (CSI, réplication sur les disques NVMe des workers).
+Quand `ceph-3n` est levé en même temps (combinaison autorisée), Rook-Ceph remplace Longhorn comme StorageClass par défaut
+et sert les chapitres Ceph, Velero et le scénario CKA. Sur `kind`, le `local-path-provisioner` embarqué suffit aux fiches débutant.
+Conséquence : `longhorn` ajouté à `components` du profil ; une fiche qui a besoin de RWX ou de snapshots CSI le dit et choisit Rook-Ceph.
+
+## 2026-10-02 — Variante `bare` du profil `kubernetes-ha`
+
+`lab up kubernetes-ha --variant bare` livre les six VM préparées (cloud-init : paquets, sysctl, containerd, kubeadm installé)
+sans lancer `kubeadm init` ni `join`. Les fiches `kubernetes/05`, `kubernetes/06` et le scénario CKA construisent le cluster à la main :
+c'est l'objet de l'examen. Les autres variantes (`kubeadm`, `talos`, `rke2`, `k3s`) livrent un cluster prêt.
+Conséquence : `variants` et `variant_notes` dans `labs/profiles/kubernetes-ha.yaml` ; la clé `kubernetes_previous` de `versions.yaml`
+donne la ligne n-1 installée par défaut en `bare`, pour que la mise à niveau soit praticable.

@@ -89,6 +89,17 @@ components:
     verification_detail: "dl.k8s.io stable.txt et stable-1.3x.txt ; github.com/kubernetes/kubernetes/releases"
     checked_on: "2026-10-02"
 
+  kubernetes_previous:
+    name: "Kubernetes, ligne précédente (n-1) pour les exercices de mise à niveau"
+    # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>1\.36\.\d+)$
+    version: "1.36.5"
+    note: "fiches kubernetes/06 et scénario CKA : installer n-1 puis `kubeadm upgrade` vers `kubernetes` ; avancer la ligne (extractVersion) à la veille quand `kubernetes` change de mineure"
+    channel: stable
+    source_url: "https://dl.k8s.io/release/stable-1.36.txt"
+    verification: direct
+    verification_detail: "dl.k8s.io stable-1.36.txt"
+    checked_on: "2026-10-02"
+
   kubeadm:
     name: "kubeadm"
     # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
@@ -124,6 +135,49 @@ components:
     channel: stable
     source_url: "https://github.com/cilium/cilium/releases"
     verification: direct
+    checked_on: "2026-10-02"
+
+  cri_tools:
+    name: "cri-tools (crictl)"
+    # renovate: datasource=github-releases depName=kubernetes-sigs/cri-tools extractVersion=^v(?<version>.*)$
+    version: "1.37.0"
+    note: "même mineure que kubernetes ; paquet cri-tools de pkgs.k8s.io"
+    channel: stable
+    source_url: "https://github.com/kubernetes-sigs/cri-tools/releases"
+    verification: indirect
+    verification_detail: "api.github.com bloqué ; tags git via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  kube_vip:
+    name: "kube-vip (VIP du control plane, static pod ARP)"
+    # renovate: datasource=github-releases depName=kube-vip/kube-vip extractVersion=^v(?<version>.*)$
+    version: "1.2.4"
+    note: "VIP api_vip du profil kubernetes-ha (DECISIONS.md 2026-10-02)"
+    channel: stable
+    source_url: "https://github.com/kube-vip/kube-vip/releases"
+    verification: indirect
+    verification_detail: "api.github.com bloqué ; tags git via proxy.golang.org"
+    checked_on: "2026-10-02"
+
+  gateway_api:
+    name: "Gateway API (CRD, canal standard)"
+    # renovate: datasource=github-releases depName=kubernetes-sigs/gateway-api extractVersion=^v(?<version>.*)$
+    version: "1.6.2"
+    note: "CRD à installer avant Cilium/Envoy Gateway ; vérifier la version supportée par cilium avant de monter"
+    channel: stable
+    source_url: "https://github.com/kubernetes-sigs/gateway-api/releases"
+    verification: indirect
+    verification_detail: "api.github.com bloqué ; tags git via proxy.golang.org (module sigs.k8s.io/gateway-api)"
+    checked_on: "2026-10-02"
+
+  metrics_server:
+    name: "metrics-server (kubectl top, HPA)"
+    # renovate: datasource=github-releases depName=kubernetes-sigs/metrics-server extractVersion=^v(?<version>.*)$
+    version: "0.9.0"
+    channel: stable
+    source_url: "https://github.com/kubernetes-sigs/metrics-server/releases"
+    verification: indirect
+    verification_detail: "api.github.com bloqué ; tags git via proxy.golang.org"
     checked_on: "2026-10-02"
 
   helm:
