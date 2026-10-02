@@ -2,17 +2,18 @@
 code: CGOA
 titre: "CGOA — mapping compétences → chapitres"
 programme: "certifs/CGOA/programme.md (converti le 2026-10-02, curriculum CNCF consulté le 2026-03-14)"
-chapitres_existants: 2
+chapitres_existants: 3
 generated: 2026-10-02
-status: "2 chapitres rédigés (brouillons, partagés avec CAPA) ; 5 fiches CGOA à créer ; à mettre à jour à chaque PR de chapitre"
+status: "3 chapitres rédigés (brouillons : 2 partagés avec CAPA, G1) ; 4 fiches CGOA à créer ; à mettre à jour à chaque PR de chapitre"
 ---
 
 # CGOA — objectifs et couverture
 
 Mapping entre les 25 compétences de [`programme.md`](programme.md) et les chapitres du workbook.
-État au 2026-10-02 : deux fiches rédigées (brouillons) couvrent une partie du vocabulaire et des principes
-(`fiches/gitops/01-argo-cd-fondamentaux.md`) et le lien CI / CD (`fiches/gitops/02-argo-workflows-fondamentaux.md`).
-Tout le reste est un trou. Ce fichier sert de plan de création ; chaque PR de chapitre remplit les colonnes
+État au 2026-10-02 : trois fiches rédigées (brouillons) : vocabulaire et principes vus par Argo CD
+(`fiches/gitops/01-argo-cd-fondamentaux.md`), lien CI / CD (`fiches/gitops/02-argo-workflows-fondamentaux.md`), et le
+référentiel OpenGitOps lui-même (`fiches/gitops/08-opengitops-principes-et-vocabulaire.md`, G1). Le reste est un trou. Ce fichier sert de
+plan de création ; chaque PR de chapitre remplit les colonnes
 « chapitre » et « exercices » et marque le chapitre « rédigé » dans la section 4.
 
 CGOA est **indépendant des outils** (le programme cite Argo CD et Flux comme exemples, pas comme objets d'examen).
@@ -23,8 +24,8 @@ et consacre une fiche entière au référentiel OpenGitOps que l'examen suit mot
 
 | Domaine | Poids | Compétences | Poids par compétence (hérité) | Couverture actuelle | Chapitres à créer |
 |---|---|---|---|---|---|
-| CGOA-01 GitOps Terminology | 20 % | 9 | 2,2 % | 6 sur 9 (F1, brouillon) | G1 |
-| CGOA-02 GitOps Principles | 30 % | 4 | 7,5 % | 2 sur 4 (F1, brouillon) | G1, G2 |
+| CGOA-01 GitOps Terminology | 20 % | 9 | 2,2 % | 9 sur 9 (F1, G1, brouillons) | — (G1 rédigé) |
+| CGOA-02 GitOps Principles | 30 % | 4 | 7,5 % | 4 sur 4 (F1, G1, brouillons) | G2 (côté Flux) |
 | CGOA-03 Related Practices | 16 % | 4 | 4,0 % | 1 sur 4 (F3, brouillon) | G4, G5 |
 | CGOA-04 GitOps Patterns | 20 % | 4 | 5,0 % | 0 sur 4 | G3 (+ CAPA F6, F7, S1) |
 | CGOA-05 Tooling | 14 % | 4 | 3,5 % | 0 sur 4 | G2, G5 (+ CAPA F2) |
@@ -71,24 +72,24 @@ ou à `certifs/CAPA/objectifs.md` §4 (F1 à F7, S1). Les sections des fiches so
 
 | ID | Compétence | Poids | Chapitre existant | Exercices existants | Chapitre cible |
 |---|---|---|---|---|---|
-| CGOA-01-01 | Continuous | 2,2 % | — (implicite dans F1 S3, non cité) | — | G1 (définition OpenGitOps : « continu » ≠ instantané), G2 (`interval` Flux) |
-| CGOA-01-02 | Declarative Description | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S2 : démo, autonome 1-3, break-fix repo-credentials, défi 10 min | F1 (rédigé), consolidé par G1 |
-| CGOA-01-03 | Desired State | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S2 : démo, autonome 1-3, défi 10 min | F1 (rédigé), consolidé par G1 |
-| CGOA-01-04 | State Drift | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S3 : démo (drift manuel, `argocd app diff`), autonome 1-3, break-fix app-degraded | F1 (rédigé), G2 (drift côté Flux) |
-| CGOA-01-05 | State Reconciliation | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S3 : démo (`selfHeal`, `prune`), autonome 1-3, défi 10 min | F1 (rédigé), G2 (`flux reconcile`) |
-| CGOA-01-06 | GitOps Managed Software System | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S1 : autonome 1-3 (composants), break-fix repo-server-down, défi 20 min | F1 (rédigé), G1 (définition : runtimes, agents, politiques) |
-| CGOA-01-07 | State Store | 2,2 % | — | — | G1 (immutabilité du dépôt), G2 (Git, OCI, Bucket) |
-| CGOA-01-08 | Feedback Loop | 2,2 % | — | — | G1 (boucle de contrôle), G5 (notifications, métriques) |
-| CGOA-01-09 | Rollback | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S3 : démo (`argocd app history` / `rollback`), autonome 3 (`git revert` vs `rollback`) | F1 (rédigé), G1 (revert = rollback GitOps) |
+| CGOA-01-01 | Continuous | 2,2 % | `fiches/gitops/08-opengitops-principes-et-vocabulaire.md` (brouillon) | S3 : concept, démo (deux rythmes, `timeout.reconciliation`), autonome 1-3, break-fix reconciliation-stalled, défi 10 min | G1 (rédigé), G2 (`interval` Flux) |
+| CGOA-01-02 | Declarative Description | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S2 : démo, autonome 1-3, break-fix repo-credentials, défi 10 min ; G1 S1 : grille, autonome 1-3, défi 10 min | F1, G1 (rédigés) |
+| CGOA-01-03 | Desired State | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S2 : démo, autonome 1-3, défi 10 min ; G1 S1 : grille, autonome 1-3 | F1, G1 (rédigés) |
+| CGOA-01-04 | State Drift | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S3 : démo (drift manuel, `argocd app diff`), autonome 1-3, break-fix app-degraded ; G1 S3 : démo (dérive vs commit), autonome 3 | F1, G1 (rédigés), G2 (drift côté Flux) |
+| CGOA-01-05 | State Reconciliation | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S3 : démo (`selfHeal`, `prune`), autonome 1-3, défi 10 min ; G1 S3 : démo, autonome 1-3 | F1, G1 (rédigés), G2 (`flux reconcile`) |
+| CGOA-01-06 | GitOps Managed Software System | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S1 : autonome 1-3 (composants), break-fix repo-server-down, défi 20 min ; G1 S1 : autonome 1-2 (trois parties sur le lab) | F1, G1 (rédigés) |
+| CGOA-01-07 | State Store | 2,2 % | `fiches/gitops/08-opengitops-principes-et-vocabulaire.md` (brouillon) | S2 : démo (receive.deny*, clé lecture seule, reflog), autonome 1 (tableau de conformité), break-fix state-store-rewritten, défi 10 min | G1 (rédigé), G2 (OCI, Bucket) |
+| CGOA-01-08 | Feedback Loop | 2,2 % | `fiches/gitops/08-opengitops-principes-et-vocabulaire.md` (brouillon) | S3 : concept (schéma), démo (conditions, événements, `argocd_app_info`), autonome 1-2 | G1 (rédigé), G5 (notifications, Prometheus) |
+| CGOA-01-09 | Rollback | 2,2 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S3 : démo (`argocd app history` / `rollback`), autonome 3 ; G1 S2 : démo (revert), autonome 2, défi 10 min | F1, G1 (rédigés) |
 
 ### CGOA-02 — GitOps Principles (30 %)
 
 | ID | Compétence | Poids | Chapitre existant | Exercices existants | Chapitre cible |
 |---|---|---|---|---|---|
-| CGOA-02-01 | Declarative | 7,5 % | — (F1 S2 manipule une `Application` déclarative sans nommer le principe) | — | G1 |
-| CGOA-02-02 | Versioned and Immutable | 7,5 % | — | — | G1 |
-| CGOA-02-03 | Pulled Automatically | 7,5 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S3 : démo (`automated`, `selfHeal`), autonome 1-3 | F1 (rédigé), G1 (pull vs push mesuré), G2 (Flux) |
-| CGOA-02-04 | Continuously Reconciled | 7,5 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S3 : démo, autonome 1-3, défi 10 min | F1 (rédigé), G1, G2 (`interval`, `suspend`) |
+| CGOA-02-01 | Declarative | 7,5 % | `fiches/gitops/08-opengitops-principes-et-vocabulaire.md` (brouillon) | S1 : concept, grille (test 1), autonome 3, défi 10 min (textes A, B, C) | G1 (rédigé) |
+| CGOA-02-02 | Versioned and Immutable | 7,5 % | `fiches/gitops/08-opengitops-principes-et-vocabulaire.md` (brouillon) | S1 : grille (test 2) ; S2 : démo complète, autonome 1-3 (option signature), break-fix, défi 10 min | G1 (rédigé) |
+| CGOA-02-03 | Pulled Automatically | 7,5 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S3 : démo (`automated`, `selfHeal`), autonome 1-3 ; G1 S1 : grille (test 3), autonome 3, break-fix push-direct | F1, G1 (rédigés), G2 (Flux) |
+| CGOA-02-04 | Continuously Reconciled | 7,5 % | `fiches/gitops/01-argo-cd-fondamentaux.md` (brouillon) | S3 : démo, autonome 1-3, défi 10 min ; G1 S1 : grille (test 4) ; G1 S3 : démo, autonome 1-3, break-fix | F1, G1 (rédigés), G2 (`interval`, `suspend`) |
 
 ### CGOA-03 — Related Practices (16 %)
 
@@ -143,7 +144,7 @@ chemin principal un cluster `kind` sur une VM du profil `linux-base` (8 vCPU / 1
 Git du lab : dépôt bare SSH sur `core-jump01` derrière `git.lab.home.arpa`. Les durées sont des estimations
 d'apprentissage (lecture ≤ 20 %, le reste en manipulation), pas de rédaction.
 
-### G1 — `fiches/gitops/08-opengitops-principes-et-vocabulaire.md`
+### G1 — `fiches/gitops/08-opengitops-principes-et-vocabulaire.md` — rédigé (brouillon, 2026-10-02)
 
 - **Titre** : OpenGitOps — les quatre principes et le vocabulaire, prouvés sur le lab
 - **Niveau** : débutant (`gitops_deb`)
@@ -152,6 +153,7 @@ d'apprentissage (lecture ≤ 20 %, le reste en manipulation), pas de rédaction.
 - **Lab** : `kind` sur `linux-base` (réutilise le cluster de F1), variante `kubernetes-ha`. Clés `versions.yaml` : `argo_cd`, `kind`.
   Source de référence : `PRINCIPLES.md` et `GLOSSARY.md` du dépôt `open-gitops/documents`, version `v1.0.0` (lue en anglais :
   l'examen reprend ces définitions).
+- **Plan validé** : `docs/plans/gitops-08-opengitops-principes-et-vocabulaire.md` (2026-10-02).
 - **Temps** : 4 h
 - **3 exercices clés** :
   1. Audit de conformité : un pipeline qui fait `kubectl apply` depuis la CI (push) et une `Application` Argo CD (pull) déploient
@@ -282,7 +284,7 @@ d'apprentissage (lecture ≤ 20 %, le reste en manipulation), pas de rédaction.
 
 | Chapitre | Niveau | Profil de lab | Temps |
 |---|---|---|---|
-| G1 OpenGitOps principes et vocabulaire | débutant | linux-base (kind) ou kubernetes-ha | 4 h |
+| G1 OpenGitOps principes et vocabulaire (rédigé, brouillon) | débutant | linux-base (kind) ou kubernetes-ha | 4 h |
 | G2 Flux fondamentaux | débutant | linux-base (kind) ou kubernetes-ha + ceph-3n | 5 h |
 | G3 Architectures GitOps | confirmé | kubernetes-ha + linux-base (kind) | 6 h |
 | G4 Pratiques associées IaC / CaC / DevSecOps | confirmé | kubernetes-ha | 6 h |

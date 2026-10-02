@@ -280,8 +280,9 @@ flowchart TB
 
 ### 6.2 CGOA (certifs/CGOA/objectifs.md, 2026-10-02)
 
-Cinq fiches `gitops` numérotées `08` à `12`, à la suite des sept fiches CAPA ; la révision (quiz, examen blanc) et le scénario
-expert sont partagés avec CAPA. Arêtes inter-domaines nouvelles, justifiées dans `certifs/CGOA/objectifs.md` §4 :
+Cinq fiches `gitops` numérotées `08` à `12`, à la suite des sept fiches CAPA (la `08` est rédigée, brouillon) ; la révision
+(quiz, examen blanc) et le scénario expert sont partagés avec CAPA. Arêtes inter-domaines nouvelles, justifiées dans
+`certifs/CGOA/objectifs.md` §4 :
 `iac_deb` → G4 (OpenTofu et Ansible pilotés par Git), `securite_deb` ⇢ G4 (Kyverno, cosign, sops),
 `observabilite_deb` → G5 (métriques et alertes des moteurs GitOps), `ceph_deb` ⇢ G2 (`Bucket` Flux sur RGW).
 
@@ -306,7 +307,7 @@ flowchart TB
   argocd_fond["gitops/01-argo-cd-fondamentaux (déb., rédigé, CAPA)"]:::deb
   wf_fond["gitops/02-argo-workflows-fondamentaux (déb., rédigé, CAPA)"]:::deb
   argocd_helm["gitops/04-argo-cd-helm-kustomize-reconciliation (conf., CAPA)"]:::plan
-  g1["gitops/08-opengitops-principes-et-vocabulaire (déb.)"]:::plandeb
+  g1["gitops/08-opengitops-principes-et-vocabulaire (déb., rédigé)"]:::deb
   g2["gitops/09-flux-fondamentaux (déb.)"]:::plandeb
   g3["gitops/10-architectures-gitops-depots-reconciliateurs (conf.)"]:::plan
   g4["gitops/11-pratiques-associees-iac-cac-devsecops (conf.)"]:::plan
@@ -346,7 +347,7 @@ flowchart TB
 
 | Nœud | Niveau | Statut | Certifications | Prérequis |
 |---|---|---|---|---|
-| `gitops/08-opengitops-principes-et-vocabulaire` | débutant | planifié | CGOA-01-01, 01-06, 01-07, 01-08, 02-01, 02-02 (+ consolidation CGOA-01-02 à 01-05, 01-09, 02-03, 02-04) | `gitops/01-argo-cd-fondamentaux`, `gitops_deb` ; `iac_deb` recommandé |
+| `gitops/08-opengitops-principes-et-vocabulaire` | débutant | rédigé (brouillon) | CGOA-01-01, 01-06, 01-07, 01-08, 02-01, 02-02 (+ consolidation CGOA-01-02 à 01-05, 01-09, 02-03, 02-04) | `gitops/01-argo-cd-fondamentaux`, `gitops_deb` ; `iac_deb` recommandé |
 | `gitops/09-flux-fondamentaux` | débutant | planifié | CGOA-05-03, 05-02, 05-01, 01-05, 01-07, 02-03, 02-04 | `gitops/01-argo-cd-fondamentaux`, `kubernetes_deb` ; `gitops/08-…` et `ceph_deb` recommandés |
 | `gitops/10-architectures-gitops-depots-reconciliateurs` | confirmé | planifié | CGOA-04-04, 04-03, 04-01, 01-07, 05-02, CAPA-02-05 | `gitops/09-flux-fondamentaux`, `gitops/04-argo-cd-helm-kustomize-reconciliation`, `kubernetes_conf` |
 | `gitops/11-pratiques-associees-iac-cac-devsecops` | confirmé | planifié | CGOA-03-01, 03-02, 03-03 | `gitops/09-flux-fondamentaux`, `gitops/02-argo-workflows-fondamentaux`, `iac_deb`, `kubernetes_conf` ; `securite_deb` recommandé |
