@@ -2,7 +2,7 @@
 chapitre: "fiches/plateforme/01-backstage-premier-lancement.md"
 domaine: "plateforme"
 niveau: "débutant"
-statut: "validé le 2026-10-02 (recommandations des six questions retenues) — rédaction à démarrer après fusion de la PR #32"
+statut: "réalisé le 2026-10-02 — chapitre fiches/plateforme/01-backstage-premier-lancement.md (brouillon, à relire)"
 duree_estimee: "5 h"
 profil_lab: "linux-base (VM de développement 4 vCPU / 8 Go / 60 Go)"
 versions: "backstage, nodejs (à créer), ubuntu_lts"
