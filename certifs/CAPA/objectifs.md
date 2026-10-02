@@ -2,9 +2,9 @@
 code: CAPA
 titre: "CAPA — mapping compétences → chapitres"
 programme: "certifs/CAPA/programme.md (converti le 2026-10-02, curriculum CNCF consulté le 2026-03-14)"
-chapitres_existants: 1
+chapitres_existants: 2
 generated: 2026-10-02
-status: "1 chapitre rédigé (brouillon) sur 8 ; à mettre à jour à chaque PR de chapitre"
+status: "2 chapitres rédigés (brouillons) sur 8 ; à mettre à jour à chaque PR de chapitre"
 ---
 
 # CAPA — objectifs et couverture
@@ -37,7 +37,7 @@ Argo Events → scénario de bout en bout.
 
 À régler **avant** d'ouvrir la PR du premier chapitre (sinon le gabarit ne peut pas être rempli honnêtement) :
 
-- `versions.yaml` : seule la clé `argo_cd` existe. Ajouter `argo_workflows`, `argo_rollouts`, `argo_events`
+- `versions.yaml` : les clés `argo_cd` et `argo_workflows` existent (la seconde depuis la PR de F3). Ajouter `argo_rollouts`, `argo_events`
   (dépôts `argoproj/argo-workflows`, `argoproj/argo-rollouts`, `argoproj/argo-events`, datasource `github-releases`)
   et une clé pour le dépôt d'artefacts S3 des Workflows (`minio`, ou réutiliser Ceph RGW via `rook`).
   Passe par la veille (`prompts/07-veille.md`) ou par la PR du chapitre concerné.
@@ -54,10 +54,10 @@ Colonnes « chapitre » et « exercices » : `—` tant que rien n'existe. La co
 
 | ID | Compétence | Poids | Chapitre existant | Exercices existants | Chapitre cible |
 |---|---|---|---|---|---|
-| CAPA-01-01 | Understand Argo Workflow Fundamentals | 6,0 % | — | — | F3 |
+| CAPA-01-01 | Understand Argo Workflow Fundamentals | 6,0 % | `fiches/gitops/02-argo-workflows-fondamentaux.md` (brouillon) | S1 : démo, autonome 1-3, break-fix controller-down, défi 15 min ; S3 : break-fix image-pull et quota | F3 (rédigé) |
 | CAPA-01-02 | Generating and Consuming Artifacts | 6,0 % | — | — | F4 |
 | CAPA-01-03 | Understand Argo Workflow Templates | 6,0 % | — | — | F4 |
-| CAPA-01-04 | Understand the Argo Workflow Spec | 6,0 % | — | — | F3 |
+| CAPA-01-04 | Understand the Argo Workflow Spec | 6,0 % | `fiches/gitops/02-argo-workflows-fondamentaux.md` (brouillon) | S2 : démo, autonome 1-3, break-fix rbac, défi 10 min ; S3 : démo, autonome 1-3, défi 10 min | F3 (rédigé) |
 | CAPA-01-05 | Work with DAG (Directed-Acyclic Graphs) | 6,0 % | — | — | F4 |
 | CAPA-01-06 | Run Data Processing Jobs with Argo Workflows | 6,0 % | — | — | F5 |
 
@@ -148,13 +148,15 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Break-fix** : `break/gitops/04-argocd-sync-loop.sh` (champ muté par un contrôleur, Application jamais `Synced`).
 - **Défi chronométré** : passer une app Kustomize de `dev` à `prod` par PR, sync vérifiée, en moins de 15 min.
 
-### F3 — `fiches/gitops/02-argo-workflows-fondamentaux.md`
+### F3 — `fiches/gitops/02-argo-workflows-fondamentaux.md` — rédigé (brouillon, 2026-10-02)
 
 - **Titre** : Argo Workflows — installer, écrire et lancer un premier workflow
 - **Niveau** : débutant (`gitops_deb`)
 - **Couvre** : CAPA-01-01, CAPA-01-04
 - **Prérequis** : `kubernetes_deb` (Pods, Jobs, ServiceAccount, RBAC de base)
-- **Lab** : `kubernetes-ha` ; variante légère `kind` sur `linux-base`. Clé `versions.yaml` : `argo_workflows` (à créer, §2).
+- **Lab** : `kind` sur `linux-base` (chemin principal), variante `kubernetes-ha`.
+  Clés `versions.yaml` : `argo_workflows`, `kind`, `cilium`, `cert_manager`.
+- **Plan validé** : `docs/plans/gitops-02-argo-workflows-fondamentaux.md` (2026-10-02).
 - **Temps** : 5 h
 - **3 exercices clés** :
   1. Installer le contrôleur et le serveur Argo Workflows, configurer `argo` CLI, lancer `hello-world`, lire les logs,
@@ -163,7 +165,8 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
      séquentiels / parallèles ; passer des `parameters` d'entrée et de sortie — CAPA-01-04.
   3. Ajouter `retryStrategy`, `activeDeadlineSeconds`, `ttlStrategy`, `podGC`, limites de ressources, ServiceAccount dédié ;
      observer l'effet de chaque champ avec `argo get` et `kubectl get pods` — CAPA-01-04.
-- **Break-fix** : `break/gitops/02-argo-workflows-rbac.sh` (ServiceAccount sans droit `workflowtaskresults`, pods en `Error`).
+- **Break-fix** : `break/gitops/02-argo-workflows-rbac.sh` (ServiceAccount sans droit `workflowtaskresults`, nœuds en `Error`),
+  `02-argo-workflows-controller-down.sh`, `02-argo-workflows-image-pull.sh`, `02-argo-workflows-quota.sh` (optionnel).
 - **Défi chronométré** : écrire et faire passer un workflow à trois étapes avec paramètres en moins de 10 min.
 
 ### F4 — `fiches/gitops/03-argo-workflows-artefacts-templates-dag.md`
@@ -263,7 +266,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 |---|---|---|---|
 | F1 Argo CD fondamentaux (rédigé, brouillon) | débutant | linux-base (kind) ou kubernetes-ha | 5 h |
 | F2 Argo CD Helm/Kustomize/réconciliation | confirmé | kubernetes-ha | 6 h |
-| F3 Argo Workflows fondamentaux | débutant | kubernetes-ha (ou kind) | 5 h |
+| F3 Argo Workflows fondamentaux (rédigé, brouillon) | débutant | linux-base (kind) ou kubernetes-ha | 5 h |
 | F4 Argo Workflows artefacts/templates/DAG | confirmé | kubernetes-ha + ceph-3n | 7 h |
 | F5 Argo Workflows traitement de données | confirmé | kubernetes-ha | 4 h |
 | F6 Argo Rollouts | confirmé | kubernetes-ha | 6 h |
