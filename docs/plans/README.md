@@ -7,3 +7,4 @@ La session de rédaction (`prompts/03-redaction-chapitre.md`) le lit en premier.
 | Plan | Chapitre | Statut |
 |---|---|---|
 | `gitops-01-argo-cd-fondamentaux.md` | `fiches/gitops/01-argo-cd-fondamentaux.md` | réalisé le 2026-10-02 (brouillon, à relire) |
+| `reseau-10-cilium-installation-architecture.md` | `fiches/reseau/10-cilium-installation-architecture.md` | proposé le 2026-10-02, en attente de validation |
