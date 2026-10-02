@@ -135,3 +135,11 @@ AS 65000 ; nœuds en AS 65001 sur le VLAN 40). kube-proxy n'est pas installé (`
 Cilium est en `kubeProxyReplacement`. MetalLB reste dans le profil comme variante (annonce L2, comparaison dans la fiche BGP).
 Conséquence : `versions.yaml` gagne `cilium_cli`, `hubble` et `gateway_api` ; `core-rtr01` porte le plugin FRR ;
 `lab up kubernetes-ha` devra configurer le voisin BGP sur OPNsense.
+
+## 2026-10-02 — VM `kind` du profil `linux-base` : `lx01` à 4 vCPU / 8 Go / 60 Go
+
+Les fiches débutant Kubernetes et GitOps tournent sur un cluster `kind` à trois nœuds (plus Cilium) hébergé sur `linux-base-lx01`.
+Les fiches `gitops/01` et `02` supposaient déjà 4 vCPU / 8 Go / 60 Go alors que le profil donnait 2 vCPU / 4 Go / 40 Go à `lx01`.
+Le profil est aligné : `lx01` passe à 4 vCPU / 8 Go / 60 Go, budget `linux-base` à 10 vCPU / 20 Go / 200 Go.
+Conséquence : `linux-base` + `kubernetes-ha` restent combinables (20 + 48 Go, plus 8 Go d'hôte et 8 Go de `core`, soit 84 Go ≤ 128) ;
+la VM `kind` n'est pas un profil à part, elle vit dans `linux-base`.

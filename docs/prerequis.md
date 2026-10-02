@@ -566,3 +566,103 @@ flowchart TB
 | `reseau/15-cilium-bgp-egress-gateway` | expert | planifié | CCA-08-01, 08-02 | `reseau_conf` (les quatre fiches confirmé), `proxmox_conf` (recommandé) |
 | `reseau/16-cilium-cluster-mesh` | expert | planifié | CCA-06-01, 06-02 | `reseau_conf`, `reseau/15-cilium-bgp-egress-gateway` (recommandé) |
 | `scenarios/NN-plateforme-reseau-cilium` | expert | planifié | CCA (28 compétences), CKA-03-02, 03-04, CKS-01-01, 04-04 (à confirmer) | les sept fiches ci-dessus |
+
+### 6.6 CKAD (certifs/CKAD/objectifs.md, 2026-10-02)
+
+Treize fiches `kubernetes` (sept débutant, six confirmé) et un scénario ; la première est rédigée (brouillon, 2026-10-02). Ces nœuds forment
+le contenu de `kubernetes_deb` et de `kubernetes_conf`, partagé avec CKA et KCNA (la cartographie CKA réutilise les nœuds
+communs et prend les numéros suivants). Arêtes inter-domaines nouvelles, justifiées dans `certifs/CKAD/objectifs.md` §4 :
+`securite_deb` ⇢ K8 (capabilities, seccomp côté hôte), `ceph_deb` ⇢ K5 (variante CSI Rook),
+K11 → `gitops/04-argo-cd-helm-kustomize-reconciliation` (Argo CD rend des sources Helm/Kustomize, il faut les connaître avant).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef deb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+  classDef plan fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef planconf fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  linux_deb[linux_deb]:::ref
+  linux_conf[linux_conf]:::ref
+  reseau_deb[reseau_deb]:::ref
+  reseau_conf[reseau_conf]:::ref
+  kubernetes_deb[kubernetes_deb]:::ref
+  kubernetes_conf[kubernetes_conf]:::ref
+  kubernetes_exp[kubernetes_exp]:::ref
+  securite_deb[securite_deb]:::ref
+  ceph_deb[ceph_deb]:::ref
+  argocd_helm["gitops/04-argo-cd-helm-kustomize-reconciliation (conf., §6.1)"]:::ref
+
+  k1["kubernetes/01-kubectl-pods-namespaces (déb., rédigé)"]:::deb
+  k2["kubernetes/02-images-conteneurs-podman (déb.)"]:::plan
+  k3["kubernetes/03-workloads-deployment-daemonset-job-cronjob (déb.)"]:::plan
+  k5["kubernetes/05-pods-multi-conteneurs-volumes (déb.)"]:::plan
+  k6["kubernetes/06-configmaps-secrets-serviceaccounts-rbac (déb.)"]:::plan
+  k7["kubernetes/07-requests-limits-quotas-limitrange (déb.)"]:::plan
+  k4["kubernetes/04-rolling-update-blue-green-canary (conf.)"]:::planconf
+  k8["kubernetes/08-securite-applicative-securitycontext-admission (conf.)"]:::planconf
+  k9["kubernetes/09-probes-monitoring-logs-debugging (conf.)"]:::planconf
+  k10["kubernetes/10-crd-operateurs-deprecations-api (conf.)"]:::planconf
+  k11["kubernetes/11-helm-kustomize (conf.)"]:::planconf
+  k12["kubernetes/12-services-dns-ingress (conf.)"]:::planconf
+  k13["kubernetes/13-networkpolicies (conf.)"]:::planconf
+  s_shop["scenarios/NN-lab-shop-de-l-image-au-canary (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  linux_conf --> kubernetes_deb
+  reseau_deb --> kubernetes_deb
+  kubernetes_deb --> k1
+  kubernetes_deb --> k2
+  linux_deb --> k2
+  k1 -.-> k2
+  securite_deb -.-> k8
+  ceph_deb -.-> k5
+  reseau_conf --> k12
+  reseau_conf --> k13
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  k1 --> k3
+  k3 --> k5
+  k3 --> k6
+  k3 --> k7
+  k3 --> k12
+  k6 --> k12
+  k12 --> k4
+  k12 --> k13
+  k6 --> k8
+  k7 --> k8
+  k5 --> k9
+  k6 --> k9
+  k7 --> k9
+  k12 --> k9
+  k6 --> k10
+  k9 --> k10
+  k4 --> k11
+  k6 --> k11
+  k4 --> kubernetes_conf
+  k8 --> kubernetes_conf
+  k9 --> kubernetes_conf
+  k10 --> kubernetes_conf
+  k11 --> kubernetes_conf
+  k13 --> kubernetes_conf
+  k11 --> argocd_helm
+  kubernetes_conf --> s_shop --> kubernetes_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `kubernetes/01-kubectl-pods-namespaces` | débutant | rédigé (brouillon) | CKAD-01-02 (Pods), 03-03, 03-04 ; CKA-02-04, 04-04, KCNA-01-01 | `linux_conf`, `reseau_deb` |
+| `kubernetes/02-images-conteneurs-podman` | débutant | planifié | CKAD-01-01 ; CKS-05-01, KCNA-01-04 | `linux_deb` ; K1 recommandé |
+| `kubernetes/03-workloads-deployment-daemonset-job-cronjob` | débutant | planifié | CKAD-01-02 ; CKA-02-04 | K1 |
+| `kubernetes/05-pods-multi-conteneurs-volumes` | débutant | planifié | CKAD-01-03, 01-04 ; CKA-01-02, 01-03 | K3 ; `ceph_deb` recommandé (variante Rook) |
+| `kubernetes/06-configmaps-secrets-serviceaccounts-rbac` | débutant | planifié | CKAD-04-02 (partiel), 04-05, 04-06, 04-07 ; CKA-02-02, CKS-02-01, 02-02, 04-02 | K3 |
+| `kubernetes/07-requests-limits-quotas-limitrange` | débutant | planifié | CKAD-04-03, 04-04 ; CKA-02-05 | K3 |
+| `kubernetes/04-rolling-update-blue-green-canary` | confirmé | planifié | CKAD-02-01, 02-02 ; CKA-02-01 | K3, K12 |
+| `kubernetes/08-securite-applicative-securitycontext-admission` | confirmé | planifié | CKAD-04-02 (admission), 04-08 ; CKS-03-04, 04-01 | K6, K7 ; `securite_deb` recommandé |
+| `kubernetes/09-probes-monitoring-logs-debugging` | confirmé | planifié | CKAD-03-02 à 03-05 ; CKA-04 | K5, K6, K7, K12 |
+| `kubernetes/10-crd-operateurs-deprecations-api` | confirmé | planifié | CKAD-03-01, 04-01 | K6, K9 |
+| `kubernetes/11-helm-kustomize` | confirmé | planifié | CKAD-02-03, 02-04 ; CAPA-02-04 (prépare `gitops/04`) | K4, K6 |
+| `kubernetes/12-services-dns-ingress` | confirmé | planifié | CKAD-05-02, 05-03 ; CKA-03-03, 03-05, 03-06, CKS-01-03 | K3, K6, `reseau_conf` |
+| `kubernetes/13-networkpolicies` | confirmé | planifié | CKAD-05-01 ; CKA-03-02, CKS-01-01 | K12, `reseau_conf` |
+| `scenarios/NN-lab-shop-de-l-image-au-canary` | expert | planifié | CKAD (24 compétences) ; CKA-02-01, 03-02, 03-03, CKS-04-01, 05-01 | les treize fiches ci-dessus |
