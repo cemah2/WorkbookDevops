@@ -210,7 +210,8 @@ flowchart LR
 
 ## 6. Chapitres planifiés par certification
 
-Nœuds `<domaine>/<slug>` ajoutés par les cartographies. Statut `planifié` tant que le chapitre n'existe pas.
+Nœuds `<domaine>/<slug>` ajoutés par les cartographies. Statut `planifié` tant que le chapitre n'existe pas,
+`rédigé` ensuite (le nœud prend la couleur de son niveau).
 Arête pleine = prérequis obligatoire ; arête pointillée = recommandé.
 
 ### 6.1 CAPA (certifs/CAPA/objectifs.md, 2026-10-02)
@@ -221,6 +222,7 @@ Sept fiches `gitops` et un scénario. Arêtes inter-domaines nouvelles, justifi�
 ```mermaid
 flowchart TB
   classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef deb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
   classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
   classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
 
@@ -233,7 +235,7 @@ flowchart TB
   observabilite_deb[observabilite_deb]:::ref
   ceph_deb[ceph_deb]:::ref
 
-  argocd_fond["gitops/01-argo-cd-fondamentaux (déb.)"]:::plan
+  argocd_fond["gitops/01-argo-cd-fondamentaux (déb., rédigé)"]:::deb
   argocd_helm["gitops/04-argo-cd-helm-kustomize-reconciliation (conf.)"]:::plan
   wf_fond["gitops/02-argo-workflows-fondamentaux (déb.)"]:::plan
   wf_art["gitops/03-argo-workflows-artefacts-templates-dag (conf.)"]:::plan
@@ -267,7 +269,7 @@ flowchart TB
 
 | Nœud | Niveau | Statut | Certifications | Prérequis |
 |---|---|---|---|---|
-| `gitops/01-argo-cd-fondamentaux` | débutant | planifié | CAPA-02-01 à 02-03 | `kubernetes_deb`, `iac_deb` |
+| `gitops/01-argo-cd-fondamentaux` | débutant | rédigé (brouillon) | CAPA-02-01 à 02-03, CGOA-01-02 à 01-06, 01-09, 02-03, 02-04 | `kubernetes_deb`, `iac_deb` |
 | `gitops/04-argo-cd-helm-kustomize-reconciliation` | confirmé | planifié | CAPA-02-04, 02-05 | `gitops/01-argo-cd-fondamentaux`, `kubernetes_conf` |
 | `gitops/02-argo-workflows-fondamentaux` | débutant | planifié | CAPA-01-01, 01-04 | `kubernetes_deb` |
 | `gitops/03-argo-workflows-artefacts-templates-dag` | confirmé | planifié | CAPA-01-02, 01-03, 01-05 | `gitops/02-argo-workflows-fondamentaux`, `ceph_deb` (recommandé) |
