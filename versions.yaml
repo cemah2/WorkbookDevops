@@ -237,7 +237,8 @@ components:
   # ---------------------------------------------------------------- OpenStack
   openstack:
     name: "OpenStack (série cible du lab)"
-    # renovate: datasource=endoflife-date depName=openstack
+    # Pas d'annotation Renovate : la série est fixée par l'examen COA (channel: exam) et endoflife.date
+    # n'expose pas de produit « openstack ». Mise à jour manuelle lors de la veille.
     version: "2026.1"
     release_name: "Gazpacho"
     latest_released: "2026.2 Hibiscus, publiée le 2026-09-30 (maintained) ; 2027.1 Indri en développement"
