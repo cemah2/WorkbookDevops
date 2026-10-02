@@ -280,7 +280,7 @@ flowchart TB
 
 ### 6.2 CKAD (certifs/CKAD/objectifs.md, 2026-10-02)
 
-Treize fiches `kubernetes` (sept débutant, six confirmé) et un scénario. `fiches/kubernetes/` était vide : ces nœuds forment
+Treize fiches `kubernetes` (sept débutant, six confirmé) et un scénario ; la première est rédigée (brouillon, 2026-10-02). Ces nœuds forment
 le contenu de `kubernetes_deb` et de `kubernetes_conf`, partagé avec CKA et KCNA (la cartographie CKA réutilise les nœuds
 communs et prend les numéros suivants). Arêtes inter-domaines nouvelles, justifiées dans `certifs/CKAD/objectifs.md` §4 :
 `securite_deb` ⇢ K8 (capabilities, seccomp côté hôte), `ceph_deb` ⇢ K5 (variante CSI Rook),
@@ -289,6 +289,7 @@ K11 → `gitops/04-argo-cd-helm-kustomize-reconciliation` (Argo CD rend des sour
 ```mermaid
 flowchart TB
   classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef deb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
   classDef plan fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
   classDef planconf fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
   classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
@@ -304,7 +305,7 @@ flowchart TB
   ceph_deb[ceph_deb]:::ref
   argocd_helm["gitops/04-argo-cd-helm-kustomize-reconciliation (conf., §6.1)"]:::ref
 
-  k1["kubernetes/01-kubectl-pods-namespaces (déb.)"]:::plan
+  k1["kubernetes/01-kubectl-pods-namespaces (déb., rédigé)"]:::deb
   k2["kubernetes/02-images-conteneurs-podman (déb.)"]:::plan
   k3["kubernetes/03-workloads-deployment-daemonset-job-cronjob (déb.)"]:::plan
   k5["kubernetes/05-pods-multi-conteneurs-volumes (déb.)"]:::plan
@@ -362,7 +363,7 @@ flowchart TB
 
 | Nœud | Niveau | Statut | Certifications | Prérequis |
 |---|---|---|---|---|
-| `kubernetes/01-kubectl-pods-namespaces` | débutant | planifié | CKAD-01-02 (Pods), 03-03, 03-04 ; KCNA-01-01 | `linux_conf`, `reseau_deb` |
+| `kubernetes/01-kubectl-pods-namespaces` | débutant | rédigé (brouillon) | CKAD-01-02 (Pods), 03-03, 03-04 ; CKA-02-04, 04-04, KCNA-01-01 | `linux_conf`, `reseau_deb` |
 | `kubernetes/02-images-conteneurs-podman` | débutant | planifié | CKAD-01-01 ; CKS-05-01, KCNA-01-04 | `linux_deb` ; K1 recommandé |
 | `kubernetes/03-workloads-deployment-daemonset-job-cronjob` | débutant | planifié | CKAD-01-02 ; CKA-02-04 | K1 |
 | `kubernetes/05-pods-multi-conteneurs-volumes` | débutant | planifié | CKAD-01-03, 01-04 ; CKA-01-02, 01-03 | K3 ; `ceph_deb` recommandé (variante Rook) |

@@ -1,0 +1,16 @@
+# fiches/kubernetes/01-kubectl-pods-namespaces — cluster kind de la série CKAD (réutilisé jusqu'à la fiche 13).
+# Usage : kind create cluster --name ckad-lab --config kind-config.yaml
+# Le CNI par défaut (kindnet) est désactivé : Cilium (versions.yaml, clé cilium) est installé juste après.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  disableDefaultCNI: true
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      # port-forward et NodePort joignables depuis l'extérieur de la VM (section 3)
+      - containerPort: 30080
+        hostPort: 30080
+        protocol: TCP
+  - role: worker
+  - role: worker

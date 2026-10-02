@@ -1,0 +1,19 @@
+question;réponse;tags
+Que contient un kubeconfig ?;Des clusters (URL + CA), des users (certificat ou token) et des contexts (cluster + user + namespace par défaut), plus current-context;kubectl,kubeconfig,ckad-03-03
+Commande pour changer de cluster à l'examen ?;kubectl config use-context <nom> ; vérifier avec kubectl config current-context;kubectl,kubeconfig,ckad-03-03
+Commande pour fixer le namespace par défaut du contexte courant ?;kubectl config set-context --current --namespace=<ns>;kubectl,namespace,ckad-03-03
+Comment obtenir le YAML d'un Pod sans le créer ?;kubectl run <nom> --image=<image> --restart=Never --dry-run=client -o yaml > pod.yaml;kubectl,pod,ckad-01-02
+Différence entre kubectl create et kubectl apply ?;create refuse un objet qui existe (AlreadyExists) ; apply crée ou met à jour (idempotent) et garde l'annotation last-applied-configuration;kubectl,ckad-01-02
+Que fait kubectl replace --force ?;Supprime l'objet puis le recrée depuis le fichier : nécessaire pour changer un champ immuable d'un Pod (env, command, volumes);kubectl,pod,ckad-01-02
+Quels champs d'un Pod vivant peut-on modifier ?;spec.containers[*].image, spec.initContainers[*].image, spec.activeDeadlineSeconds, ajout de tolerations, terminationGracePeriodSeconds (cas limité) ; le reste est immuable;pod,ckad-01-02
+Où se place le -- dans kubectl run ?;Après toutes les options de kubectl : kubectl run x --image=busybox --restart=Never -- sh -c 'sleep 10' ; tout ce qui suit -- est la commande du conteneur;kubectl,pod,ckad-01-02
+Option pour afficher les labels dans kubectl get ?;--show-labels (toutes) ou -L <clé> (une colonne par clé) ; -l <sélecteur> filtre;kubectl,labels,ckad-03-03
+Syntaxe d'un sélecteur de labels ensembliste ?;-l 'tier in (backend,data),app!=api' ; égalité : -l tier=backend;kubectl,labels,ckad-03-03
+Comment lister nom et image de chaque Pod avec jsonpath ?;kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.containers[0].image}{"\n"}{end}';kubectl,jsonpath,ckad-03-03
+Comment produire un tableau à colonnes choisies ?;kubectl get pods -o custom-columns='NAME:.metadata.name,IMAGE:.spec.containers[*].image' (-o name donne pod/<nom>);kubectl,ckad-03-03
+Documentation hors ligne des champs d'un objet ?;kubectl explain <ressource>.<chemin> ; --recursive pour l'arbre complet ; les enum et -required- sont indiqués;kubectl,ckad-03-03
+Quelles sont les phases d'un Pod ?;Pending, Running, Succeeded, Failed (et Unknown) ; CrashLoopBackOff n'est pas une phase mais une raison d'attente d'un conteneur;pod,ckad-03-05
+Commande qui donne la cause d'un CrashLoopBackOff ?;kubectl logs <pod> --previous (logs du conteneur qui vient de mourir) ; describe donne Last State: Terminated et Exit Code;pod,logs,ckad-03-04
+Où lire la cause d'un Pod Pending ?;kubectl describe pod <pod> (section Events, FailedScheduling) ou kubectl events --for pod/<pod> --types=Warning ; jamais dans logs (aucun conteneur créé);pod,events,ckad-03-05
+Suivre les logs d'un conteneur précis d'un Pod multi-conteneurs ?;kubectl logs <pod> -c <conteneur> -f --tail=20 ; --all-containers pour tous, -l <sélecteur> par label;logs,ckad-03-04
+Différence entre delete --now et delete --force --grace-period=0 ?;--now envoie le signal d'arrêt tout de suite (grace 1 s) ; --force --grace-period=0 supprime l'objet de l'API sans attendre le kubelet, réservé aux Pods coincés;kubectl,pod,ckad-03-05

@@ -1,0 +1,23 @@
+# fiches/kubernetes/01-kubectl-pods-namespaces — section 2, le Pod `api` écrit à la main après le dry-run.
+# Produit par : kubectl run api --image=nginx:1.29 --port=80 --labels=app=api,tier=backend --env=MODE=dev \
+#               --restart=Never -n shop --dry-run=client -o yaml
+# puis nettoyé (status: {}, resources: {} et creationTimestamp retirés). Le tag d'image suit la démo, pas versions.yaml :
+# nginx n'est pas un composant du lab, c'est une image d'exercice.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: api
+  namespace: shop
+  labels:
+    app: api
+    tier: backend
+spec:
+  restartPolicy: Never
+  containers:
+    - name: api
+      image: nginx:1.29
+      ports:
+        - containerPort: 80
+      env:
+        - name: MODE
+          value: dev

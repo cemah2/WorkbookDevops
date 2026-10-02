@@ -16,7 +16,7 @@ Règles :
 | Profil | VM | vCPU (alloués) | RAM | Disque | VLAN | Pour |
 |---|---|---|---|---|---|---|
 | `core` | 5 | 7 | 8 Go | 240 Go | lan, 10, 20, 50 | socle permanent (toujours actif) |
-| `linux-base` | 4 | 8 | 16 Go | 180 Go | 10 | Linux, réseau, LFCS, RHCSA/RHCE |
+| `linux-base` | 4 | 10 | 20 Go | 200 Go | 10 | Linux, réseau, LFCS, RHCSA/RHCE ; `lx01` porte le cluster `kind` des fiches débutant |
 | `kubernetes-ha` | 6 | 16 | 48 Go | 300 Go | 10, 30, 40 | Kubernetes HA kubeadm/Talos, Cilium, GitOps, observabilité |
 | `ceph-3n` | 3 | 12 | 48 Go | 60 Go + 3×200 Go OSD | 10, 20, 21 | Ceph, Rook, Velero/CSI |
 | `openstack-kolla` | 3 | 18 | 96 Go | 400 Go | 10, 20, 30, 40 | OpenStack Kolla-Ansible, COA |

@@ -1,9 +1,9 @@
 name: linux-base
-description: "Quatre VM Linux pour le socle (LFCS, RHCSA/RHCE, réseau, services de base)."
+description: "Quatre VM Linux pour le socle (LFCS, RHCSA/RHCE, réseau, services de base) ; lx01 porte aussi le cluster kind des fiches Kubernetes et GitOps débutant."
 budget:
-  vcpu: 8
-  ram_gb: 16
-  disk_gb: 180
+  vcpu: 10
+  ram_gb: 20
+  disk_gb: 200
   overcommit_ratio_max: 2.0
 vlans: [10]
 images:
@@ -14,11 +14,11 @@ can_run_with: [kubernetes-ha, ceph-3n, airgap]
 vms:
   - name: linux-base-lx01
     vmid: 1011
-    role: Ubuntu LTS (serveur générique, LFCS)
+    role: Ubuntu LTS (serveur générique, LFCS) + Docker et kind (DECISIONS.md 2026-10-02)
     image: ubuntu_lts
-    vcpu: 2
-    ram_gb: 4
-    disk_gb: 40
+    vcpu: 4
+    ram_gb: 8
+    disk_gb: 60
     storage: nvme
     nics: [10]
     ip: {mgmt: 10.10.10.11}
