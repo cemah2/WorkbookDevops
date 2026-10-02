@@ -1,16 +1,30 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":dependencyDashboard", ":semanticCommitsDisabled"],
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommitsDisabled"
+  ],
   "timezone": "Europe/Paris",
-  "schedule": ["before 6am on monday"],
-  "labels": ["versions"],
+  "schedule": [
+    "before 6am on monday"
+  ],
+  "labels": [
+    "versions"
+  ],
   "commitMessagePrefix": "versions:",
-  "enabledManagers": ["custom.regex", "github-actions", "pip_requirements"],
+  "enabledManagers": [
+    "custom.regex",
+    "github-actions",
+    "pip_requirements"
+  ],
   "customManagers": [
     {
       "customType": "regex",
       "description": "Lit les lignes '# renovate: datasource=… depName=…' qui précèdent 'version:' dans versions.yaml",
-      "managerFilePatterns": ["/^versions\\.yaml$/"],
+      "managerFilePatterns": [
+        "/^versions\\.yaml$/"
+      ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?\\s*\\n\\s*version: \"(?<currentValue>[^\"]+)\""
       ]
@@ -18,20 +32,48 @@
   ],
   "packageRules": [
     {
-      "matchFileNames": ["versions.yaml"],
+      "matchFileNames": [
+        "versions.yaml"
+      ],
       "groupName": "versions.yaml",
       "commitMessageTopic": "{{depName}}",
-      "prBodyNotes": ["Mettre à jour `checked_on` et relancer la veille (`prompts/07-veille.md`) avant de fusionner."]
+      "prBodyNotes": [
+        "Mettre à jour `checked_on` et relancer la veille (`prompts/07-veille.md`) avant de fusionner."
+      ]
     },
     {
-      "matchFileNames": ["versions.yaml"],
-      "matchDepNames": ["kubernetes/kubernetes", "hashicorp/terraform", "hashicorp/vault", "kolla-ansible", "kolla", "openstack"],
+      "matchFileNames": [
+        "versions.yaml"
+      ],
+      "matchDepNames": [
+        "ubuntu"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "description": "Ubuntu : rester sur la LTS courante (DECISIONS.md 2026-10-02) ; le passage à la LTS suivante se déclenche depuis le Dependency Dashboard",
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchFileNames": [
+        "versions.yaml"
+      ],
+      "matchDepNames": [
+        "kubernetes/kubernetes",
+        "hashicorp/terraform",
+        "hashicorp/vault",
+        "kolla-ansible",
+        "kolla",
+        "openstack"
+      ],
       "description": "Composants liés à une version d'examen (channel: exam) : PR séparée, jamais automerge",
       "groupName": "versions.yaml (versions d'examen)",
       "automerge": false
     },
     {
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "github-actions"
     }
   ]

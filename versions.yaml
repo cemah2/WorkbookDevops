@@ -45,7 +45,7 @@ components:
 
   ubuntu_lts:
     name: "Ubuntu LTS (image de référence du lab)"
-    # renovate: datasource=endoflife-date depName=ubuntu
+    # renovate: datasource=endoflife-date depName=ubuntu versioning=ubuntu
     version: "24.04"
     point_release: "24.04.5 LTS (noble), support standard jusqu'en mai 2029"
     newer_lts: "26.04.1 LTS (resolute), publiée avril 2026 ; bascule prévue quand Kolla-Ansible la supporte (DECISIONS.md 2026-10-02)"
