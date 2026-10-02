@@ -8,3 +8,4 @@ La session de rédaction (`prompts/03-redaction-chapitre.md`) le lit en premier.
 |---|---|---|
 | `gitops-01-argo-cd-fondamentaux.md` | `fiches/gitops/01-argo-cd-fondamentaux.md` | réalisé le 2026-10-02 (brouillon, à relire) |
 | `gitops-02-argo-workflows-fondamentaux.md` | `fiches/gitops/02-argo-workflows-fondamentaux.md` | réalisé le 2026-10-02 (brouillon, à relire) |
+| `openstack-01-deployer-openstack-kolla-ansible.md` | `fiches/openstack/01-deployer-openstack-kolla-ansible.md` | proposé le 2026-10-02, en attente de validation (4 questions ouvertes) |
