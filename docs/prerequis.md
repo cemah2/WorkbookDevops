@@ -277,3 +277,100 @@ flowchart TB
 | `gitops/05-argo-rollouts` | confirmé | planifié | CAPA-03-01 à 03-03 | `gitops/01-argo-cd-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
 | `gitops/07-argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/02-argo-workflows-fondamentaux`, `kubernetes_conf` |
 | `scenarios/NN-chaine-argo-bout-en-bout` | expert | planifié | CAPA (16 compétences), CGOA-04-01 à 04-04 | les sept fiches ci-dessus |
+
+### 6.2 CKA (certifs/CKA/objectifs.md, 2026-10-02)
+
+Douze fiches `kubernetes`, un scénario et un examen blanc. Aucune fiche `kubernetes` n'existe au 2026-10-02 ; les deux fiches `gitops`
+rédigées couvrent partiellement cinq compétences CKA (RBAC, NodePort, Gateway API en variante, logs, limites) et sont citées comme
+prérequis **recommandés** de K7, K9 et K10. Arêtes inter-domaines nouvelles, justifiées dans `certifs/CKA/objectifs.md` §4 :
+`ceph_deb` ⇢ K4 (variante Rook-Ceph sur `ceph-3n`), `iac_deb` ⇢ K5 (`lab up kubernetes-ha` sans Kubernetes, rôle Ansible de préparation
+des nœuds). Les arêtes `linux_conf` → K5/K11 et `reseau_conf` → K5/K9 précisent les arêtes de référence déjà présentes en §2.
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  linux_conf[linux_conf]:::ref
+  reseau_deb[reseau_deb]:::ref
+  reseau_conf[reseau_conf]:::ref
+  proxmox_deb[proxmox_deb]:::ref
+  iac_deb[iac_deb]:::ref
+  ceph_deb[ceph_deb]:::ref
+  kubernetes_deb[kubernetes_deb]:::ref
+  kubernetes_conf[kubernetes_conf]:::ref
+  kubernetes_exp[kubernetes_exp]:::ref
+  gitops01["gitops/01-argo-cd-fondamentaux (rédigé)"]:::ref
+  gitops02["gitops/02-argo-workflows-fondamentaux (rédigé)"]:::ref
+
+  k1["kubernetes/01-kubectl-pods-deployments (déb.)"]:::plandeb
+  k2["kubernetes/02-configuration-probes-ressources (déb.)"]:::plandeb
+  k3["kubernetes/03-services-endpoints-coredns (déb.)"]:::plandeb
+  k4["kubernetes/04-stockage-pv-pvc-storageclass (déb.)"]:::plandeb
+  k5["kubernetes/05-kubeadm-cluster-ha (conf.)"]:::plan
+  k6["kubernetes/06-cycle-de-vie-etcd-upgrade (conf.)"]:::plan
+  k7["kubernetes/07-rbac-comptes-de-service (conf.)"]:::plan
+  k8["kubernetes/08-ordonnancement-admission-autoscaling (conf.)"]:::plan
+  k9["kubernetes/09-network-policies-gateway-api-ingress (conf.)"]:::plan
+  k10["kubernetes/10-helm-kustomize-crd-operateurs (conf.)"]:::plan
+  k11["kubernetes/11-depannage-noeuds-control-plane (conf.)"]:::plan
+  k12["kubernetes/12-depannage-applications-reseau (conf.)"]:::plan
+  s_k8s["scenarios/NN-cluster-kubeadm-de-zero-a-l-exploitation (exp.)"]:::planexp
+  e_cka["exams/cka-blanc-01 (conf. → exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence (socle débutant)
+  linux_conf --> k1
+  reseau_deb --> k1
+  proxmox_deb --> k1
+  k1 --> k2
+  k1 --> k3
+  k1 --> k4
+  ceph_deb -.-> k4
+  k2 --> kubernetes_deb
+  k3 --> kubernetes_deb
+  k4 --> kubernetes_deb
+
+  %% niveau confirmé (jamais déb. -> exp.)
+  kubernetes_deb --> k5
+  reseau_conf --> k5
+  iac_deb -.-> k5
+  k5 --> k6
+  k5 --> k7
+  gitops02 -.-> k7
+  k5 --> k8
+  k5 --> k9
+  gitops01 -.-> k9
+  k5 --> k10
+  gitops01 -.-> k10
+  gitops02 -.-> k10
+  k6 --> k11
+  k9 --> k12
+  k11 --> k12
+  k7 --> kubernetes_conf
+  k8 --> kubernetes_conf
+  k10 --> kubernetes_conf
+  k12 --> kubernetes_conf
+
+  %% expert
+  kubernetes_conf --> e_cka
+  kubernetes_conf --> s_k8s --> kubernetes_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `kubernetes/01-kubectl-pods-deployments` | débutant | planifié | CKA-02-01 (+ 04-04 bases) ; CKAD-01-02, 02-02, 03-03 | `linux_conf`, `reseau_deb`, `proxmox_deb` |
+| `kubernetes/02-configuration-probes-ressources` | débutant | planifié | CKA-02-02, 02-04 ; CKAD-03-02, 04-05, 04-06 | `kubernetes/01-kubectl-pods-deployments` |
+| `kubernetes/03-services-endpoints-coredns` | débutant | planifié | CKA-03-01, 03-03, 03-06 ; CKAD-05-02 | `kubernetes/01-kubectl-pods-deployments`, `reseau_deb` |
+| `kubernetes/04-stockage-pv-pvc-storageclass` | débutant | planifié | CKA-01-01 à 01-03 ; CKAD-01-04 | `kubernetes/01-kubectl-pods-deployments` ; `ceph_deb` recommandé |
+| `kubernetes/05-kubeadm-cluster-ha` | confirmé | planifié | CKA-05-02, 05-03, 05-05, 05-07 | K1 à K4 (`kubernetes_deb`), `linux_conf`, `reseau_conf` ; `iac_deb` recommandé |
+| `kubernetes/06-cycle-de-vie-etcd-upgrade` | confirmé | planifié | CKA-05-04 (+ 04-02) ; CKS-02-04 | `kubernetes/05-kubeadm-cluster-ha` |
+| `kubernetes/07-rbac-comptes-de-service` | confirmé | planifié | CKA-05-01 ; CKAD-04-02, 04-07 ; CKS-02-01 à 02-03 | `kubernetes/05-kubeadm-cluster-ha` ; `gitops/02-argo-workflows-fondamentaux` recommandé |
+| `kubernetes/08-ordonnancement-admission-autoscaling` | confirmé | planifié | CKA-02-03, 02-05 ; CKAD-04-03, 04-04 | `kubernetes/02-configuration-probes-ressources`, `kubernetes/05-kubeadm-cluster-ha` |
+| `kubernetes/09-network-policies-gateway-api-ingress` | confirmé | planifié | CKA-03-02, 03-04, 03-05 ; CKAD-05-01, 05-03 ; CKS-01-01, 01-03 | `kubernetes/03-services-endpoints-coredns`, `kubernetes/05-kubeadm-cluster-ha`, `reseau_conf` ; `gitops/01-argo-cd-fondamentaux` recommandé |
+| `kubernetes/10-helm-kustomize-crd-operateurs` | confirmé | planifié | CKA-05-06, 05-07, 05-08 ; CKAD-02-03, 02-04, 03-01, 04-01 | `kubernetes/04-stockage-pv-pvc-storageclass`, `kubernetes/05-kubeadm-cluster-ha` ; fiches `gitops` recommandées |
+| `kubernetes/11-depannage-noeuds-control-plane` | confirmé | planifié | CKA-04-01 à 04-03 | `kubernetes/05-kubeadm-cluster-ha`, `kubernetes/06-cycle-de-vie-etcd-upgrade`, `linux_conf` |
+| `kubernetes/12-depannage-applications-reseau` | confirmé | planifié | CKA-04-04, 04-05 ; CKAD-03-04, 03-05 | `kubernetes/03-services-endpoints-coredns`, `kubernetes/09-network-policies-gateway-api-ingress`, `kubernetes/11-depannage-noeuds-control-plane` |
+| `scenarios/NN-cluster-kubeadm-de-zero-a-l-exploitation` | expert | planifié | CKA (25 compétences) | les douze fiches ci-dessus (`kubernetes_conf`), `ceph-3n` levé |
+| `exams/cka-blanc-01` | confirmé → expert | planifié | échantillon pondéré des 25 compétences CKA | `kubernetes_conf` |
