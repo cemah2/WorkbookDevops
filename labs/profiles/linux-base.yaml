@@ -1,0 +1,55 @@
+name: linux-base
+description: "Quatre VM Linux pour le socle (LFCS, RHCSA/RHCE, réseau, services de base)."
+budget:
+  vcpu: 8
+  ram_gb: 16
+  disk_gb: 180
+  overcommit_ratio_max: 2.0
+vlans: [10]
+images:
+  - ubuntu_lts
+  - rocky_linux
+  - rhel
+can_run_with: [kubernetes-ha, ceph-3n, airgap]
+vms:
+  - name: linux-base-lx01
+    vmid: 1011
+    role: Ubuntu LTS (serveur générique, LFCS)
+    image: ubuntu_lts
+    vcpu: 2
+    ram_gb: 4
+    disk_gb: 40
+    storage: nvme
+    nics: [10]
+    ip: {mgmt: 10.10.10.11}
+  - name: linux-base-lx02
+    vmid: 1012
+    role: Rocky Linux (scénarios génériques EL)
+    image: rocky_linux
+    vcpu: 2
+    ram_gb: 4
+    disk_gb: 40
+    storage: nvme
+    nics: [10]
+    ip: {mgmt: 10.10.10.12}
+  - name: linux-base-lx03
+    vmid: 1013
+    role: RHEL (abonnement Developer) — nœud de contrôle Ansible pour RHCE
+    image: rhel
+    vcpu: 2
+    ram_gb: 4
+    disk_gb: 40
+    storage: nvme
+    nics: [10]
+    ip: {mgmt: 10.10.10.13}
+  - name: linux-base-lx04
+    vmid: 1014
+    role: RHEL (abonnement Developer) — nœud géré, cible de break-fix (disque supplémentaire pour LVM/Stratis)
+    image: rhel
+    vcpu: 2
+    ram_gb: 4
+    disk_gb: 40
+    extra_disks_gb: [10, 10]
+    storage: nvme
+    nics: [10]
+    ip: {mgmt: 10.10.10.14}

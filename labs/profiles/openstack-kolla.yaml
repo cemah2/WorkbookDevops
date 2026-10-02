@@ -1,0 +1,51 @@
+name: openstack-kolla
+description: "OpenStack Kolla-Ansible : 1 contrôleur all-in-one (API, DB, MQ, Neutron, Horizon) + 2 computes ; stockage Cinder LVM local. Profil le plus lourd, seul."
+budget:
+  vcpu: 18
+  ram_gb: 96
+  disk_gb: 400
+  overcommit_ratio_max: 2.0
+vlans: [10, 20, 30, 40]
+images:
+  - ubuntu_lts
+  - rocky_linux
+components: [openstack, kolla_ansible, kolla, python_openstackclient]
+network:
+  kolla_internal_vip: 10.10.10.70
+  kolla_external_vip: 10.10.40.221
+  tunnel_interface_vlan: 30
+  neutron_external_interface_vlan: 40
+  floating_ip_pool: 10.10.40.230-10.10.40.254
+  tenant_cidr_pool: 10.200.0.0/16
+can_run_with: [linux-base]   # jamais avec kubernetes-ha ni ceph-3n
+nested_virtualization: true   # computes en KVM imbriqué (CPU host-passthrough)
+vms:
+  - name: openstack-kolla-ctl01
+    vmid: 1051
+    role: contrôleur (deploy host + control + network + monitoring)
+    vcpu: 6
+    ram_gb: 32
+    disk_gb: 120
+    storage: nvme
+    nics: [10, 20, 30, 40]
+    ip: {mgmt: 10.10.10.51, storage: 10.10.20.51, overlay: 10.10.30.51, provider: 10.10.40.51}
+  - name: openstack-kolla-cmp01
+    vmid: 1061
+    role: compute + cinder-volume (LVM sur disque supplémentaire)
+    vcpu: 6
+    ram_gb: 32
+    disk_gb: 60
+    extra_disks_gb: [80]
+    storage: nvme
+    nics: [10, 20, 30, 40]
+    ip: {mgmt: 10.10.10.61, storage: 10.10.20.61, overlay: 10.10.30.61, provider: 10.10.40.61}
+  - name: openstack-kolla-cmp02
+    vmid: 1062
+    role: compute + cinder-volume (LVM sur disque supplémentaire)
+    vcpu: 6
+    ram_gb: 32
+    disk_gb: 60
+    extra_disks_gb: [80]
+    storage: nvme
+    nics: [10, 20, 30, 40]
+    ip: {mgmt: 10.10.10.62, storage: 10.10.20.62, overlay: 10.10.30.62, provider: 10.10.40.62}

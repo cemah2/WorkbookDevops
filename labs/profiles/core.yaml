@@ -1,0 +1,56 @@
+# Socle permanent : toujours actif, hors budget des profils.
+name: core
+description: "Routeur virtuel, DNS/PKI/IdP, miroir, PBS et bastion. Démarre avec l'hôte."
+always_on: true
+budget:
+  vcpu: 7
+  ram_gb: 8
+  disk_gb: 240
+  overcommit_ratio_max: 2.0
+vlans: [lan, 10, 20, 50]
+vms:
+  - name: core-rtr01
+    vmid: 100
+    role: routeur virtuel (VyOS ou OPNsense, à décider)
+    vcpu: 2
+    ram_gb: 1
+    disk_gb: 10
+    storage: nvme
+    nics: [lan, 10, 20, 30, 40, 50, 60]
+    ip: {lan: 192.168.0.250, mgmt: 10.10.10.1}
+  - name: core-dns01
+    vmid: 1002
+    role: DNS interne faisant autorité + récurseur (PowerDNS ou BIND)
+    vcpu: 1
+    ram_gb: 1
+    disk_gb: 20
+    storage: nvme
+    nics: [10]
+    ip: {mgmt: 10.10.10.2}
+  - name: core-pki01
+    vmid: 1003
+    role: CA interne (step-ca ou OpenBao PKI) + IdP (Keycloak)
+    vcpu: 2
+    ram_gb: 3
+    disk_gb: 40
+    storage: nvme
+    nics: [10]
+    ip: {mgmt: 10.10.10.3}
+  - name: core-pbs01
+    vmid: 1006
+    role: Proxmox Backup Server (datastore sur HDD)
+    vcpu: 1
+    ram_gb: 2
+    disk_gb: 150
+    storage: hdd
+    nics: [10, 20]
+    ip: {mgmt: 10.10.10.6, storage: 10.10.20.6}
+  - name: core-jump01
+    vmid: 1008
+    role: bastion / poste d'examen (tmux, k9s, kubectx, fzf ; interdits d'examen configurables)
+    vcpu: 1
+    ram_gb: 1
+    disk_gb: 20
+    storage: nvme
+    nics: [10]
+    ip: {mgmt: 10.10.10.8}

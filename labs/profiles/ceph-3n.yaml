@@ -1,0 +1,50 @@
+name: ceph-3n
+description: "Cluster Ceph à 3 nœuds (mon+mgr+osd colocalisés, cephadm), 1 OSD par nœud sur le SSD ; réseau public et cluster séparés."
+budget:
+  vcpu: 12
+  ram_gb: 48
+  disk_gb: 660   # 3 × (20 OS + 200 OSD) ; les OSD sont sur le SSD
+  overcommit_ratio_max: 2.0
+vlans: [10, 20, 21]
+images:
+  - ubuntu_lts
+components: [ceph, rook, velero]
+network:
+  public_network: 10.10.20.0/24
+  cluster_network: 10.10.21.0/24
+  mtu_cluster: 9000
+can_run_with: [linux-base, kubernetes-ha]   # ensemble : 28 vCPU alloués (ratio 1.75), 96 Go + core 8 + hôte 8 = 112 Go
+vms:
+  - name: ceph-3n-osd01
+    vmid: 2041
+    role: mon + mgr + osd
+    vcpu: 4
+    ram_gb: 16
+    disk_gb: 20
+    extra_disks_gb: [200]
+    storage: nvme
+    extra_disks_storage: ssd
+    nics: [10, 20, 21]
+    ip: {mgmt: 10.10.10.41, storage: 10.10.20.41, storage_cluster: 10.10.21.41}
+  - name: ceph-3n-osd02
+    vmid: 2042
+    role: mon + mgr + osd
+    vcpu: 4
+    ram_gb: 16
+    disk_gb: 20
+    extra_disks_gb: [200]
+    storage: nvme
+    extra_disks_storage: ssd
+    nics: [10, 20, 21]
+    ip: {mgmt: 10.10.10.42, storage: 10.10.20.42, storage_cluster: 10.10.21.42}
+  - name: ceph-3n-osd03
+    vmid: 2043
+    role: mon + mgr + osd
+    vcpu: 4
+    ram_gb: 16
+    disk_gb: 20
+    extra_disks_gb: [200]
+    storage: nvme
+    extra_disks_storage: ssd
+    nics: [10, 20, 21]
+    ip: {mgmt: 10.10.10.43, storage: 10.10.20.43, storage_cluster: 10.10.21.43}
