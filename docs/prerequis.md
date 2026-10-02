@@ -1,6 +1,7 @@
 # Graphe de prérequis entre chapitres
 
-Structure seulement : les nœuds sont des **domaines × niveaux**, pas encore des chapitres.
+Les nœuds de référence sont des **domaines × niveaux** (§2). Les chapitres planifiés par une cartographie de
+certification apparaissent en §6 sous la forme `<domaine>/<slug>` et sont rattachés aux nœuds de référence.
 Chaque chapitre rédigé s'y rattache par son front matter (`domaine`, `niveau`, `prerequis`) et ajoute
 ses propres arêtes. Règle de `CLAUDE.md` : jamais de saut direct débutant → expert.
 
@@ -202,5 +203,75 @@ flowchart LR
 ## 5. Règles d'édition du graphe
 
 - Un chapitre ajoute ses nœuds sous la forme `<domaine>/<slug>` et ne relie que des nœuds existants.
+- Une cartographie de certification (`prompts/01-cartographie-certification.md`) ajoute ses chapitres **planifiés**
+  en §6 avec le statut `planifié` ; la PR du chapitre passe le nœud en `rédigé` et déplace ses arêtes si besoin.
 - Une arête inter-domaines nouvelle se justifie en une ligne dans la PR du chapitre.
 - Le graphe est régénéré, pas retouché à la main, dès qu'un script `scripts/prerequis.py` existera (à créer).
+
+## 6. Chapitres planifiés par certification
+
+Nœuds `<domaine>/<slug>` ajoutés par les cartographies. Statut `planifié` tant que le chapitre n'existe pas.
+Arête pleine = prérequis obligatoire ; arête pointillée = recommandé.
+
+### 6.1 CAPA (certifs/CAPA/objectifs.md, 2026-10-02)
+
+Sept fiches `gitops` et un scénario. Arêtes inter-domaines nouvelles, justifiées dans `certifs/CAPA/objectifs.md` §4 :
+`observabilite_deb` → Argo Rollouts (AnalysisTemplate Prometheus), `ceph_deb` ⇢ Argo Workflows artefacts (bucket S3 via RGW).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  kubernetes_deb[kubernetes_deb]:::ref
+  kubernetes_conf[kubernetes_conf]:::ref
+  iac_deb[iac_deb]:::ref
+  gitops_deb[gitops_deb]:::ref
+  gitops_conf[gitops_conf]:::ref
+  gitops_exp[gitops_exp]:::ref
+  observabilite_deb[observabilite_deb]:::ref
+  ceph_deb[ceph_deb]:::ref
+
+  argocd_fond["gitops/01-argo-cd-fondamentaux (déb.)"]:::plan
+  argocd_helm["gitops/04-argo-cd-helm-kustomize-reconciliation (conf.)"]:::plan
+  wf_fond["gitops/02-argo-workflows-fondamentaux (déb.)"]:::plan
+  wf_art["gitops/03-argo-workflows-artefacts-templates-dag (conf.)"]:::plan
+  wf_data["gitops/06-argo-workflows-traitement-de-donnees (conf.)"]:::plan
+  rollouts["gitops/05-argo-rollouts (conf.)"]:::plan
+  events["gitops/07-argo-events (conf.)"]:::plan
+  s_argo["scenarios/NN-chaine-argo-bout-en-bout (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  kubernetes_deb --> gitops_deb
+  iac_deb --> gitops_deb
+  gitops_deb --> argocd_fond
+  gitops_deb --> wf_fond
+  kubernetes_conf --> argocd_helm
+  kubernetes_conf --> rollouts
+  kubernetes_conf --> events
+  observabilite_deb --> rollouts
+  ceph_deb -.-> wf_art
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  argocd_fond --> argocd_helm
+  argocd_fond --> rollouts
+  wf_fond --> wf_art --> wf_data
+  wf_fond --> events
+  argocd_helm --> gitops_conf
+  wf_data --> gitops_conf
+  rollouts --> gitops_conf
+  events --> gitops_conf
+  gitops_conf --> s_argo --> gitops_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `gitops/01-argo-cd-fondamentaux` | débutant | planifié | CAPA-02-01 à 02-03 | `kubernetes_deb`, `iac_deb` |
+| `gitops/04-argo-cd-helm-kustomize-reconciliation` | confirmé | planifié | CAPA-02-04, 02-05 | `gitops/01-argo-cd-fondamentaux`, `kubernetes_conf` |
+| `gitops/02-argo-workflows-fondamentaux` | débutant | planifié | CAPA-01-01, 01-04 | `kubernetes_deb` |
+| `gitops/03-argo-workflows-artefacts-templates-dag` | confirmé | planifié | CAPA-01-02, 01-03, 01-05 | `gitops/02-argo-workflows-fondamentaux`, `ceph_deb` (recommandé) |
+| `gitops/06-argo-workflows-traitement-de-donnees` | confirmé | planifié | CAPA-01-06 | `gitops/03-argo-workflows-artefacts-templates-dag` |
+| `gitops/05-argo-rollouts` | confirmé | planifié | CAPA-03-01 à 03-03 | `gitops/01-argo-cd-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
+| `gitops/07-argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/02-argo-workflows-fondamentaux`, `kubernetes_conf` |
+| `scenarios/NN-chaine-argo-bout-en-bout` | expert | planifié | CAPA (16 compétences), CGOA-04-01 à 04-04 | les sept fiches ci-dessus |

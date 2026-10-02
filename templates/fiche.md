@@ -14,8 +14,8 @@ certifications:
   - "<CODE-DD-CC>"
 praticable_sur_le_lab: "<oui | partiellement : sections marquées [lecture + simulation]>"
 solutions: "solutions/fiches/<domaine>/<nom-de-la-fiche>.md"
-break_fix: "break/<domaine>/<nom-de-la-panne>.sh"
-flashcards: "revision/flashcards/<domaine>-<nom-de-la-fiche>.csv"
+break_fix: "break/<domaine>/<NN>-<nom-de-la-panne>.sh"
+flashcards: "revision/flashcards/<domaine>-<NN>-<nom-de-la-fiche>.csv"
 statut: "<brouillon | relu | validé en conditions réelles le AAAA-MM-JJ>"
 ---
 
@@ -50,7 +50,7 @@ Compétences couvertes : `<CODE-DD-CC>`, `<CODE-DD-CC>`.
 
 ### Break-fix
 
-Script : `break/<domaine>/<nom-de-la-panne>.sh` — injecte la panne, `--undo` la retire.
+Script : `break/<domaine>/<NN>-<nom-de-la-panne>.sh` — injecte la panne, `--undo` la retire (`NN` = numéro de la fiche, DECISIONS.md 2026-10-02).
 
 <Symptôme observé par l'apprenant. Pas la cause.>
 
@@ -74,6 +74,6 @@ Script : `break/<domaine>/<nom-de-la-panne>.sh` — injecte la panne, `--undo` l
 
 - Solutions (3 indices puis correction commentée) : `solutions/fiches/<domaine>/<nom-de-la-fiche>.md`
 - Pannes scriptées : `break/<domaine>/`
-- Flashcards (10 à 20, CSV `question;réponse;tags`) : `revision/flashcards/<domaine>-<nom-de-la-fiche>.csv`
+- Flashcards (10 à 20, CSV `question;réponse;tags`) : `revision/flashcards/<domaine>-<NN>-<nom-de-la-fiche>.csv`
 - Mapping certification : `certifs/<CODE>/objectifs.md`
 - Rappel espacé : séances J+1, J+7, J+30 à noter dans `journal/`
