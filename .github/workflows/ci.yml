@@ -64,3 +64,5 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements-docs.txt
       - run: mkdocs build --strict
+        env:
+          DISABLE_MKDOCS_2_WARNING: "true"
