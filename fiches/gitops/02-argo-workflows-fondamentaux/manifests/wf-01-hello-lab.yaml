@@ -1,0 +1,24 @@
+# Premier workflow du lab : un seul template container, un paramètre d'entrée surchargeable avec `argo submit -p`.
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: hello-lab-
+  namespace: argo
+  labels:
+    workbook/fiche: gitops-02
+spec:
+  entrypoint: hello
+  serviceAccountName: wf-runner
+  arguments:
+    parameters:
+      - name: message
+        value: "bonjour depuis le lab"
+  templates:
+    - name: hello
+      inputs:
+        parameters:
+          - name: message
+      container:
+        image: busybox:1.37
+        command: [echo]
+        args: ["{{inputs.parameters.message}}"]

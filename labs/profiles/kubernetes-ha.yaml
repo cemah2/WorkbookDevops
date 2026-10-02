@@ -9,7 +9,7 @@ vlans: [10, 30, 40]
 images:
   - ubuntu_lts
 variants: [kubeadm, talos, rke2, k3s]
-components: [kubernetes, kubeadm, containerd, cilium, metallb, envoy_gateway, argo_cd, flux, prometheus, grafana, loki, velero]
+components: [kubernetes, kubeadm, containerd, cilium, metallb, envoy_gateway, argo_cd, argo_workflows, flux, prometheus, grafana, loki, velero]
 network:
   pod_cidr: 10.244.0.0/16
   service_cidr: 10.96.0.0/12

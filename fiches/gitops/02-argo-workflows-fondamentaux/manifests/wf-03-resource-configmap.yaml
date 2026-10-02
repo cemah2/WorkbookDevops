@@ -1,0 +1,61 @@
+# Template `resource` : le workflow crée un objet Kubernetes et lit des champs en sortie (jsonPath).
+# Le ServiceAccount wf-runner doit pouvoir créer des ConfigMaps : voir rbac-resource-configmaps.yaml.
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: release-note-
+  namespace: argo
+  labels:
+    workbook/fiche: gitops-02
+spec:
+  entrypoint: main
+  serviceAccountName: wf-runner
+  arguments:
+    parameters:
+      - name: version
+        value: "0.1.0"
+  templates:
+    - name: main
+      steps:
+        - - name: create-note
+            template: create-note
+        - - name: read-back
+            template: read-back
+            arguments:
+              parameters:
+                - name: cm-name
+                  value: "{{steps.create-note.outputs.parameters.cm-name}}"
+                - name: cm-version
+                  value: "{{steps.create-note.outputs.parameters.cm-version}}"
+
+    - name: create-note
+      resource:
+        action: create
+        setOwnerReference: true              # le ConfigMap disparaît avec le Workflow
+        manifest: |
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            generateName: release-note-
+            namespace: argo
+          data:
+            version: "{{workflow.parameters.version}}"
+            author: "{{workflow.name}}"
+      outputs:
+        parameters:
+          - name: cm-name
+            valueFrom:
+              jsonPath: "{.metadata.name}"
+          - name: cm-version
+            valueFrom:
+              jsonPath: "{.data.version}"
+
+    - name: read-back
+      inputs:
+        parameters:
+          - name: cm-name
+          - name: cm-version
+      container:
+        image: busybox:1.37
+        command: [sh, -c]
+        args: ["echo ConfigMap {{inputs.parameters.cm-name}} porte la version {{inputs.parameters.cm-version}}"]

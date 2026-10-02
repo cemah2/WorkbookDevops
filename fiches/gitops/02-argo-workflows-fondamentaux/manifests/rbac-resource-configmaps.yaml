@@ -1,0 +1,25 @@
+# Droits supplémentaires pour le template `resource` de wf-03 : créer et lire des ConfigMaps dans argo.
+# À appliquer en plus de rbac-executor.yaml. Le workflow n'a que ce dont il a besoin, pas plus.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: wf-configmaps
+  namespace: argo
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["create", "get", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: wf-runner-configmaps
+  namespace: argo
+subjects:
+  - kind: ServiceAccount
+    name: wf-runner
+    namespace: argo
+roleRef:
+  kind: Role
+  name: wf-configmaps
+  apiGroup: rbac.authorization.k8s.io
