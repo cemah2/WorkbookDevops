@@ -16,8 +16,8 @@ meta:
   checked_by: "session d'amorçage (prompts/00-amorcage-depot.md)"
   next_review: "veille mensuelle (prompts/07-veille.md)"
   lab_target_summary: >
-    Proxmox VE 9.2 / Ubuntu 26.04 LTS / Rocky 10.2 / Kubernetes 1.37 / Ceph 20.2 Tentacle /
-    OpenStack 2026.1 Gazpacho (Kolla-Ansible 22) / OpenTofu 1.13 / OpenBao 2.7.
+    Proxmox VE 9.2 / Ubuntu 24.04 LTS / Rocky 10.2 / Kubernetes 1.37 / Ceph 20.2 Tentacle /
+    OpenStack 2026.1 Gazpacho (Kolla-Ansible 22) / OpenTofu 1.13 / OpenBao 2.7 / Helm 4 / OPNsense 26.7.
 
 components:
 
@@ -36,23 +36,23 @@ components:
   proxmox_backup_server:
     name: "Proxmox Backup Server"
     # renovate: datasource=endoflife-date depName=proxmox-backup-server
-    version: null
+    version: "4.2"
     channel: stable
-    source_url: "https://pbs.proxmox.com/wiki/index.php/Roadmap"
-    verification: unverified
-    verification_detail: "site bloqué ; le miroir GitHub proxmox/proxmox-backup est obsolète (3.2.4). À renseigner à la main."
+    source_url: "https://pbs.proxmox.com/wiki/Roadmap"
+    verification: indirect
+    verification_detail: "site bloqué ; annonce officielle 4.2 (2026-04-29) relayée par recherche web, miroir GitHub obsolète. À confirmer sur le site."
     checked_on: "2026-10-02"
 
   ubuntu_lts:
-    name: "Ubuntu LTS"
+    name: "Ubuntu LTS (image de référence du lab)"
     # renovate: datasource=endoflife-date depName=ubuntu
-    version: "26.04"
-    point_release: "26.04.1 LTS (resolute)"
-    previous_supported: "24.04.5 LTS (noble), support standard jusqu'en mai 2029"
+    version: "24.04"
+    point_release: "24.04.5 LTS (noble), support standard jusqu'en mai 2029"
+    newer_lts: "26.04.1 LTS (resolute), publiée avril 2026 ; bascule prévue quand Kolla-Ansible la supporte (DECISIONS.md 2026-10-02)"
     channel: lts
     source_url: "https://changelogs.ubuntu.com/meta-release-lts"
     verification: direct
-    verification_detail: "meta-release-lts officiel + ubuntu.com/about/release-cycle (26.04 LTS publiée avril 2026)"
+    verification_detail: "meta-release-lts officiel + ubuntu.com/about/release-cycle"
     checked_on: "2026-10-02"
 
   rocky_linux:
@@ -130,7 +130,7 @@ components:
     name: "Helm"
     # renovate: datasource=github-releases depName=helm/helm extractVersion=^v(?<version>.*)$
     version: "4.3.0"
-    note: "Helm 3.22.0 est la dernière mineure 3.x (fin de vie annoncée)"
+    note: "Helm 4 retenu pour tous les chapitres (DECISIONS.md 2026-10-02) ; 3.22.0 est la dernière mineure 3.x, fin de vie annoncée"
     channel: stable
     source_url: "https://github.com/helm/helm/releases"
     verification: direct
@@ -188,7 +188,7 @@ components:
     version: "20.2.4"
     release_name: "Tentacle"
     previous: "19.2.6 Squid"
-    note: "21.x Umbrella seulement en release candidate (v21.1.1 le 2026-09-10) ; seules les x.2.z sont stables"
+    note: "20 Tentacle retenu pour le lab (DECISIONS.md 2026-10-02) ; 21.x Umbrella seulement en RC (v21.1.1 le 2026-09-10), seules les x.2.z sont stables"
     channel: stable
     source_url: "https://docs.ceph.com/en/latest/releases/"
     verification: indirect
@@ -318,7 +318,8 @@ components:
     name: "Terraform (certifs/TFA uniquement)"
     # renovate: datasource=github-releases depName=hashicorp/terraform extractVersion=^v(?<version>.*)$
     version: "1.16.5"
-    exam_note: "TFA 004 annoncé sur Terraform 1.12 dans certifs/ ; 1.17.0 en bêta"
+    exam_version: "1.12"
+    exam_note: "chapitres TFA sur la version d'examen (1.12) avec section « différences avec la version courante » (DECISIONS.md 2026-10-02) ; 1.17.0 en bêta"
     channel: exam
     source_url: "https://releases.hashicorp.com/terraform/"
     verification: direct
@@ -356,7 +357,9 @@ components:
     name: "Vault (certifs/VA uniquement)"
     # renovate: datasource=github-releases depName=hashicorp/vault extractVersion=^v(?<version>.*)$
     version: "2.1.1"
-    exam_note: "VA 003 annoncé sur Vault 1.16.x dans certifs/ ; Vault 2.0.0 publié le 2026-04-14, ligne 1.21.x en maintenance"
+    exam_version: "1.16"
+    exam_note: "chapitres VA sur la version d'examen (1.16.x) avec section « différences avec la version courante » (DECISIONS.md 2026-10-02)"
+    note: "Vault 2.0.0 publié le 2026-04-14, ligne 1.21.x en maintenance"
     channel: exam
     source_url: "https://releases.hashicorp.com/vault/"
     verification: direct
@@ -596,62 +599,53 @@ components:
     checked_on: "2026-10-02"
 
   powerdns:
-    name: "PowerDNS Authoritative / Recursor"
+    name: "PowerDNS Authoritative Server"
     # renovate: datasource=github-tags depName=PowerDNS/pdns extractVersion=^auth-(?<version>.*)$
-    version: null
+    version: "5.1.4"
+    recursor: "5.4.7"
     channel: stable
-    source_url: "https://www.powerdns.com/downloads"
-    verification: unverified
-    verification_detail: "site bloqué, pas de releases GitHub (tags seulement, non lus). À renseigner."
+    source_url: "https://blog.powerdns.com/"
+    verification: indirect
+    verification_detail: "sites bloqués ; annonces officielles (auth 5.1.4 le 2026-08-06, recursor 5.4.7 le 2026-10-01) relayées par recherche web. À confirmer."
     checked_on: "2026-10-02"
 
   freeipa:
     name: "FreeIPA"
     # renovate: datasource=github-tags depName=freeipa/freeipa extractVersion=^release-(?<version>.*)$
-    version: null
+    version: "4.13.4"
     channel: stable
-    source_url: "https://www.freeipa.org/page/Releases"
-    verification: unverified
-    verification_detail: "site bloqué, pas de releases GitHub (tags seulement, non lus). À renseigner."
+    source_url: "https://www.freeipa.org/release-notes/"
+    verification: indirect
+    verification_detail: "site bloqué ; publication 4.13.4 (2026-09-07, correctifs de sécurité) relayée par recherche web. À confirmer."
     checked_on: "2026-10-02"
 
   vyos:
-    name: "VyOS (routeur virtuel)"
+    name: "VyOS (non retenu : OPNsense est le routeur du lab, DECISIONS.md 2026-10-02)"
     # renovate: datasource=github-tags depName=vyos/vyos-1x
-    version: null
+    version: "1.5"
     channel: lts
-    source_url: "https://vyos.io/"
-    verification: unverified
-    verification_detail: "site bloqué, pas de releases GitHub. Alternative : OPNsense, également non vérifié."
+    source_url: "https://blog.vyos.io/vyos-1.5.0-ga-release"
+    verification: indirect
+    verification_detail: "site bloqué ; GA 1.5 LTS (2026-03-31) relayée par recherche web. Conservé pour une fiche de comparaison éventuelle."
     checked_on: "2026-10-02"
 
   opnsense:
-    name: "OPNsense (pare-feu virtuel)"
+    name: "OPNsense (routeur / pare-feu virtuel du lab)"
     # renovate: datasource=github-tags depName=opnsense/core
-    version: null
+    version: "26.7.5"
     channel: stable
-    source_url: "https://opnsense.org/"
-    verification: unverified
-    verification_detail: "site bloqué, pas de releases GitHub. À renseigner."
+    source_url: "https://opnsense.org/blog/"
+    verification: indirect
+    verification_detail: "site bloqué ; 26.7.5 (2026-09-30, série 26.7 « Xenial Xenops ») relayée par recherche web. À confirmer avant installation."
     checked_on: "2026-10-02"
 
   maas:
     name: "MAAS"
-    version: null
+    version: "3.7.3"
     channel: stable
-    source_url: "https://maas.io/docs/release-notes-and-upgrade-instructions"
-    verification: unverified
-    verification_detail: "non vérifié (snap/launchpad inaccessibles). À renseigner."
-    checked_on: "2026-10-02"
-
-  # ---------------------------------------------------------------- IA sur CPU (module en deux temps)
-  ollama:
-    name: "Ollama"
-    # renovate: datasource=github-releases depName=ollama/ollama extractVersion=^v(?<version>.*)$
-    version: "0.35.0"
-    channel: stable
-    source_url: "https://github.com/ollama/ollama/releases"
-    verification: direct
+    source_url: "https://canonical.com/maas/docs/stable/reference/release-notes/"
+    verification: indirect
+    verification_detail: "site bloqué ; 3.7.3 (2026-08-18, requiert Ubuntu 24.04) relayée par recherche web. À confirmer."
     checked_on: "2026-10-02"
 
   open_webui:
