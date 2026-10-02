@@ -289,7 +289,7 @@ step-ca et cert-manager pour l'Ingress TLS), `reseau_conf` ⇢ F4 et F10 (sélec
 ```mermaid
 flowchart TB
   classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
-  classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef deb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
   classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
   classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
 
@@ -304,7 +304,7 @@ flowchart TB
   securite_conf[securite_conf]:::ref
   securite_exp[securite_exp]:::ref
 
-  s01["securite/01-durcissement-hote-linux (déb.)"]:::plandeb
+  s01["securite/01-durcissement-hote-linux (déb., rédigé)"]:::deb
   s02["securite/02-rbac-serviceaccounts-moindre-privilege (conf.)"]:::plan
   s03["securite/03-api-server-acces-restreint-upgrade (conf.)"]:::plan
   s04["securite/04-network-policies-deny-par-defaut (conf.)"]:::plan
@@ -368,7 +368,7 @@ flowchart TB
 
 | Nœud | Niveau | Statut | Certifications | Prérequis |
 |---|---|---|---|---|
-| `securite/01-durcissement-hote-linux` | débutant | planifié | CKS-03-01 à 03-04 (hôte), KCSA-02-04, 02-05 | `linux_deb` ; `reseau_deb` recommandé |
+| `securite/01-durcissement-hote-linux` | débutant | rédigé (brouillon) | CKS-03-01 à 03-04 (hôte), KCSA-02-04, 02-05 | `linux_deb` ; `reseau_deb` recommandé |
 | `securite/02-rbac-serviceaccounts-moindre-privilege` | confirmé | planifié | CKS-02-01, 02-02, KCSA-03-03, 02-10, CKA-05-01 | `kubernetes_conf` ; `securite/01` recommandé |
 | `securite/03-api-server-acces-restreint-upgrade` | confirmé | planifié | CKS-02-03, 02-04, KCSA-02-01, 02-10, CKA-05-04 | `securite/02`, `kubernetes_conf` |
 | `securite/04-network-policies-deny-par-defaut` | confirmé | planifié | CKS-01-01, KCSA-03-07, 03-05, 02-09, CKA-03-02 | `kubernetes_conf` ; `reseau_conf` recommandé |

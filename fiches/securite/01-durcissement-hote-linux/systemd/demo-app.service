@@ -1,0 +1,16 @@
+# demo-app.service — service HTTP d'exemple exposé sur 8080 (fiche securite/01, sections 2 et 3).
+# deploy a le droit de le redémarrer par sudo, et rien d'autre. Le pare-feu limite qui peut le joindre.
+[Unit]
+Description=demo-app (HTTP statique sur 8080, service d'exemple de la fiche securite/01)
+After=network.target
+
+[Service]
+Type=simple
+User=app
+Group=app
+WorkingDirectory=/var/lib/demo-app
+ExecStart=/usr/bin/python3 -m http.server 8080 --directory /var/lib/demo-app
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
