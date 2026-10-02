@@ -1,0 +1,21 @@
+question;réponse;tags
+Quelles sont les deux charges de travail installées par install.yaml d'Argo Workflows ?;workflow-controller (crée un pod par étape, met à jour le statut) et argo-server (UI et API REST, facultatif pour exécuter);argo-workflows,capa-01-01
+Quels sont les trois conteneurs d'un pod d'étape et leur rôle ?;init (prépare volumes et artefacts d'entrée), main (ton conteneur), wait (collecte sorties et artefacts, publie le WorkflowTaskResult) — init et wait sont l'executor emissary;argo-workflows,capa-01-01
+Quel droit RBAC minimal le ServiceAccount des pods de workflow doit-il avoir depuis la 3.4 ?;create et patch sur workflowtaskresults.argoproj.io — sinon main réussit mais le nœud passe en Error;argo-workflows,capa-01-01
+Le CLI argo a-t-il besoin d'argo-server pour fonctionner ?;Non : par défaut il parle à l'API Kubernetes via le kubeconfig — il n'utilise argo-server que si ARGO_SERVER est défini;argo-workflows,capa-01-01
+Quel est le mode d'authentification par défaut d'argo-server depuis la 3.0 et que demande-t-il ?;client : un jeton Kubernetes (Bearer) fourni par l'utilisateur — les modes server et sso existent aussi;argo-workflows,capa-01-01
+Pourquoi faut-il kubectl apply --server-side pour installer Argo Workflows 4.x ?;Depuis la 4.0 les CRD sont complètes (validation incluse) et dépassent la taille d'annotation du client-side apply;argo-workflows,capa-01-01
+Que désigne spec.entrypoint ?;Le nom du template par lequel le workflow commence;argo-workflows,capa-01-04
+Dans un template steps, quelle est la différence entre « - - name » et « - name » ?;Un double tiret ouvre une nouvelle étape (séquentielle) — un simple tiret ajoute un élément à la même étape, exécuté en parallèle;argo-workflows,capa-01-04
+Quelles sortes de templates as-tu utilisées dans la fiche 02 ?;container, script, suspend, resource et steps (dag, http et containerSet existent aussi);argo-workflows,capa-01-04
+Comment passer un paramètre à la soumission et le lire dans un template ?;argo submit -p nom=valeur surcharge spec.arguments.parameters — lecture par {{workflow.parameters.nom}} ou via inputs.parameters;argo-workflows,capa-01-04
+Comment une étape expose-t-elle une valeur lue dans un fichier ?;outputs.parameters avec valueFrom.path — référence {{steps.NOM.outputs.parameters.X}} (ou tasks. dans un dag);argo-workflows,capa-01-04
+Que contient outputs.result ?;La sortie standard (max 256 ko) d'un template script ou container — référence {{steps.NOM.outputs.result}};argo-workflows,capa-01-04
+Que fait un template suspend sans duration ?;Il bloque le workflow jusqu'à argo resume — avec duration il reprend seul après le délai;argo-workflows,capa-01-04
+Différence entre argo stop et argo terminate ?;stop arrête le workflow mais exécute le gestionnaire onExit — terminate arrête tout immédiatement sans onExit;argo-workflows,capa-01-04
+Différence entre argo retry et argo resubmit ?;retry relance le même workflow à partir des nœuds en échec (même nom) — resubmit crée un nouveau workflow avec les mêmes paramètres, tout est rejoué;argo-workflows,capa-01-04
+Que fait activeDeadlineSeconds et à quels niveaux se place-t-il ?;Durée maximale au-delà de laquelle le travail est tué : sur spec (tout le workflow) ou sur un template (cette étape seule);argo-workflows,capa-01-04
+Que signifie retryStrategy.limit: "3" et quelle est la retryPolicy par défaut ?;Trois nouvelles tentatives après le premier essai (quatre au total) — défaut OnFailure (Always si une expression est fournie, depuis 3.5);argo-workflows,capa-01-04
+Quelle est la différence entre ttlStrategy et podGC ?;ttlStrategy supprime l'objet Workflow après un délai (secondsAfterCompletion/Success/Failure) — podGC supprime les pods selon une stratégie (OnPodSuccess, OnPodCompletion, OnWorkflowSuccess, OnWorkflowCompletion);argo-workflows,capa-01-04
+Où définir des valeurs par défaut appliquées à tous les workflows d'un contrôleur ?;Clé workflowDefaults de workflow-controller-configmap — un champ écrit dans le workflow garde la priorité;argo-workflows,capa-01-04
+Qu'est-ce qu'un WorkflowTemplate et un CronWorkflow (fiche 03) ?;WorkflowTemplate : spec réutilisable dans un namespace, appelée par templateRef ou workflowTemplateRef — CronWorkflow : workflow planifié par le champ schedules;argo-workflows,capa-01-03,fiche-03

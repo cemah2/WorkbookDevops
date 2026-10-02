@@ -1,0 +1,35 @@
+# Point de départ de l'exercice autonome 3 : ce workflow échoue une fois sur deux et ne nettoie rien.
+# À rendre robuste sans toucher au script : retry avec backoff, délai maximal, nettoyage des pods
+# réussis, suppression du Workflow 10 min après la fin.
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: flaky-
+  namespace: argo
+  labels:
+    workbook/fiche: gitops-02
+spec:
+  entrypoint: main
+  serviceAccountName: wf-runner
+  templates:
+    - name: main
+      steps:
+        - - name: fetch
+            template: fetch
+        - - name: report
+            template: report
+
+    - name: fetch
+      script:
+        image: alpine:3.23
+        command: [sh]
+        source: |
+          n=$(od -An -N1 -tu1 /dev/urandom | tr -d ' ')
+          [ $((n % 2)) -eq 0 ] && { echo "téléchargement OK"; exit 0; }
+          echo "réseau instable, nouvel essai nécessaire"; exit 1
+
+    - name: report
+      container:
+        image: busybox:1.37
+        command: [echo]
+        args: ["rapport généré"]

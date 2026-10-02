@@ -237,7 +237,7 @@ flowchart TB
 
   argocd_fond["gitops/01-argo-cd-fondamentaux (déb., rédigé)"]:::deb
   argocd_helm["gitops/04-argo-cd-helm-kustomize-reconciliation (conf.)"]:::plan
-  wf_fond["gitops/02-argo-workflows-fondamentaux (déb.)"]:::plan
+  wf_fond["gitops/02-argo-workflows-fondamentaux (déb., rédigé)"]:::deb
   wf_art["gitops/03-argo-workflows-artefacts-templates-dag (conf.)"]:::plan
   wf_data["gitops/06-argo-workflows-traitement-de-donnees (conf.)"]:::plan
   rollouts["gitops/05-argo-rollouts (conf.)"]:::plan
@@ -271,7 +271,7 @@ flowchart TB
 |---|---|---|---|---|
 | `gitops/01-argo-cd-fondamentaux` | débutant | rédigé (brouillon) | CAPA-02-01 à 02-03, CGOA-01-02 à 01-06, 01-09, 02-03, 02-04 | `kubernetes_deb`, `iac_deb` |
 | `gitops/04-argo-cd-helm-kustomize-reconciliation` | confirmé | planifié | CAPA-02-04, 02-05 | `gitops/01-argo-cd-fondamentaux`, `kubernetes_conf` |
-| `gitops/02-argo-workflows-fondamentaux` | débutant | planifié | CAPA-01-01, 01-04 | `kubernetes_deb` |
+| `gitops/02-argo-workflows-fondamentaux` | débutant | rédigé (brouillon) | CAPA-01-01, 01-04, CGOA-03-04 | `kubernetes_deb` ; `gitops/01-argo-cd-fondamentaux` recommandé |
 | `gitops/03-argo-workflows-artefacts-templates-dag` | confirmé | planifié | CAPA-01-02, 01-03, 01-05 | `gitops/02-argo-workflows-fondamentaux`, `ceph_deb` (recommandé) |
 | `gitops/06-argo-workflows-traitement-de-donnees` | confirmé | planifié | CAPA-01-06 | `gitops/03-argo-workflows-artefacts-templates-dag` |
 | `gitops/05-argo-rollouts` | confirmé | planifié | CAPA-03-01 à 03-03 | `gitops/01-argo-cd-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |

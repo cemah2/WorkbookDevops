@@ -1,0 +1,62 @@
+# Bornes et nettoyage : chaque champ est observable avec `argo get` ou `kubectl get pods -w`.
+# L'étape `flaky` échoue une fois sur deux : retryStrategy la rattrape.
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: limits-
+  namespace: argo
+  labels:
+    workbook/fiche: gitops-02
+spec:
+  entrypoint: main
+  onExit: notify
+  serviceAccountName: wf-runner
+  activeDeadlineSeconds: 300                 # le workflow entier : au-delà, Failed
+  ttlStrategy:
+    secondsAfterCompletion: 600              # le Workflow est supprimé 10 min après la fin
+    secondsAfterSuccess: 300                 # 5 min seulement s'il a réussi
+  podGC:
+    strategy: OnPodSuccess                   # les pods réussis disparaissent, les pods en échec restent lisibles
+  templates:
+    - name: main
+      steps:
+        - - name: flaky
+            template: flaky
+        - - name: bounded
+            template: bounded
+
+    - name: flaky
+      retryStrategy:
+        limit: "3"
+        retryPolicy: OnFailure               # exit code != 0 ; OnError pour les erreurs d'infrastructure
+        backoff:
+          duration: "5s"
+          factor: "2"
+          maxDuration: "1m"
+      script:
+        image: alpine:3.23
+        command: [sh]
+        source: |
+          n=$(od -An -N1 -tu1 /dev/urandom | tr -d ' ')
+          if [ $((n % 2)) -eq 0 ]; then echo "tentative réussie (n=$n)"; exit 0; fi
+          echo "tentative échouée (n=$n)"; exit 1
+
+    - name: bounded
+      activeDeadlineSeconds: 30              # cette étape seule : tuée après 30 s
+      container:
+        image: busybox:1.37
+        command: [sh, -c]
+        args: ["echo je dors 10 s; sleep 10; echo fini dans les temps"]
+        resources:
+          requests:
+            cpu: 50m
+            memory: 32Mi
+          limits:
+            cpu: 200m
+            memory: 64Mi
+
+    - name: notify
+      container:
+        image: busybox:1.37
+        command: [sh, -c]
+        args: ["echo \"{{workflow.name}} : {{workflow.status}} en {{workflow.duration}}\""]

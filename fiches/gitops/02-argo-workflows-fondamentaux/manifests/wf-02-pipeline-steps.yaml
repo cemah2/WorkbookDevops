@@ -1,0 +1,82 @@
+# Anatomie d'un Workflow : steps séquentiels et parallèles, templates container / script / suspend,
+# paramètres d'entrée (arguments), de sortie (valueFrom.path) et résultat de script (outputs.result).
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: pipeline-
+  namespace: argo
+  labels:
+    workbook/fiche: gitops-02
+spec:
+  entrypoint: pipeline
+  serviceAccountName: wf-runner
+  arguments:
+    parameters:
+      - name: version
+        value: "0.1.0"
+  templates:
+    - name: pipeline
+      steps:
+        - - name: prepare                      # étape 1, seule
+            template: prepare
+        - - name: lint                         # étape 2a et 2b : même niveau, donc en parallèle
+            template: lint
+          - name: unit
+            template: unit
+        - - name: approve                      # étape 3 : attend un `argo resume`
+            template: approve
+        - - name: summary                      # étape 4 : consomme les sorties des précédentes
+            template: summary
+            arguments:
+              parameters:
+                - name: build-id
+                  value: "{{steps.prepare.outputs.parameters.build-id}}"
+                - name: tests
+                  value: "{{steps.unit.outputs.result}}"
+
+    - name: prepare
+      script:
+        image: alpine:3.23
+        command: [sh]
+        source: |
+          set -eu
+          echo "préparation de la version {{workflow.parameters.version}}"
+          echo -n "{{workflow.parameters.version}}-$(date +%s)" > /tmp/build-id.txt
+      outputs:
+        parameters:
+          - name: build-id
+            valueFrom:
+              path: /tmp/build-id.txt
+
+    - name: lint
+      container:
+        image: alpine:3.23
+        command: [sh, -c]
+        args: ["echo lint OK; sleep 5"]
+
+    - name: unit
+      script:
+        image: python:3.13-alpine
+        command: [python]
+        source: |
+          import random, time
+          time.sleep(5)
+          print(random.randint(10, 50))     # stdout = outputs.result
+
+    - name: approve
+      suspend: {}
+
+    - name: summary
+      inputs:
+        parameters:
+          - name: build-id
+          - name: tests
+      container:
+        image: busybox:1.37
+        command: [sh, -c]
+        args:
+          - >-
+            echo "version={{workflow.parameters.version}}
+            build={{inputs.parameters.build-id}}
+            tests={{inputs.parameters.tests}}
+            workflow={{workflow.name}}"
