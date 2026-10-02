@@ -33,7 +33,7 @@ Deux particularités de cet examen pèsent sur le plan (détail dans [`examen.md
 
 - il est **pratique** (15 à 20 tâches en 120 min, terminal + documentation `istio.io` autorisée) : chaque fiche
   se termine par un défi chronométré au format de l'examen, et le dépannage (20 %) est entraîné dans **toutes**
-  les fiches par un break-fix, pas seulement dans la fiche 08 ;
+  les fiches par un break-fix, pas seulement dans la fiche 13 ;
 - depuis le 2025-08-12 le programme couvre le **mode ambient** au même titre que le mode sidecar : chaque fiche
   de trafic et de sécurité traite les deux modes (sidecar d'abord, puis la variante ambient avec waypoint).
 
@@ -51,24 +51,24 @@ personnalisation et mises à jour → scénario de bout en bout → examen blanc
   sur la clé `istio`, comme sur la clé `kubernetes`. Les fiches suivent la version stable et signalent dans
   une ligne « différences avec la version d'examen » ce qui change (les API Istio v1 sont stables, l'écart attendu
   porte sur `istioctl` et sur ambient). Ajouter une clé `kiali` (dépôt `kiali/kiali`, datasource `github-releases`)
-  pour la fiche 08 ; Prometheus et Grafana existent déjà.
+  pour la fiche 13 ; Prometheus et Grafana existent déjà.
 - `labs/profiles/kubernetes-ha.yaml` : la liste `components` ne cite pas `istio` ; l'ajouter (et `kiali`) à la PR
-  de la fiche 01.
+  de la fiche 06.
 - **Compatibilité Istio ↔ Cilium** sur `kubernetes-ha` : Cilium est le CNI avec `kubeProxyReplacement`. La page
   « Platform prerequisites » de la documentation Istio impose des réglages Cilium (`cni.exclusive=false`,
   `socketLB.hostNamespaceOnly=true`, désactivation du masquerading BPF pour ambient). À vérifier dans la
-  documentation de la version `istio` au moment du plan de la fiche 01 (`prompts/02-plan-chapitre.md`) et à
+  documentation de la version `istio` au moment du plan de la fiche 06 (`prompts/02-plan-chapitre.md`) et à
   reporter dans `labs/profiles/kubernetes-ha.yaml` ; sinon la fiche le marque `[non testé]` avec la raison.
 - `DECISIONS.md` : Gateway API est l'ingress de référence, implémentation Cilium par défaut (2026-10-02).
   Istio installe sa propre `GatewayClass` (`istio`) et le mode ambient repose sur Gateway API pour les waypoints.
-  Proposition d'ajout daté à soumettre dans la PR de la fiche 02 : « sur les fiches Istio, la `GatewayClass`
+  Proposition d'ajout daté à soumettre dans la PR de la fiche 07 : « sur les fiches Istio, la `GatewayClass`
   `istio` porte le trafic du mesh ; la Gateway Cilium reste réservée aux UI du lab ; les API Istio
   (`Gateway`, `VirtualService`) sont enseignées parce que l'examen les cite ». Rien n'est rouvert.
 - Chemin principal des fiches **débutant** : un cluster `kind` (CNI par défaut) sur une VM du profil `linux-base`,
   comme pour les fiches `gitops` (DECISIONS.md, 2026-10-02) ; `kubernetes-ha` en variante. Les fiches confirmé
   attendent `kubernetes-ha` (ambient multi-nœuds, egress, Gateway Cilium pour les UI).
-- `docs/prerequis.md` : les nœuds de chapitres planifiés sont ajoutés en §6.2 (cette PR).
-- `break/plateforme/` et `fiches/plateforme/` : créer le `README.md` de `break/plateforme/` à la première panne.
+- `docs/prerequis.md` : les nœuds de chapitres planifiés sont ajoutés en §6.4 (cette PR).
+- `break/plateforme/` : créer son `README.md` à la première panne (celle de la fiche Backstage 01 ou de la fiche 06, selon l'ordre des PR).
 
 ## 3. Couverture par compétence
 
@@ -129,7 +129,8 @@ CNPE cite Istio dans sa liste d'outils sans identifiant de compétence : rien à
 
 ## 4. Trous et chapitres à créer
 
-Les fiches sont numérotées dans l'ordre de lecture recommandé (DECISIONS.md, 2026-10-02) ; les étiquettes F1 à F8
+Les fiches sont numérotées dans l'ordre de lecture recommandé (DECISIONS.md, 2026-10-02) ; la série `plateforme`
+démarre à `01` avec Backstage (cartographie CBA), les fiches Istio prennent les numéros 06 à 13 ; les étiquettes F1 à F8
 donnent l'ordre de rédaction (§1), qui suit les poids. Tous les chapitres ciblent le profil `kubernetes-ha`
 (16 vCPU / 48 Go / 300 Go, `labs/profiles/kubernetes-ha.yaml`). Tant que `lab up kubernetes-ha` n'existe pas, les
 fiches **débutant** ont pour chemin principal un cluster `kind` sur une VM du profil `linux-base` (8 vCPU / 16 Go /
@@ -140,7 +141,7 @@ autorisée à l'examen ; `httpbin` et `sleep`/`curl` pour les tests. Les durées
 Chaque fiche se termine par un **défi au format de l'examen** : 3 à 4 tâches énoncées comme à l'examen, 20 à 30 min,
 documentation `istio.io` seule autorisée.
 
-### F1 — `fiches/plateforme/01-istio-installation-sidecar-ambient.md`
+### F1 — `fiches/plateforme/06-istio-installation-sidecar-ambient.md`
 
 - **Titre** : Istio — installer avec istioctl et Helm, mode sidecar et mode ambient
 - **Niveau** : débutant (`plateforme_deb`)
@@ -161,12 +162,12 @@ documentation `istio.io` seule autorisée.
   3. Personnaliser : fichier `IstioOperator` (profil, `components`, `meshConfig.accessLogFile`, `values`),
      `istioctl manifest generate` pour lire le rendu, différence entre `--set` et un fichier, même chose avec
      `values.yaml` Helm ; régler les ressources de `istiod` et de la gateway pour le budget du lab — ICA-01-03.
-- **Break-fix** : `break/plateforme/01-istio-injection-absente.sh` (namespace sans label ou label de révision
+- **Break-fix** : `break/plateforme/11-istio-injection-absente.sh` (namespace sans label ou label de révision
   erroné : pods sans sidecar, `istioctl analyze` le signale) — ICA-04-01.
 - **Défi au format de l'examen** : installer Istio en mode ambient, enrôler un namespace, déployer un waypoint et prouver
   que le trafic passe par ztunnel, en moins de 20 min.
 
-### F2 — `fiches/plateforme/02-istio-ingress-et-routage.md`
+### F2 — `fiches/plateforme/07-istio-ingress-et-routage.md`
 
 - **Titre** : Istio — gateway d'entrée, VirtualService et DestinationRule
 - **Niveau** : débutant (`plateforme_deb`)
@@ -185,12 +186,12 @@ documentation `istio.io` seule autorisée.
   3. `DestinationRule` : `subsets` par label de version, `trafficPolicy` (`loadBalancer` `ROUND_ROBIN`, `LEAST_REQUEST`,
      `consistentHash` sur en-tête), `connectionPool`, `tls.mode` ; portée `exportTo` ; conflit entre deux
      `DestinationRule` sur le même hôte et comment `istioctl analyze` le signale — ICA-02-03.
-- **Break-fix** : `break/plateforme/02-istio-virtualservice-subset-inconnu.sh` (subset référencé sans
+- **Break-fix** : `break/plateforme/12-istio-virtualservice-subset-inconnu.sh` (subset référencé sans
   `DestinationRule` : 503 `NR`/`UH` dans les access logs) — ICA-04-01.
 - **Défi au format de l'examen** : exposer un service sur l'hôte `app.lab.home.arpa` avec routage par en-tête vers
   deux versions, en moins de 20 min.
 
-### F3 — `fiches/plateforme/03-istio-traffic-shifting-resilience-fault-injection.md`
+### F3 — `fiches/plateforme/08-istio-traffic-shifting-resilience-fault-injection.md`
 
 - **Titre** : Istio — bascule de trafic, résilience et injection de pannes
 - **Niveau** : confirmé (`plateforme_conf`)
@@ -211,11 +212,11 @@ documentation `istio.io` seule autorisée.
   3. Fault injection : `fault.delay` (`fixedDelay`, `percentage`) et `fault.abort` (`httpStatus`) ciblés par en-tête ;
      combiner avec un `timeout` pour reproduire le cas d'école `bookinfo` (`ratings` lent → `reviews` en erreur) ;
      retirer la panne et prouver le retour à la normale — ICA-02-07.
-- **Break-fix** : `break/plateforme/03-istio-retries-amplification.sh` (`retries` sans `retryOn` adapté + `timeout`
+- **Break-fix** : `break/plateforme/13-istio-retries-amplification.sh` (`retries` sans `retryOn` adapté + `timeout`
   trop court : latence multipliée, à lire dans les access logs) — ICA-04-01.
 - **Défi au format de l'examen** : canary 20 % avec timeout 2 s, 3 retries et éjection après 3 erreurs 5xx, en moins de 20 min.
 
-### F4 — `fiches/plateforme/05-istio-securite-mtls-jwt-autorisation.md`
+### F4 — `fiches/plateforme/10-istio-securite-mtls-jwt-autorisation.md`
 
 - **Titre** : Istio — mTLS, authentification JWT et AuthorizationPolicy
 - **Niveau** : confirmé (`plateforme_conf`)
@@ -236,12 +237,12 @@ documentation `istio.io` seule autorisée.
      (identité SPIFFE), `namespaces`, `to.operation` (`methods`, `paths`, `hosts`), `when` (`request.auth.claims`) ;
      politique par défaut « tout refuser » dans un namespace puis ouverture minimale ; en ambient, politique L4 appliquée
      par ztunnel vs L7 par le waypoint, et ce qui se passe quand on utilise un champ L7 sans waypoint — ICA-03-01.
-- **Break-fix** : `break/plateforme/05-istio-mtls-strict-client-hors-mesh.sh` (`STRICT` global, un client sans sidecar :
+- **Break-fix** : `break/plateforme/10-istio-mtls-strict-client-hors-mesh.sh` (`STRICT` global, un client sans sidecar :
   connexion refusée, diagnostic par `istioctl x describe` et `proxy-config`) — ICA-04-03.
 - **Défi au format de l'examen** : mTLS `STRICT` sur un namespace, JWT obligatoire sur `/api`, `GET` seul autorisé
   depuis un `ServiceAccount` donné, en moins de 25 min.
 
-### F5 — `fiches/plateforme/08-istio-troubleshooting.md`
+### F5 — `fiches/plateforme/13-istio-troubleshooting.md`
 
 - **Titre** : Istio — diagnostiquer la configuration, le plan de contrôle et le plan de données
 - **Niveau** : confirmé (`plateforme_conf`)
@@ -261,11 +262,11 @@ documentation `istio.io` seule autorisée.
   3. Plan de données : access logs Envoy et codes `response_flags` (`UH`, `NR`, `UF`, `UO`, `URX`, `DC`), `istioctl
      proxy-config log --level debug`, `/stats` et `/clusters` du sidecar, `istioctl ztunnel-config` (`workloads`, `services`,
      `policies`, `certificates`) et logs ztunnel/waypoint en ambient, graphe Kiali pour localiser l'arête rouge — ICA-04-03.
-- **Break-fix** : `break/plateforme/08-istio-random.sh` (tire au sort une des pannes de F1 à F4 et F6 à F8, sans dire
-  laquelle) ; `break/plateforme/08-istiod-webhook-casse.sh` ; `break/plateforme/08-istio-ztunnel-arrete.sh` — ICA-04-01 à 04-03.
+- **Break-fix** : `break/plateforme/13-istio-random.sh` (tire au sort une des pannes de F1 à F4 et F6 à F8, sans dire
+  laquelle) ; `break/plateforme/13-istiod-webhook-casse.sh` ; `break/plateforme/13-istio-ztunnel-arrete.sh` — ICA-04-01 à 04-03.
 - **Défi au format de l'examen** : trois pannes injectées à l'aveugle, diagnostic écrit et correction en moins de 30 min.
 
-### F6 — `fiches/plateforme/04-istio-services-externes-et-egress.md`
+### F6 — `fiches/plateforme/09-istio-services-externes-et-egress.md`
 
 - **Titre** : Istio — ServiceEntry, egress gateway et charges de travail hors cluster
 - **Niveau** : confirmé (`plateforme_conf`)
@@ -285,11 +286,11 @@ documentation `istio.io` seule autorisée.
   3. Charges de travail hors cluster : `WorkloadGroup` + `WorkloadEntry` pour la VM (`istioctl x workload entry configure`,
      agent Istio sur la VM) ou, en version courte, `ServiceEntry` + `WorkloadEntry` statiques vers la VM ; appeler la VM
      depuis le mesh en mTLS ; marquer `[lecture + simulation]` la partie multi-réseau — ICA-02-05.
-- **Break-fix** : `break/plateforme/04-istio-registry-only-sans-serviceentry.sh` (sortie bloquée après passage en
+- **Break-fix** : `break/plateforme/09-istio-registry-only-sans-serviceentry.sh` (sortie bloquée après passage en
   `REGISTRY_ONLY`, `BlackHoleCluster` dans les logs) — ICA-04-01.
 - **Défi au format de l'examen** : mesh en `REGISTRY_ONLY`, un seul hôte externe autorisé, via la egress gateway, en moins de 20 min.
 
-### F7 — `fiches/plateforme/06-istio-tls-en-bordure.md`
+### F7 — `fiches/plateforme/11-istio-tls-en-bordure.md`
 
 - **Titre** : Istio — TLS, mTLS et passthrough sur la gateway d'entrée
 - **Niveau** : confirmé (`plateforme_conf`)
@@ -305,11 +306,11 @@ documentation `istio.io` seule autorisée.
      sur un même port (SNI), `PASSTHROUGH` vers un service qui termine lui-même TLS — ICA-03-03.
   3. Diagnostiquer : `istioctl proxy-config secret` sur la gateway, `openssl s_client -servername`, erreurs classiques
      (secret dans le mauvais namespace, `credentialName` erroné, chaîne incomplète) — ICA-03-03, ICA-04-03.
-- **Break-fix** : `break/plateforme/06-istio-gateway-secret-mauvais-namespace.sh` (secret TLS créé hors `istio-system`
+- **Break-fix** : `break/plateforme/11-istio-gateway-secret-mauvais-namespace.sh` (secret TLS créé hors `istio-system`
   ou hors du namespace de la gateway : handshake refusé) — ICA-04-03.
 - **Défi au format de l'examen** : exposer deux hôtes en HTTPS sur la même gateway avec redirection HTTP, en moins de 15 min.
 
-### F8 — `fiches/plateforme/07-istio-personnalisation-et-mises-a-jour.md`
+### F8 — `fiches/plateforme/12-istio-personnalisation-et-mises-a-jour.md`
 
 - **Titre** : Istio — personnaliser l'installation, mettre à jour en canary et en place
 - **Niveau** : confirmé (`plateforme_conf`)
@@ -329,7 +330,7 @@ documentation `istio.io` seule autorisée.
   3. Mise à jour en place (`istioctl upgrade`, `helm upgrade`), pré-vérifications (`istioctl x precheck`), mise à jour
      des gateways et de ztunnel/waypoints en ambient, retour arrière ; lire les notes de version et la politique de
      support (n-1) dans la documentation — ICA-01-04.
-- **Break-fix** : `break/plateforme/07-istio-revision-orpheline.sh` (namespace étiqueté sur une révision supprimée :
+- **Break-fix** : `break/plateforme/12-istio-revision-orpheline.sh` (namespace étiqueté sur une révision supprimée :
   injection en échec, `istioctl analyze` et logs du webhook) — ICA-04-02.
 - **Défi au format de l'examen** : passer un namespace de la révision `1-x` à `1-y` sans interruption mesurable
   (`fortio` en continu), en moins de 20 min.
@@ -367,14 +368,14 @@ documentation `istio.io` seule autorisée.
 
 | Chapitre | Fichier | Niveau | Profil de lab | Temps |
 |---|---|---|---|---|
-| F1 Installation sidecar / ambient | `fiches/plateforme/01-…` | débutant | linux-base (kind) ou kubernetes-ha | 6 h |
-| F2 Ingress et routage | `fiches/plateforme/02-…` | débutant | linux-base (kind) ou kubernetes-ha | 6 h |
-| F3 Traffic shifting, résilience, fault injection | `fiches/plateforme/03-…` | confirmé | kubernetes-ha | 6 h |
-| F4 Sécurité mTLS / JWT / autorisation | `fiches/plateforme/05-…` | confirmé | kubernetes-ha | 7 h |
-| F5 Troubleshooting | `fiches/plateforme/08-…` | confirmé | kubernetes-ha | 7 h |
-| F6 Services externes et egress | `fiches/plateforme/04-…` | confirmé | kubernetes-ha + linux-base | 4 h |
-| F7 TLS en bordure | `fiches/plateforme/06-…` | confirmé | kubernetes-ha | 4 h |
-| F8 Personnalisation et mises à jour | `fiches/plateforme/07-…` | confirmé | kubernetes-ha | 5 h |
+| F1 Installation sidecar / ambient | `fiches/plateforme/06-…` | débutant | linux-base (kind) ou kubernetes-ha | 6 h |
+| F2 Ingress et routage | `fiches/plateforme/07-…` | débutant | linux-base (kind) ou kubernetes-ha | 6 h |
+| F3 Traffic shifting, résilience, fault injection | `fiches/plateforme/08-…` | confirmé | kubernetes-ha | 6 h |
+| F4 Sécurité mTLS / JWT / autorisation | `fiches/plateforme/10-…` | confirmé | kubernetes-ha | 7 h |
+| F5 Troubleshooting | `fiches/plateforme/13-…` | confirmé | kubernetes-ha | 7 h |
+| F6 Services externes et egress | `fiches/plateforme/09-…` | confirmé | kubernetes-ha + linux-base | 4 h |
+| F7 TLS en bordure | `fiches/plateforme/11-…` | confirmé | kubernetes-ha | 4 h |
+| F8 Personnalisation et mises à jour | `fiches/plateforme/12-…` | confirmé | kubernetes-ha | 5 h |
 | S1 Service mesh bout en bout | `scenarios/NN-…` | expert | kubernetes-ha + linux-base | 8 h |
 | E1 Examen blanc | `exams/ica-01/` | confirmé | kubernetes-ha | 4 h |
 | Révision (flashcards, quiz, second passage de l'examen blanc) | — | — | — | 6 h |

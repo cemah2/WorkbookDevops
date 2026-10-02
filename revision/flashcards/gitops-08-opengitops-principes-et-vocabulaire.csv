@@ -1,0 +1,21 @@
+question;réponse;tags
+Quels sont les quatre principes OpenGitOps (v1.0.0), en anglais ?;Declarative, Versioned and Immutable, Pulled Automatically, Continuously Reconciled;opengitops,cgoa-02-01,cgoa-02-02,cgoa-02-03,cgoa-02-04
+Que signifie « Continuous » dans le glossaire OpenGitOps ?;Que la réconciliation continue d'avoir lieu, pas qu'elle doit être instantanée;opengitops,cgoa-01-01
+Qu'est-ce qu'une Declarative Description ?;Une configuration qui décrit l'état voulu sans la procédure pour l'atteindre (séparation configuration / implémentation);opengitops,cgoa-01-02,cgoa-02-01
+Le Desired State inclut-il les données persistantes (base de données) ?;En général non, il inclut souvent les identifiants d'accès à ces données et la configuration de leur sauvegarde;opengitops,cgoa-01-03
+Qu'est-ce que le State Drift ?;L'état réel s'est éloigné, ou est en train de s'éloigner, de l'état désiré;opengitops,cgoa-01-04
+Qu'est-ce qui déclenche une State Reconciliation en GitOps, contrairement au CI/CD classique ?;Toute divergence (dérive de l'état réel ou nouvel état désiré), pas un déclencheur prédéfini;opengitops,cgoa-01-05
+Quelles sont les trois parties d'un GitOps Managed Software System ?;Un ou plusieurs runtimes avec les ressources gérées, les agents de gestion dans chaque runtime, les politiques d'accès et de gestion (dépôts, déploiements, runtimes);opengitops,cgoa-01-06
+Quels critères un State Store doit-il remplir ?;Stocker des versions immuables de l'état désiré, avec contrôle d'accès et audit des changements, Git est l'exemple canonique, pas le seul;opengitops,cgoa-01-07
+Un dépôt Git est-il immuable par défaut ?;Non : push --force et suppression de branche sont acceptés tant que receive.denyNonFastForwards et receive.denyDeletes ne sont pas à true;git,cgoa-01-07,cgoa-02-02
+Que représente le Feedback dans OpenGitOps ?;En théorie du contrôle, l'effet des tentatives précédentes d'appliquer l'état désiré sur l'état réel, l'agent peut réessayer, revenir en arrière ou alerter;opengitops,cgoa-01-08
+Qu'est-ce qu'un Rollback au sens GitOps ?;Publier dans le store un état désiré antérieur (ex. git revert), pas effacer l'historique ni modifier le cluster à la main;opengitops,cgoa-01-09
+Pourquoi argocd app rollback n'est-il pas un rollback GitOps complet ?;Il rejoue une révision déployée sans toucher à Git : l'état vivant ne correspond plus au store (OutOfSync), refusé tant que automated est actif;argocd,cgoa-01-09
+Pourquoi le principe 3 impose-t-il le pull plutôt que le push ?;L'agent doit pouvoir lire l'état désiré à tout moment, pas seulement quand un changement déclenche un push : c'est le prérequis de la réconciliation continue;opengitops,cgoa-02-03
+Un CronJob qui fait kubectl apply toutes les minutes respecte-t-il les principes ?;Non : il applique un snapshot (pas tiré du store), ne supprime jamais ce qui a disparu, et n'observe pas le cluster entre deux runs;opengitops,cgoa-02-03,cgoa-02-04
+Quelle option git côté serveur refuse la réécriture d'historique ?;receive.denyNonFastForwards true (et receive.denyDeletes true pour les suppressions de branche);git,cgoa-01-07
+Comment obtenir un reflog sur un dépôt bare ?;core.logAllRefUpdates true : les pushes suivants sont journalisés (git reflog show main);git,cgoa-01-07
+Comment limiter la clé SSH d'Argo CD à la lecture d'un seul dépôt ?;Dans authorized_keys : command="git-upload-pack '/chemin/depot.git'" avec no-pty, no-port-forwarding…, le push échoue car receive-pack n'est jamais lancé;git,cgoa-01-07
+Valeur par défaut de timeout.reconciliation dans Argo CD 3.5 et conséquence ?;120 s plus un jitter de 60 s, un commit peut attendre jusqu'à 3 min, « continu » n'est pas « instantané », redémarrer le contrôleur après changement;argocd,cgoa-01-01,cgoa-02-04
+Argo CD détecte-t-il une dérive du cluster au même rythme qu'un nouveau commit ?;Non : la dérive est vue en secondes (observation continue du cluster), le commit au prochain pull périodique de Git;argocd,cgoa-01-04,cgoa-02-04
+Quelle métrique Argo CD donne l'état de sync et de santé d'une Application ?;argocd_app_info (labels sync_status, health_status), exposée par argocd-metrics:8082/metrics;argocd,cgoa-01-08

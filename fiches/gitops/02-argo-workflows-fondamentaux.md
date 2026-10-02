@@ -24,7 +24,7 @@ statut: "brouillon"
 # Argo Workflows — installer, écrire et lancer un premier workflow
 
 > Niveau **débutant** · durée **5 h** · profil de lab **linux-base** (kind sur une VM ; variante **kubernetes-ha**) ·
-> couvre **CAPA-01-01, CAPA-01-04** (+ CGOA-03-04, à confirmer par la cartographie CGOA).
+> couvre **CAPA-01-01, CAPA-01-04** (+ CGOA-03-04, confirmés par `certifs/CGOA/objectifs.md`).
 
 Statut d'exécution de cette version : la session de rédaction n'avait pas de démon Docker, donc pas de cluster `kind`.
 Les commandes qui touchent un cluster sont marquées `[non testé : pas de cluster dans la session de rédaction]`.

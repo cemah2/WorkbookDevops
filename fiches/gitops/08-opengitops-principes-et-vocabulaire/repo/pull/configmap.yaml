@@ -1,0 +1,9 @@
+# Dépôt du lab, dossier pull/ : la « fonctionnalité » visible de l'app est cette page.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-content
+data:
+  index.html: |
+    <h1>demo-pull</h1>
+    <p>version: v1</p>

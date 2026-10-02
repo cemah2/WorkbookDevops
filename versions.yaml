@@ -414,6 +414,16 @@ components:
     verification_detail: "API GitHub bloquée depuis la session ; tags git du dépôt officiel (git ls-remote) et binaire argo v4.1.4 téléchargé depuis la release"
     checked_on: "2026-10-02"
 
+  opengitops_documents:
+    name: "OpenGitOps — principes et glossaire (document de référence, pas un logiciel)"
+    # renovate: datasource=github-releases depName=open-gitops/documents extractVersion=^v(?<version>.*)$
+    version: "1.0.0"
+    channel: stable
+    source_url: "https://github.com/open-gitops/documents/releases"
+    verification: direct
+    verification_detail: "tag v1.0.0 lu par git ls-remote et PRINCIPLES.md / GLOSSARY.md du tag lus sur raw.githubusercontent.com ; cité par les fiches gitops 08+ (CGOA)"
+    checked_on: "2026-10-02"
+
   flux:
     name: "Flux"
     # renovate: datasource=github-releases depName=fluxcd/flux2 extractVersion=^v(?<version>.*)$
