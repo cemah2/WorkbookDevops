@@ -1,0 +1,48 @@
+# Variante kubernetes-ha : exposition de l'UI par Gateway API (Cilium, DECISIONS.md 2026-10-02)
+# et certificat cert-manager émis par la CA interne. Prérequis : argocd-server lancé avec --insecure
+# (ConfigMap argocd-cmd-params-cm, clé server.insecure: "true") car la Gateway termine le TLS.
+# [non testé : pas de cluster dans la session de rédaction] — validé avec kubeconform seulement.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd-ui
+  namespace: argocd
+spec:
+  secretName: argocd-ui-tls
+  dnsNames:
+    - argocd.apps.lab.home.arpa
+  issuerRef:
+    name: lab-root-ca
+    kind: ClusterIssuer
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  gatewayClassName: cilium
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: argocd.apps.lab.home.arpa
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: argocd-ui-tls
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  parentRefs:
+    - name: argocd
+  hostnames:
+    - argocd.apps.lab.home.arpa
+  rules:
+    - backendRefs:
+        - name: argocd-server
+          port: 80

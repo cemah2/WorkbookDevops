@@ -2,7 +2,7 @@
 chapitre: "fiches/gitops/01-argo-cd-fondamentaux.md"
 domaine: "gitops"
 niveau: "débutant"
-statut: "validé le 2026-10-02 — à rédiger avec prompts/03-redaction-chapitre.md dans une nouvelle session"
+statut: "réalisé le 2026-10-02 — chapitre en brouillon, relecture critique à faire (prompts/04)"
 duree_estimee: "5 h"
 profil_lab: "linux-base (kind sur une VM) ; variante kubernetes-ha"
 versions: "argo_cd, kind, kubernetes, cilium, cert_manager"
