@@ -494,7 +494,80 @@ flowchart TB
 | `plateforme/13-istio-troubleshooting` | confirmé | planifié | ICA-04-01 à 04-03 | `plateforme/08-…` à `12-…` ; `observabilite_deb` recommandé |
 | `scenarios/NN-service-mesh-bout-en-bout` | expert | planifié | ICA (17 compétences), CKS-04-04, CKA-03-04 ; CAPA-03-02 si Argo Rollouts | les huit fiches ci-dessus ; `gitops/05-argo-rollouts` recommandé |
 
-### 6.5 CKS (certifs/CKS/objectifs.md, 2026-10-02)
+### 6.5 CCA (certifs/CCA/objectifs.md, 2026-10-02)
+
+Sept fiches `reseau` (numéros `10` à `16`, les `01` à `09` restant aux fiches `reseau_deb`) et un scénario ; la fiche 10 est rédigée (brouillon).
+Aucune fiche Cilium au niveau débutant : `reseau_deb` est un prérequis de `kubernetes_deb`, dont Cilium a besoin.
+Arêtes inter-domaines nouvelles, justifiées dans `certifs/CCA/objectifs.md` §2 et §4 : `kubernetes_deb` → Cilium installation
+(cluster existant, kubectl, Services) ; `linux_conf` ⇢ IPAM/datapath/eBPF (namespaces réseau, `nft`, `tcpdump`) ;
+`securite_deb` ⇢ Network Policy (moindre privilège) ; `observabilite_deb` ⇢ Hubble (Prometheus, Grafana) ;
+`services_deb` ⇢ Gateway API (PKI interne, DNS `*.apps.lab.home.arpa`) ; `proxmox_conf` ⇢ BGP (OPNsense `core-rtr01`, plugin FRR).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef conf fill:#fff8e1,stroke:#f9a825,color:#6d4c00
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  reseau_deb[reseau_deb]:::ref
+  reseau_conf[reseau_conf]:::ref
+  reseau_exp[reseau_exp]:::ref
+  kubernetes_deb[kubernetes_deb]:::ref
+  linux_conf[linux_conf]:::ref
+  securite_deb[securite_deb]:::ref
+  observabilite_deb[observabilite_deb]:::ref
+  services_deb[services_deb]:::ref
+  proxmox_conf[proxmox_conf]:::ref
+
+  cil_install["reseau/10-cilium-installation-architecture (conf., rédigé)"]:::conf
+  cil_datapath["reseau/11-cilium-ipam-datapath-ebpf (conf.)"]:::plan
+  cil_policy["reseau/12-cilium-network-policy (conf.)"]:::plan
+  cil_hubble["reseau/13-cilium-hubble-observabilite (conf.)"]:::plan
+  cil_gateway["reseau/14-cilium-gateway-api-service-mesh (conf.)"]:::plan
+  cil_bgp["reseau/15-cilium-bgp-egress-gateway (exp.)"]:::planexp
+  cil_mesh["reseau/16-cilium-cluster-mesh (exp.)"]:::planexp
+  s_cilium["scenarios/NN-plateforme-reseau-cilium (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  reseau_deb --> cil_install
+  kubernetes_deb --> cil_install
+  linux_conf -.-> cil_datapath
+  securite_deb -.-> cil_policy
+  observabilite_deb -.-> cil_hubble
+  services_deb -.-> cil_gateway
+  proxmox_conf -.-> cil_bgp
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  cil_install --> cil_datapath
+  cil_install --> cil_policy
+  cil_policy --> cil_hubble
+  cil_hubble --> cil_gateway
+  cil_datapath --> cil_gateway
+  cil_datapath --> reseau_conf
+  cil_policy --> reseau_conf
+  cil_hubble --> reseau_conf
+  cil_gateway --> reseau_conf
+  reseau_conf --> cil_bgp
+  reseau_conf --> cil_mesh
+  cil_bgp -.-> cil_mesh
+  cil_bgp --> s_cilium
+  cil_mesh --> s_cilium
+  s_cilium --> reseau_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `reseau/10-cilium-installation-architecture` | confirmé | rédigé (brouillon) | CCA-01-01, 01-02, 01-04, 05-01, 05-02 | `reseau_deb`, `kubernetes_deb` |
+| `reseau/11-cilium-ipam-datapath-ebpf` | confirmé | planifié | CCA-01-03, 01-05, 07-01 à 07-03 | `reseau/10-cilium-installation-architecture`, `linux_conf` (recommandé) |
+| `reseau/12-cilium-network-policy` | confirmé | planifié | CCA-02-01 à 02-05 | `reseau/10-cilium-installation-architecture`, `securite_deb` (recommandé) |
+| `reseau/13-cilium-hubble-observabilite` | confirmé | planifié | CCA-04-01 à 04-03 | `reseau/12-cilium-network-policy`, `observabilite_deb` (recommandé) |
+| `reseau/14-cilium-gateway-api-service-mesh` | confirmé | planifié | CCA-03-01 à 03-05 | `reseau/12-cilium-network-policy`, `reseau/13-cilium-hubble-observabilite`, `reseau/11-cilium-ipam-datapath-ebpf`, `services_deb` (recommandé) |
+| `reseau/15-cilium-bgp-egress-gateway` | expert | planifié | CCA-08-01, 08-02 | `reseau_conf` (les quatre fiches confirmé), `proxmox_conf` (recommandé) |
+| `reseau/16-cilium-cluster-mesh` | expert | planifié | CCA-06-01, 06-02 | `reseau_conf`, `reseau/15-cilium-bgp-egress-gateway` (recommandé) |
+| `scenarios/NN-plateforme-reseau-cilium` | expert | planifié | CCA (28 compétences), CKA-03-02, 03-04, CKS-01-01, 04-04 (à confirmer) | les sept fiches ci-dessus |
+
+### 6.6 CKS (certifs/CKS/objectifs.md, 2026-10-02)
 
 Quatorze fiches `securite` et un scénario. Une seule fiche débutant (`securite_deb`, hôte Linux), treize fiches
 confirmé sous `securite_conf` (bloc CKA acquis), le scénario sous `securite_exp`.

@@ -49,7 +49,7 @@ Arbitrages hérités : Ubuntu 24.04 LTS image de référence (DECISIONS.md 2026-
 
 ## Niveau et prérequis
 
-- Débutant, nœud `securite_deb` (`docs/prerequis.md` §6.5, premier nœud de la série).
+- Débutant, nœud `securite_deb` (`docs/prerequis.md` §6.6, premier nœud de la série).
 - Prérequis : nœud `linux_deb` (systemd, paquets apt, utilisateurs et groupes, SSH par clé, `journalctl`) ;
   nœud `reseau_deb` recommandé (ports, TCP/UDP, notion de pare-feu). Aucun chapitre n'existe pour ces nœuds au
   2026-10-02 : le front matter cite les nœuds, pas des fichiers, comme la fiche `gitops/01`.
@@ -169,7 +169,7 @@ aveugle par `break.sh random` quand ce wrapper existera).
 - `revision/flashcards/securite-01-durcissement-hote-linux.csv` (10 à 20 cartes)
 - `templates/fiche.md` : deux lignes optionnelles de front matter (`etat_initial`, `verification`) et un paragraphe « état initial
   scripté » dans la section Liens, pour les fiches hors Kubernetes (arbitrage 3)
-- mise à jour de `certifs/CKS/objectifs.md` §3 et §4, de `docs/prerequis.md` §6.5 (nœud `rédigé`), de `docs/plans/README.md`
+- mise à jour de `certifs/CKS/objectifs.md` §3 et §4, de `docs/prerequis.md` §6.6 (nœud `rédigé`), de `docs/plans/README.md`
   et de ce plan (`statut: réalisé`)
 
 ## Arbitrages validés (2026-10-02)

@@ -1,0 +1,19 @@
+# Cluster kind pour la fiche reseau/10 : 1 control plane + 2 workers, SANS CNI et SANS kube-proxy.
+# Cilium prend les deux rôles (DECISIONS.md 2026-10-02 : kube-proxy absent, kubeProxyReplacement).
+# Image de nœud : la seule 1.37 publiée avec kind 0.33.0 (versions.yaml: kind), digest obligatoire.
+# Usage : kind create cluster --name cilium-lab --config kind-config.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: cilium-lab
+nodes:
+  - role: control-plane
+    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
+  - role: worker
+    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
+  - role: worker
+    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
+networking:
+  disableDefaultCNI: true   # pas de kindnet : les nœuds restent NotReady jusqu'à l'installation de Cilium
+  kubeProxyMode: none       # pas de kube-proxy : Cilium en kubeProxyReplacement
+  podSubnet: 10.244.0.0/16  # labs/network.md §4
+  serviceSubnet: 10.96.0.0/12
