@@ -1,0 +1,34 @@
+# MkDocs
+site/
+# Node (markdownlint-cli2 local)
+node_modules/
+# Python
+__pycache__/
+*.pyc
+.venv/
+# OpenTofu / Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.example.tfvars
+.terraform.lock.hcl
+crash.log
+# Packer
+packer_cache/
+*.pkrvars.hcl
+# Ansible
+*.retry
+.ansible/
+# Secrets et clés : jamais committés
+*.pem
+*.key
+*.p12
+vault-password*
+.env
+# Éditeurs et OS
+.idea/
+.vscode/
+.DS_Store
+# Exports de schémas générés (sources .excalidraw committées)
+assets/excalidraw/*.png
