@@ -93,3 +93,29 @@ nouvelle entrée ici.
 `core-dns01` fait tourner BIND 9 (zone `lab.home.arpa`, sous-zones par VLAN, reverse `10.10.0.0/16`, récurseur).
 Choix cohérent avec LFCS et RHCE, qui citent BIND. PowerDNS n'est pas retenu ; NetBox pourra générer les
 fichiers de zone BIND plus tard. Dans le VLAN air-gap, `core-mirror01` porte une seconde instance BIND sans récursion.
+
+## 2026-10-02 — Fiches numérotées par série
+
+Dans chaque domaine de `fiches/`, les fiches portent un préfixe `NN-` dans l'ordre de lecture recommandé
+(`fiches/gitops/01-argo-cd-fondamentaux.md`). Les scripts de panne et les flashcards reprennent ce numéro :
+`break/<domaine>/NN-<panne>.sh`, `revision/flashcards/<domaine>-NN-<slug>.csv`.
+Conséquence : les nœuds de `docs/prerequis.md` §6 et les `objectifs.md` citent le chemin numéroté ; un numéro
+attribué ne change plus, une insertion prend le numéro suivant.
+
+## 2026-10-02 — Git du lab : dépôt bare SSH sur `core-jump01`
+
+Aucun profil ne porte GitLab. Jusqu'au premier chapitre qui a besoin d'un GitLab (CI, webhooks : scénario Argo de
+bout en bout), `git.lab.home.arpa` pointe sur `core-jump01` qui héberge des dépôts bare accessibles en SSH.
+Les démos guidées peuvent partir du dépôt public `argoproj/argocd-example-apps` pour une première synchronisation
+sans infrastructure ; l'exercice sur les identifiants privés utilise le dépôt du lab.
+Conséquence : `core-jump01` gagne le rôle « serveur Git léger » (budget inchangé, 1 vCPU / 1 Go) ; le placement
+de GitLab 19.x fera l'objet d'une nouvelle entrée.
+
+## 2026-10-02 — Gateway API : Cilium par défaut, Envoy Gateway en variante
+
+Sur `kubernetes-ha`, l'implémentation Gateway API par défaut est celle de Cilium (déjà CNI, `kubeProxyReplacement`
+activé, programme CCA). Envoy Gateway reste dans le profil comme variante pour un chapitre qui aurait besoin d'une
+fonction absente de Cilium ; la fiche concernée le justifie en une ligne.
+Conséquence : les fiches exposent leurs UI par `Gateway` + `HTTPRoute` Cilium et un certificat cert-manager
+émis par la CA interne ; sur `kind`, l'exposition se fait par `port-forward` et la Gateway est une variante.
+

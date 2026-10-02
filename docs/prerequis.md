@@ -233,13 +233,13 @@ flowchart TB
   observabilite_deb[observabilite_deb]:::ref
   ceph_deb[ceph_deb]:::ref
 
-  argocd_fond["gitops/argo-cd-fondamentaux (déb.)"]:::plan
-  argocd_helm["gitops/argo-cd-helm-kustomize-reconciliation (conf.)"]:::plan
-  wf_fond["gitops/argo-workflows-fondamentaux (déb.)"]:::plan
-  wf_art["gitops/argo-workflows-artefacts-templates-dag (conf.)"]:::plan
-  wf_data["gitops/argo-workflows-traitement-de-donnees (conf.)"]:::plan
-  rollouts["gitops/argo-rollouts (conf.)"]:::plan
-  events["gitops/argo-events (conf.)"]:::plan
+  argocd_fond["gitops/01-argo-cd-fondamentaux (déb.)"]:::plan
+  argocd_helm["gitops/04-argo-cd-helm-kustomize-reconciliation (conf.)"]:::plan
+  wf_fond["gitops/02-argo-workflows-fondamentaux (déb.)"]:::plan
+  wf_art["gitops/03-argo-workflows-artefacts-templates-dag (conf.)"]:::plan
+  wf_data["gitops/06-argo-workflows-traitement-de-donnees (conf.)"]:::plan
+  rollouts["gitops/05-argo-rollouts (conf.)"]:::plan
+  events["gitops/07-argo-events (conf.)"]:::plan
   s_argo["scenarios/NN-chaine-argo-bout-en-bout (exp.)"]:::planexp
 
   %% rattachement aux nœuds de référence
@@ -267,11 +267,11 @@ flowchart TB
 
 | Nœud | Niveau | Statut | Certifications | Prérequis |
 |---|---|---|---|---|
-| `gitops/argo-cd-fondamentaux` | débutant | planifié | CAPA-02-01 à 02-03 | `kubernetes_deb`, `iac_deb` |
-| `gitops/argo-cd-helm-kustomize-reconciliation` | confirmé | planifié | CAPA-02-04, 02-05 | `gitops/argo-cd-fondamentaux`, `kubernetes_conf` |
-| `gitops/argo-workflows-fondamentaux` | débutant | planifié | CAPA-01-01, 01-04 | `kubernetes_deb` |
-| `gitops/argo-workflows-artefacts-templates-dag` | confirmé | planifié | CAPA-01-02, 01-03, 01-05 | `gitops/argo-workflows-fondamentaux`, `ceph_deb` (recommandé) |
-| `gitops/argo-workflows-traitement-de-donnees` | confirmé | planifié | CAPA-01-06 | `gitops/argo-workflows-artefacts-templates-dag` |
-| `gitops/argo-rollouts` | confirmé | planifié | CAPA-03-01 à 03-03 | `gitops/argo-cd-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
-| `gitops/argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/argo-workflows-fondamentaux`, `kubernetes_conf` |
+| `gitops/01-argo-cd-fondamentaux` | débutant | planifié | CAPA-02-01 à 02-03 | `kubernetes_deb`, `iac_deb` |
+| `gitops/04-argo-cd-helm-kustomize-reconciliation` | confirmé | planifié | CAPA-02-04, 02-05 | `gitops/01-argo-cd-fondamentaux`, `kubernetes_conf` |
+| `gitops/02-argo-workflows-fondamentaux` | débutant | planifié | CAPA-01-01, 01-04 | `kubernetes_deb` |
+| `gitops/03-argo-workflows-artefacts-templates-dag` | confirmé | planifié | CAPA-01-02, 01-03, 01-05 | `gitops/02-argo-workflows-fondamentaux`, `ceph_deb` (recommandé) |
+| `gitops/06-argo-workflows-traitement-de-donnees` | confirmé | planifié | CAPA-01-06 | `gitops/03-argo-workflows-artefacts-templates-dag` |
+| `gitops/05-argo-rollouts` | confirmé | planifié | CAPA-03-01 à 03-03 | `gitops/01-argo-cd-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
+| `gitops/07-argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/02-argo-workflows-fondamentaux`, `kubernetes_conf` |
 | `scenarios/NN-chaine-argo-bout-en-bout` | expert | planifié | CAPA (16 compétences), CGOA-04-01 à 04-04 | les sept fiches ci-dessus |

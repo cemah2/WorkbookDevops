@@ -102,30 +102,35 @@ Le mapping CGOA lui-même sera fait par sa propre session `prompts/01-cartograph
 
 ## 4. Trous et chapitres à créer
 
+Les fiches sont numérotées dans l'ordre de rédaction recommandé (DECISIONS.md, 2026-10-02).
 Tous les chapitres ciblent le profil `kubernetes-ha` (16 vCPU / 48 Go / 300 Go, `labs/profiles/kubernetes-ha.yaml`).
-Les fiches **débutant** tiennent aussi sur un cluster `kind` d'une seule VM du profil `linux-base`
-(8 vCPU / 16 Go / 180 Go) : c'est noté « variante légère » quand c'est le cas.
+Tant que `lab up kubernetes-ha` n'existe pas, les fiches **débutant** ont pour chemin principal un cluster `kind`
+sur une VM du profil `linux-base` (8 vCPU / 16 Go / 180 Go) et gardent `kubernetes-ha` en variante ; les fiches
+confirmé attendent le profil complet. Git du lab : dépôt bare SSH sur `core-jump01` derrière `git.lab.home.arpa`
+(DECISIONS.md, 2026-10-02). Gateway API : Cilium par défaut (DECISIONS.md, 2026-10-02).
 Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en manipulation), pas de rédaction.
 
-### F1 — `fiches/gitops/argo-cd-fondamentaux.md`
+### F1 — `fiches/gitops/01-argo-cd-fondamentaux.md`
 
 - **Titre** : Argo CD — installer, déclarer une Application, synchroniser
 - **Niveau** : débutant (`gitops_deb`)
 - **Couvre** : CAPA-02-01, CAPA-02-02, CAPA-02-03
 - **Prérequis** : `kubernetes_deb` (kubectl, Deployments, namespaces), `iac_deb` (Git, dépôt distant sur le GitLab du lab)
-- **Lab** : `kubernetes-ha` ; variante légère `kind` sur `linux-base`. Clé `versions.yaml` : `argo_cd`, `helm`.
+- **Lab** : `kind` sur `linux-base` (chemin principal tant que le profil n'est pas levé), variante `kubernetes-ha`.
+  Clés `versions.yaml` : `argo_cd`, `kind`, `cilium`, `cert_manager`.
+- **Plan validé** : `docs/plans/gitops-01-argo-cd-fondamentaux.md` (2026-10-02).
 - **Temps** : 5 h
 - **3 exercices clés** :
-  1. Installer Argo CD (manifests officiels, puis Helm 4), exposer l'UI via Gateway API, se connecter avec `argocd` CLI,
+  1. Installer Argo CD (manifests officiels de la version `argo_cd`), exposer l'UI via Gateway API, se connecter avec `argocd` CLI,
      créer un projet et une Application pointant vers un dépôt du lab — CAPA-02-01, CAPA-02-03.
   2. Comparer sync manuelle / automatique, `prune`, `selfHeal` : modifier une ressource à la main, observer `OutOfSync`,
      corriger le drift dans les deux sens — CAPA-02-02.
   3. Lire l'arbre de ressources, les états `health` et `sync`, revenir à un commit précédent (`argocd app history` / `rollback`),
      diagnostiquer une Application `Degraded` — CAPA-02-02, CAPA-02-03.
-- **Break-fix** : `break/gitops/argocd-repo-credentials.sh` (secret de dépôt cassé → `ComparisonError`).
+- **Break-fix** : `break/gitops/01-argocd-repo-credentials.sh` (secret de dépôt cassé → `ComparisonError`).
 - **Défi chronométré** : déployer une app depuis un dépôt vierge en moins de 10 min.
 
-### F2 — `fiches/gitops/argo-cd-helm-kustomize-reconciliation.md`
+### F2 — `fiches/gitops/04-argo-cd-helm-kustomize-reconciliation.md`
 
 - **Titre** : Argo CD — sources Helm et Kustomize, patterns de réconciliation
 - **Niveau** : confirmé (`gitops_conf`)
@@ -143,7 +148,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Break-fix** : `break/gitops/argocd-sync-loop.sh` (champ muté par un contrôleur, Application jamais `Synced`).
 - **Défi chronométré** : passer une app Kustomize de `dev` à `prod` par PR, sync vérifiée, en moins de 15 min.
 
-### F3 — `fiches/gitops/argo-workflows-fondamentaux.md`
+### F3 — `fiches/gitops/02-argo-workflows-fondamentaux.md`
 
 - **Titre** : Argo Workflows — installer, écrire et lancer un premier workflow
 - **Niveau** : débutant (`gitops_deb`)
@@ -161,7 +166,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Break-fix** : `break/gitops/argo-workflows-rbac.sh` (ServiceAccount sans droit `workflowtaskresults`, pods en `Error`).
 - **Défi chronométré** : écrire et faire passer un workflow à trois étapes avec paramètres en moins de 10 min.
 
-### F4 — `fiches/gitops/argo-workflows-artefacts-templates-dag.md`
+### F4 — `fiches/gitops/03-argo-workflows-artefacts-templates-dag.md`
 
 - **Titre** : Argo Workflows — artefacts, WorkflowTemplate et DAG
 - **Niveau** : confirmé (`gitops_conf`)
@@ -181,7 +186,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Défi chronométré** : transformer un workflow linéaire de 4 étapes en DAG à 2 branches parallèles avec artefact partagé,
   en moins de 15 min.
 
-### F5 — `fiches/gitops/argo-workflows-traitement-de-donnees.md`
+### F5 — `fiches/gitops/06-argo-workflows-traitement-de-donnees.md`
 
 - **Titre** : Argo Workflows — traitement de données en parallèle
 - **Niveau** : confirmé (`gitops_conf`)
@@ -199,7 +204,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Break-fix** : `break/gitops/argo-workflows-parallelism.sh` (sémaphore à 0, lot figé en `Pending`).
 - **Défi chronométré** : traiter 20 éléments en parallèle avec agrégation finale en moins de 12 min.
 
-### F6 — `fiches/gitops/argo-rollouts.md`
+### F6 — `fiches/gitops/05-argo-rollouts.md`
 
 - **Titre** : Argo Rollouts — canary, blue-green et analyse automatisée
 - **Niveau** : confirmé (`gitops_conf`)
@@ -218,7 +223,7 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 - **Break-fix** : `break/gitops/argo-rollouts-analysis-fail.sh` (requête PromQL qui échoue toujours, Rollout `Degraded`).
 - **Défi chronométré** : publier une nouvelle image en canary 20 % → 50 % → 100 % avec analyse en moins de 15 min.
 
-### F7 — `fiches/gitops/argo-events.md`
+### F7 — `fiches/gitops/07-argo-events.md`
 
 - **Titre** : Argo Events — EventBus, EventSource, Sensor
 - **Niveau** : confirmé (`gitops_conf`)

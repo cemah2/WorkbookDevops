@@ -4,8 +4,9 @@ Plan validé. Crée une branche `chapitre/<slug>`.
 Rédige <chemin du chapitre> en suivant le gabarit à la lettre, puis :
 
 - `solutions/<même chemin>` avec 3 indices progressifs puis correction commentée ;
-- `break/<techno>/<numéro>-*.sh` : scripts de panne idempotents, avec `--reveal` qui explique la panne ;
-- `revision/<techno>/<numéro>.csv` : 10 à 20 flashcards `question;réponse;tags` ;
+- `break/<domaine>/<numéro>-<panne>.sh` : scripts de panne idempotents, `--undo` retire la panne,
+  `--reveal` l'explique (chemins du gabarit `templates/fiche.md`) ;
+- `revision/flashcards/<domaine>-<numéro>-<slug>.csv` : 10 à 20 flashcards `question;réponse;tags` ;
 - mise à jour de `certifs/<CODE>/objectifs.md` pour chaque ID couvert ;
 - mise à jour de docs/prerequis.md.
 
