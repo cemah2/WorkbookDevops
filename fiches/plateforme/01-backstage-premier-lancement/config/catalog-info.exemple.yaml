@@ -1,0 +1,11 @@
+# Composant minimal enregistré à la main par l'API pendant la démo de la section 3 (servi en HTTP local).
+# Le catalogue, ses kinds et ses annotations sont le sujet de la fiche 02.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: lab-portal-demo
+  description: Composant enregistré à la main pendant la fiche 01
+spec:
+  type: service
+  lifecycle: experimental
+  owner: guests

@@ -367,6 +367,7 @@ de Kubernetes). L'arête de référence `kubernetes_conf` → `plateforme_deb` d
 ```mermaid
 flowchart TB
   classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef deb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
   classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
   classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
   classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
@@ -382,7 +383,7 @@ flowchart TB
   plateforme_conf[plateforme_conf]:::ref
   plateforme_exp[plateforme_exp]:::ref
 
-  bs_lancement["plateforme/01-backstage-premier-lancement (déb.)"]:::plandeb
+  bs_lancement["plateforme/01-backstage-premier-lancement (déb., rédigé)"]:::deb
   bs_catalogue["plateforme/02-backstage-catalogue (déb.)"]:::plandeb
   bs_plugins["plateforme/03-backstage-plugins-et-personnalisation (conf.)"]:::plan
   bs_ingestion["plateforme/04-backstage-ingestion-automatisee (conf.)"]:::plan
@@ -412,7 +413,7 @@ flowchart TB
 
 | Nœud | Niveau | Statut | Certifications | Prérequis |
 |---|---|---|---|---|
-| `plateforme/01-backstage-premier-lancement` | débutant | planifié | CBA-01-01 à 01-04, 03-01, 03-04 | `linux_deb`, `iac_deb` |
+| `plateforme/01-backstage-premier-lancement` | débutant | rédigé (brouillon) | CBA-01-01 à 01-04, 03-01, 03-04 | `linux_deb`, `iac_deb` |
 | `plateforme/02-backstage-catalogue` | débutant | planifié | CBA-02-01 à 02-05, CNPA-05-02 | `plateforme/01-backstage-premier-lancement` |
 | `plateforme/03-backstage-plugins-et-personnalisation` | confirmé | planifié | CBA-04-01 à 04-04 (+ 01-02, 01-03) | `plateforme/01-…`, `plateforme/02-…` |
 | `plateforme/04-backstage-ingestion-automatisee` | confirmé | planifié | CBA-02-05, 02-06, CNPA-05-02 | `plateforme/02-…`, `plateforme/03-…`, `services_deb` (recommandé) |
