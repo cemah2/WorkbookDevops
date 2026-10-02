@@ -277,3 +277,107 @@ flowchart TB
 | `gitops/05-argo-rollouts` | confirmé | planifié | CAPA-03-01 à 03-03 | `gitops/01-argo-cd-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
 | `gitops/07-argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/02-argo-workflows-fondamentaux`, `kubernetes_conf` |
 | `scenarios/NN-chaine-argo-bout-en-bout` | expert | planifié | CAPA (16 compétences), CGOA-04-01 à 04-04 | les sept fiches ci-dessus |
+
+### 6.2 CNPA (certifs/CNPA/objectifs.md, 2026-10-02)
+
+Huit fiches `plateforme`, deux fiches `securite`, une fiche `observabilite` et un scénario. Cinq fiches sont partagées
+avec ICA, KCSA, KCA, PCA/OTCA et CBA (`certifs/CNPA/objectifs.md` §3). Arêtes inter-domaines nouvelles, justifiées dans
+`certifs/CNPA/objectifs.md` §4 : `kubernetes_deb` → sécurité Kubernetes essentiels (RBAC et PSA supposent l'API Kubernetes,
+le graphe de référence ne relie `securite_deb` qu'à `linux_deb`) ; `iac_deb` → Crossplane (comparaison avec OpenTofu, module
+`labs/tofu`) ; `services_deb` → mTLS (PKI interne `core-pki01`) ; `observabilite_deb` → incidents et DORA (Alertmanager, PromQL).
+Les fiches CAPA `gitops/04`, `gitops/05` et `gitops/07` sont des prérequis recommandés (pointillés).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  kubernetes_deb[kubernetes_deb]:::ref
+  kubernetes_conf[kubernetes_conf]:::ref
+  gitops_deb[gitops_deb]:::ref
+  iac_deb[iac_deb]:::ref
+  services_deb[services_deb]:::ref
+  securite_deb[securite_deb]:::ref
+  securite_conf[securite_conf]:::ref
+  observabilite_deb[observabilite_deb]:::ref
+  plateforme_deb[plateforme_deb]:::ref
+  plateforme_conf[plateforme_conf]:::ref
+  plateforme_exp[plateforme_exp]:::ref
+
+  argocd_fond["gitops/01-argo-cd-fondamentaux (déb., rédigé)"]:::ref
+  wf_fond["gitops/02-argo-workflows-fondamentaux (déb., rédigé)"]:::ref
+  capa_f2["gitops/04 · 05 · 07 (CAPA, conf., planifiés)"]:::ref
+
+  pf01["plateforme/01-platform-engineering-fondamentaux (déb.)"]:::plandeb
+  pf02["plateforme/02-crd-operateurs-reconciliation (déb.)"]:::plandeb
+  pf03["plateforme/03-crossplane-provisioning-self-service (conf.)"]:::plan
+  pf04["plateforme/04-ci-pipelines-securisees (conf.)"]:::plan
+  pf05["plateforme/05-communication-securisee-mtls (conf.)"]:::plan
+  pf06["plateforme/06-backstage-portail-catalogue-templates (conf.)"]:::plan
+  pf07["plateforme/07-ia-dans-l-automatisation-plateforme (déb.)"]:::plandeb
+  pf08["plateforme/08-incidents-dora-mesure-de-la-plateforme (conf.)"]:::plan
+  sec01["securite/01-kubernetes-securite-essentiels (déb.)"]:::plandeb
+  sec02["securite/02-kyverno-politiques-plateforme (conf.)"]:::plan
+  obs01["observabilite/01-metriques-logs-traces-evenements (déb.)"]:::plandeb
+  s_pf["scenarios/NN-plateforme-self-service-bout-en-bout (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  kubernetes_conf --> plateforme_deb
+  gitops_deb --> plateforme_deb
+  argocd_fond --> plateforme_deb
+  plateforme_deb --> pf01
+  plateforme_deb --> pf02
+  plateforme_deb --> pf07
+  kubernetes_deb --> obs01
+  kubernetes_deb --> sec01
+  securite_deb --> sec01
+  kubernetes_conf --> sec02
+  iac_deb --> pf03
+  services_deb --> pf05
+  kubernetes_conf --> pf05
+  observabilite_deb --> pf08
+  wf_fond --> pf04
+  argocd_fond --> pf04
+  argocd_fond --> pf08
+  capa_f2 -.-> pf04
+  capa_f2 -.-> pf08
+  capa_f2 -.-> s_pf
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  pf01 --> pf02 --> pf03
+  pf01 --> pf04
+  pf01 --> pf07
+  pf04 --> pf06
+  pf03 -.-> pf06
+  sec01 --> sec02
+  sec01 --> pf05
+  sec02 -.-> pf04
+  obs01 --> pf08
+  pf04 --> pf08
+  obs01 --> observabilite_deb
+  sec01 --> securite_deb
+  sec02 --> securite_conf
+  pf03 --> plateforme_conf
+  pf04 --> plateforme_conf
+  pf05 --> plateforme_conf
+  pf06 --> plateforme_conf
+  pf08 --> plateforme_conf
+  plateforme_conf --> s_pf --> plateforme_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `plateforme/01-platform-engineering-fondamentaux` | débutant | planifié | CNPA-01-02 à 01-05 ; partiels 01-01, 03-05, 05-01 | `plateforme_deb` (`kubernetes_conf`, `gitops/01-argo-cd-fondamentaux`) |
+| `plateforme/02-crd-operateurs-reconciliation` | débutant | planifié | CNPA-04-01, 04-02, 04-04 ; CNPE-03-01, 03-03 | `plateforme/01`, `kubernetes_conf` |
+| `plateforme/03-crossplane-provisioning-self-service` | confirmé | planifié | CNPA-04-03 ; partiels 04-02, 05-02 ; CNPE-03-02, 03-04 | `plateforme/02`, `iac_deb` ; `ceph_deb` recommandé |
+| `plateforme/04-ci-pipelines-securisees` | confirmé | planifié | CNPA-01-06, 02-05, 03-01, 03-03 ; partiel 01-07 ; CNPE-02-02, 05-05 | `gitops/02-argo-workflows-fondamentaux`, `gitops/01`, `plateforme/01`, `kubernetes_conf` ; `gitops/07-argo-events` et `securite/02` recommandés |
+| `plateforme/05-communication-securisee-mtls` | confirmé | planifié | CNPA-02-02 ; ICA, CCA, CNPE-05-01 | `securite/01`, `services_deb`, `kubernetes_conf` |
+| `plateforme/06-backstage-portail-catalogue-templates` | confirmé | planifié | CNPA-05-01 à 05-03 ; CBA-02-xx, 03-02, 03-03 | `plateforme/01`, `plateforme/04`, `gitops/01` ; `plateforme/03` recommandé |
+| `plateforme/07-ia-dans-l-automatisation-plateforme` | débutant | planifié | CNPA-05-04 | `plateforme/01` ; `securite/01` ou `securite/02` pour un cluster à diagnostiquer |
+| `plateforme/08-incidents-dora-mesure-de-la-plateforme` | confirmé | planifié | CNPA-03-02, 06-01, 06-02 ; CNPE-04-02, 04-03 | `observabilite/01`, `gitops/01`, `plateforme/04` ; `gitops/05-argo-rollouts` recommandé |
+| `securite/01-kubernetes-securite-essentiels` | débutant | planifié | CNPA-02-04 ; KCSA, CKS, KCNA-02-02 | `securite_deb` (`linux_deb`), `kubernetes_deb` |
+| `securite/02-kyverno-politiques-plateforme` | confirmé | planifié | CNPA-02-03 ; KCA-01-xx, 02-01, 04-01, 05-01, 05-04 à 05-06, 06-01 | `securite/01`, `kubernetes_conf` ; `plateforme/04` recommandé |
+| `observabilite/01-metriques-logs-traces-evenements` | débutant | planifié | CNPA-02-01 ; PCA, OTCA-01-xx, 03-01, 03-04, KCNA-04-01 | `kubernetes_deb` |
+| `scenarios/NN-plateforme-self-service-bout-en-bout` | expert | planifié | CNPA (27 compétences), CNPE-02-xx, 03-xx partiels | les onze fiches ci-dessus, `gitops/04` et `gitops/05` (CAPA) |
