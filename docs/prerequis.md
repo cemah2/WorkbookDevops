@@ -277,3 +277,71 @@ flowchart TB
 | `gitops/05-argo-rollouts` | confirmé | planifié | CAPA-03-01 à 03-03 | `gitops/01-argo-cd-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
 | `gitops/07-argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/02-argo-workflows-fondamentaux`, `kubernetes_conf` |
 | `scenarios/NN-chaine-argo-bout-en-bout` | expert | planifié | CAPA (16 compétences), CGOA-04-01 à 04-04 | les sept fiches ci-dessus |
+
+### 6.2 KCA (certifs/KCA/objectifs.md, 2026-10-02)
+
+Sept fiches `securite` et un scénario. Arêtes inter-domaines nouvelles, justifiées dans `certifs/KCA/objectifs.md` §4 :
+`kubernetes_deb` → fondamentaux Kyverno (admission, kubectl), `kubernetes_conf` → validation CEL et installation HA
+(ValidatingAdmissionPolicy native, Helm 4, PDB), `observabilite_deb` → rapports et métriques (Prometheus, Grafana),
+`services_deb` ⇢ vérification d'images (PKI interne du registre), `gitops/01-argo-cd-fondamentaux` ⇢ scénario
+(déploiement GitOps des policies).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  kubernetes_deb[kubernetes_deb]:::ref
+  kubernetes_conf[kubernetes_conf]:::ref
+  securite_deb[securite_deb]:::ref
+  securite_conf[securite_conf]:::ref
+  securite_exp[securite_exp]:::ref
+  observabilite_deb[observabilite_deb]:::ref
+  services_deb[services_deb]:::ref
+  argocd_fond["gitops/01-argo-cd-fondamentaux (rédigé)"]:::ref
+
+  kyv_fond["securite/01-kyverno-fondamentaux (déb.)"]:::plandeb
+  kyv_cli["securite/02-kyverno-cli (déb.)"]:::plandeb
+  kyv_val["securite/03-kyverno-validation-variables-cel (conf.)"]:::plan
+  kyv_mut["securite/04-kyverno-mutation-generation-cleanup (conf.)"]:::plan
+  kyv_img["securite/05-kyverno-verify-image (conf.)"]:::plan
+  kyv_ha["securite/06-kyverno-installation-ha-rbac-mise-a-jour (conf.)"]:::plan
+  kyv_rep["securite/07-kyverno-reports-exceptions-metriques (conf.)"]:::plan
+  s_kyv["scenarios/NN-gouvernance-kyverno-lab (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  kubernetes_deb --> securite_deb
+  securite_deb --> kyv_fond
+  argocd_fond -.-> kyv_fond
+  kubernetes_conf --> kyv_val
+  kubernetes_conf --> kyv_ha
+  observabilite_deb --> kyv_rep
+  services_deb -.-> kyv_img
+  argocd_fond -.-> s_kyv
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  kyv_fond --> kyv_cli --> kyv_val
+  kyv_val --> kyv_mut
+  kyv_val --> kyv_img
+  kyv_val --> kyv_rep
+  kyv_fond --> kyv_ha
+  kyv_mut --> kyv_ha
+  kyv_mut --> securite_conf
+  kyv_img --> securite_conf
+  kyv_ha --> securite_conf
+  kyv_rep --> securite_conf
+  securite_conf --> s_kyv --> securite_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `securite/01-kyverno-fondamentaux` | débutant | planifié | KCA-01-01 à 01-04, 02-01, 04-01 à 04-03 | `kubernetes_deb` ; `gitops/01-argo-cd-fondamentaux` recommandé (cluster `kind`) |
+| `securite/02-kyverno-cli` | débutant | planifié | KCA-03-01 à 03-04 | `securite/01-kyverno-fondamentaux` |
+| `securite/03-kyverno-validation-variables-cel` | confirmé | planifié | KCA-05-01 à 05-03, 05-07, 05-09, 05-11 | `securite/02-kyverno-cli`, `kubernetes_conf` |
+| `securite/04-kyverno-mutation-generation-cleanup` | confirmé | planifié | KCA-05-04, 05-05, 05-08, 05-10 | `securite/03-kyverno-validation-variables-cel` |
+| `securite/05-kyverno-verify-image` | confirmé | planifié | KCA-01-04, 05-06 | `securite/03-kyverno-validation-variables-cel` ; `services_deb` recommandé |
+| `securite/06-kyverno-installation-ha-rbac-mise-a-jour` | confirmé | planifié | KCA-02-01 à 02-06 | `securite/01-kyverno-fondamentaux`, `securite/04-kyverno-mutation-generation-cleanup`, `kubernetes_conf` |
+| `securite/07-kyverno-reports-exceptions-metriques` | confirmé | planifié | KCA-06-01 à 06-03 | `securite/03-kyverno-validation-variables-cel`, `observabilite_deb` |
+| `scenarios/NN-gouvernance-kyverno-lab` | expert | planifié | KCA (31 compétences), CKS-05-03, KCSA-05-07, CNPA-02-03, CNPE-05-04 | les sept fiches ci-dessus ; `gitops/01-argo-cd-fondamentaux` recommandé |
