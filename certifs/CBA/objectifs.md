@@ -2,16 +2,16 @@
 code: CBA
 titre: "CBA — mapping compétences → chapitres"
 programme: "certifs/CBA/programme.md (converti le 2026-10-02, curriculum CNCF consulté le 2026-03-14)"
-chapitres_existants: 0
+chapitres_existants: 1
 generated: 2026-10-02
-status: "0 chapitre rédigé sur 6 ; à mettre à jour à chaque PR de chapitre"
+status: "1 chapitre rédigé (brouillon) sur 6 ; à mettre à jour à chaque PR de chapitre"
 ---
 
 # CBA — objectifs et couverture
 
 Mapping entre les 19 compétences de [`programme.md`](programme.md) et les chapitres du workbook.
-État au 2026-10-02 : aucun chapitre du domaine `plateforme` n'existe (`fiches/plateforme/` ne contient que son README),
-aucune fiche d'un autre domaine ne touche Backstage. Les six chapitres ci-dessous sont donc tous des trous.
+État au 2026-10-02 : une fiche rédigée (`fiches/plateforme/01-backstage-premier-lancement.md`, statut brouillon),
+les cinq autres chapitres sont des trous ; aucune fiche d'un autre domaine ne touche Backstage.
 Ce fichier sert de plan de création ; chaque PR de chapitre remplit les colonnes « chapitre » et « exercices »
 et marque le chapitre « rédigé » dans la section 4.
 
@@ -39,7 +39,7 @@ scénario de bout en bout.
 À régler **avant** d'ouvrir la PR du premier chapitre (sinon le gabarit ne peut pas être rempli honnêtement) :
 
 - `versions.yaml` : la clé `backstage` existe (1.55.3, vérifiée le 2026-10-02). Il manque le runtime que Backstage impose :
-  ajouter `nodejs` (datasource `node-version`, canal LTS actif dans la plage `engines` de la version `backstage`) dans la PR de F1.
+  `nodejs` ajouté par la PR de F1 (24, Active LTS, dans la plage `engines` de la version `backstage`).
   Pas de clé `yarn` : le champ `packageManager` de l'app fait foi, lu par `corepack` (plan de F1, arbitrage du 2026-10-02).
   Pour F5 seulement : un moteur de conteneurs pour la VM de développement, `docker_engine` ou `podman` (le choix n'est pas
   tranché dans `DECISIONS.md` ; proposer une entrée datée dans la PR de F5), et `postgresql` (image officielle, conteneur local)
@@ -76,10 +76,10 @@ Colonnes « chapitre » et « exercices » : `—` tant que rien n'existe. La co
 
 | ID | Compétence | Poids | Chapitre existant | Exercices existants | Chapitre cible |
 |---|---|---|---|---|---|
-| CBA-01-01 | Build and run Backstage projects locally | 4,8 % | — | — | F1 |
-| CBA-01-02 | Understand local development workflows | 4,8 % | — | — | F1 (approfondi en F3) |
-| CBA-01-03 | Compile a Backstage project with TypeScript | 4,8 % | — | — | F1 (`yarn tsc` au quotidien), F5 (build de production) |
-| CBA-01-04 | Download and install dependencies for a Backstage project with NPM/Yarn | 4,8 % | — | — | F1 |
+| CBA-01-01 | Build and run Backstage projects locally | 4,8 % | `fiches/plateforme/01-backstage-premier-lancement.md` (brouillon) | S1 : démo, autonome 1-3, break-fix node-version, défi 15 min | F1 (rédigé) |
+| CBA-01-02 | Understand local development workflows | 4,8 % | `fiches/plateforme/01-backstage-premier-lancement.md` (brouillon) | S2 : démo, autonome 1-3, break-fix lockfile-corepack, défi 10 min | F1 (rédigé), approfondi en F3 |
+| CBA-01-03 | Compile a Backstage project with TypeScript | 4,8 % | `fiches/plateforme/01-backstage-premier-lancement.md` (brouillon) | S2 : démo (`tsc`, `tsc:full`), autonome 1-3, défi 10 min | F1 (rédigé), build de production en F5 |
+| CBA-01-04 | Download and install dependencies for a Backstage project with NPM/Yarn | 4,8 % | `fiches/plateforme/01-backstage-premier-lancement.md` (brouillon) | S1 et S2 : démo, autonome, break-fix node-version et lockfile-corepack | F1 (rédigé) |
 | CBA-01-05 | Use Docker to build a container image of a Backstage project | 4,8 % | — | — | F5 |
 
 ### CBA-02 — Backstage Catalog (22 %)
@@ -97,10 +97,10 @@ Colonnes « chapitre » et « exercices » : `—` tant que rien n'existe. La co
 
 | ID | Compétence | Poids | Chapitre existant | Exercices existants | Chapitre cible |
 |---|---|---|---|---|---|
-| CBA-03-01 | Understand the Backstage framework | 5,5 % | — | — | F1 |
+| CBA-03-01 | Understand the Backstage framework | 5,5 % | `fiches/plateforme/01-backstage-premier-lancement.md` (brouillon) | S3 : démo (`index.ts`, `App.tsx`, services), autonome 1-3, défi 10 min | F1 (rédigé) |
 | CBA-03-02 | Configure Backstage | 5,5 % | — | — | F5 (introduit en F1) |
 | CBA-03-03 | Deploy Backstage to production | 5,5 % | — | — | F5 |
-| CBA-03-04 | Understand Backstage client-server architecture | 5,5 % | — | — | F1 |
+| CBA-03-04 | Understand Backstage client-server architecture | 5,5 % | `fiches/plateforme/01-backstage-premier-lancement.md` (brouillon) | S3 : démo, autonome 1-3, break-fix baseurl et port-occupe, défi 10 min | F1 (rédigé) |
 
 ### CBA-04 — Customizing Backstage (32 %)
 
@@ -143,14 +143,15 @@ n'annonce aucune version (`examen.md`). La version `backstage` de `versions.yaml
 peut encore apparaître dans les questions. Chaque fiche concernée garde une section « à connaître pour l'examen »
 (lecture seule) qui met les deux formes face à face.
 
-### F1 — `fiches/plateforme/01-backstage-premier-lancement.md`
+### F1 — `fiches/plateforme/01-backstage-premier-lancement.md` — rédigé (brouillon, 2026-10-02)
 
 - **Titre** : Backstage — créer une app, la lancer, comprendre ce qui tourne
 - **Niveau** : débutant (`plateforme_deb`)
 - **Couvre** : CBA-01-01, CBA-01-02, CBA-01-03, CBA-01-04, CBA-03-01, CBA-03-04
 - **Prérequis** : `linux_deb` (shell, paquets, systemd, ports), `iac_deb` (Git : clone, commit, push).
   Aucune compétence Kubernetes : voir la justification de l'arête dans `docs/prerequis.md` §6.3.
-- **Lab** : VM de développement sur `linux-base` (Ubuntu LTS). Clés `versions.yaml` : `backstage`, `nodejs` (à créer), `ubuntu_lts`.
+- **Lab** : VM de développement sur `linux-base` (Ubuntu LTS). Clés `versions.yaml` : `backstage`, `nodejs`, `ubuntu_lts`.
+- **Plan validé** : `docs/plans/plateforme-01-backstage-premier-lancement.md` (2026-10-02).
 - **Temps** : 5 h
 - **3 exercices clés** :
   1. Installer Node.js LTS et Yarn via `corepack`, créer l'app avec `npx @backstage/create-app@latest`, lire l'arborescence
@@ -162,8 +163,8 @@ peut encore apparaître dans les questions. Chaque fiche concernée garde une se
   3. Architecture : schéma Mermaid frontend (SPA React) → backend (Node, système de backend, plugins backend) → base
      SQLite de développement ; interroger `curl http://localhost:7007/api/catalog/entities`, lire les logs du backend,
      identifier quel processus sert quoi et où passe un appel d'API depuis le navigateur — CBA-03-01, CBA-03-04.
-- **Break-fix** : `break/plateforme/01-backstage-node-version.sh` (version de Node hors plage supportée et `yarn.lock`
-  altéré : `yarn install` et `yarn start` échouent avec des messages à décoder).
+- **Break-fix** : `break/plateforme/01-backstage-node-version.sh`, `01-backstage-lockfile-corepack.sh`, `01-backstage-baseurl.sh`,
+  `01-backstage-port-occupe.sh` (Node hors plage, lockfile et corepack altérés, `baseUrl` incohérente, port 7007 occupé).
 - **Défi chronométré** : d'une VM vierge à une UI Backstage qui répond en moins de 15 min.
 
 ### F2 — `fiches/plateforme/02-backstage-catalogue.md`
@@ -300,7 +301,7 @@ peut encore apparaître dans les questions. Chaque fiche concernée garde une se
 
 | Chapitre | Niveau | Profil de lab | Temps |
 |---|---|---|---|
-| F1 Backstage premier lancement | débutant | linux-base (VM de développement) | 5 h |
+| F1 Backstage premier lancement (rédigé, brouillon) | débutant | linux-base (VM de développement) | 5 h |
 | F2 Catalogue, annotations, locations | débutant | linux-base (VM de développement) | 6 h |
 | F3 Plugins et personnalisation | confirmé | linux-base (VM de développement) | 8 h |
 | F4 Ingestion automatisée | confirmé | linux-base + Keycloak du socle | 5 h |
