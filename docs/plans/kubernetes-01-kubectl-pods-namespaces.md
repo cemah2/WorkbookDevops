@@ -119,8 +119,7 @@ sinon un `shuf` sur la liste dans la fiche).
   (l'ancien `--dry-run=true` est retiré), `kubectl replace --force`, comportement de `--now`.
 - `cilium` 1.20.2 sur `kind` : suivre la page « Getting started on kind » de la version exacte (`cilium install --version`),
   `kubeProxyReplacement` non obligatoire ici (utile seulement pour la Gateway API, hors sujet) ; le CLI `cilium` prend une version
-  distincte de l'agent, à lire dans la même page, pas de clé `versions.yaml` dédiée : la fiche cite celle que la doc 1.20 recommande
-  et le signale.
+  distincte de l'agent : clé `cilium_cli` de `versions.yaml` (créée par la cartographie CCA, fusionnée après ce plan).
 - `yq` : prérequis implicite depuis `gitops/01` (lecture de `versions.yaml`) ; pas de clé `versions.yaml`, à installer par le
   paquet de la distribution ou le binaire `mikefarah/yq`. À signaler dans la fiche, pas à résoudre ici.
 - Environnement d'examen : les aliases, la complétion et `vim` sont ceux que fournit le bureau distant PSI ; ce qu'il contient

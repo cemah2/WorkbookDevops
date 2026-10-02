@@ -9,7 +9,7 @@ duree_estimee: "5 h"
 lecture_max: "20 %"
 profil_lab: "linux-base"
 budget_lab: "1 VM : 4 vCPU / 8 Go RAM / 60 Go (linux-base-lx01, labs/profiles/linux-base.yaml) ; variante kubernetes-ha : 16 vCPU / 48 Go / 300 Go"
-versions: "kubernetes, kind, cilium"
+versions: "kubernetes, kind, cilium, cilium_cli"
 certifications:
   - "CKAD-01-02"
   - "CKAD-03-03"
@@ -133,10 +133,10 @@ kubectl get nodes
 `kindest/node:v1.37.0` (notes de version de `kind`, lues le 2026-10-02) : même mineure que `versions.yaml` et que l'examen.
 
 Cilium en quatre commandes, sans explication ici (c'est le réseau du cluster, la fiche 13 et CCA y reviennent). Le CLI `cilium`
-a sa propre version, lue dans `stable.txt` du dépôt `cilium/cilium-cli`.
+a sa propre clé dans `versions.yaml` (`cilium_cli`, ajoutée par la cartographie CCA), distincte de l'agent.
 
 ```bash
-CILIUM_CLI_VERSION=$(curl -sSL https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CILIUM_CLI_VERSION=v$(yq -r '.components.cilium_cli.version' versions.yaml)
 curl -sSL "https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-amd64.tar.gz" \
   | sudo tar -xzf - -C /usr/local/bin cilium
 cilium version --client
@@ -661,8 +661,8 @@ des Pods `Running` `1/1` (ou `2/2`), `RESTARTS` stable, et `kubectl config get-c
 - Les messages de suppression de 1.37 citent le namespace (`pod "api" deleted from shop namespace`) : des supports plus anciens
   montrent `pod "api" deleted`. Même commande, même résultat.
 - Cilium 1.20.2 sur `kind` : `ipam.mode=kubernetes` d'après la documentation 1.20 (fichier `Documentation/installation/kind.rst`
-  du dépôt à la version 1.20.2, lu le 2026-10-02) ; le CLI `cilium` est à part (v0.20.1 le 2026-10-02, pas de clé `versions.yaml`),
-  la fiche lit sa version dans `stable.txt` plutôt que de l'écrire en dur.
+  du dépôt à la version 1.20.2, lu le 2026-10-02) ; le CLI `cilium` a sa propre clé `cilium_cli` (0.20.1 au 2026-10-02, créée par
+  la cartographie CCA), c'est aussi la version `stable.txt` du dépôt `cilium/cilium-cli` ce jour-là.
 - `yq` (binaire `mikefarah/yq`, pas de clé `versions.yaml`) est supposé installé sur la VM, comme dans `fiches/gitops/01`.
 
 ## Liens
