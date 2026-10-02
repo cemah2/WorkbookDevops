@@ -162,7 +162,7 @@ documentation `istio.io` seule autorisée.
   3. Personnaliser : fichier `IstioOperator` (profil, `components`, `meshConfig.accessLogFile`, `values`),
      `istioctl manifest generate` pour lire le rendu, différence entre `--set` et un fichier, même chose avec
      `values.yaml` Helm ; régler les ressources de `istiod` et de la gateway pour le budget du lab — ICA-01-03.
-- **Break-fix** : `break/plateforme/11-istio-injection-absente.sh` (namespace sans label ou label de révision
+- **Break-fix** : `break/plateforme/06-istio-injection-absente.sh` (namespace sans label ou label de révision
   erroné : pods sans sidecar, `istioctl analyze` le signale) — ICA-04-01.
 - **Défi au format de l'examen** : installer Istio en mode ambient, enrôler un namespace, déployer un waypoint et prouver
   que le trafic passe par ztunnel, en moins de 20 min.
@@ -186,7 +186,7 @@ documentation `istio.io` seule autorisée.
   3. `DestinationRule` : `subsets` par label de version, `trafficPolicy` (`loadBalancer` `ROUND_ROBIN`, `LEAST_REQUEST`,
      `consistentHash` sur en-tête), `connectionPool`, `tls.mode` ; portée `exportTo` ; conflit entre deux
      `DestinationRule` sur le même hôte et comment `istioctl analyze` le signale — ICA-02-03.
-- **Break-fix** : `break/plateforme/12-istio-virtualservice-subset-inconnu.sh` (subset référencé sans
+- **Break-fix** : `break/plateforme/07-istio-virtualservice-subset-inconnu.sh` (subset référencé sans
   `DestinationRule` : 503 `NR`/`UH` dans les access logs) — ICA-04-01.
 - **Défi au format de l'examen** : exposer un service sur l'hôte `app.lab.home.arpa` avec routage par en-tête vers
   deux versions, en moins de 20 min.
@@ -212,7 +212,7 @@ documentation `istio.io` seule autorisée.
   3. Fault injection : `fault.delay` (`fixedDelay`, `percentage`) et `fault.abort` (`httpStatus`) ciblés par en-tête ;
      combiner avec un `timeout` pour reproduire le cas d'école `bookinfo` (`ratings` lent → `reviews` en erreur) ;
      retirer la panne et prouver le retour à la normale — ICA-02-07.
-- **Break-fix** : `break/plateforme/13-istio-retries-amplification.sh` (`retries` sans `retryOn` adapté + `timeout`
+- **Break-fix** : `break/plateforme/08-istio-retries-amplification.sh` (`retries` sans `retryOn` adapté + `timeout`
   trop court : latence multipliée, à lire dans les access logs) — ICA-04-01.
 - **Défi au format de l'examen** : canary 20 % avec timeout 2 s, 3 retries et éjection après 3 erreurs 5xx, en moins de 20 min.
 

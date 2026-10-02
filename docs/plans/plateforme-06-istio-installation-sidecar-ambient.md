@@ -72,21 +72,21 @@ objet `Sidecar` (12), gateways d'entrée au-delà de l'installation (07), toute 
 | 1.1 | 1 | guidé | Lire `istio` dans `versions.yaml`, télécharger l'archive de la release (binaire `istioctl` + `samples/`), `istioctl version`, `istioctl x precheck`, `istioctl install --set profile=default -y`, `istioctl verify-install` | `istiod` et `istio-ingressgateway` `Running`, `verify-install` sans erreur |
 | 1.2 | 1 | guidé | Lire les composants : `istiod` (discovery, CA, webhooks), CRD `networking`/`security`/`telemetry`, `istio-ingressgateway`, `istioctl profile list` / `profile dump default` / `profile diff default minimal` ; schéma Mermaid du plan de contrôle et du plan de données | schéma complété par l'apprenant |
 | 1.3 | 1 | autonome | Réinstaller en profil `minimal` + une gateway d'entrée installée séparément (`istioctl install -f` avec un composant `ingressGateways` nommé), puis expliquer ce que `demo` ajoute et pourquoi on ne l'utilise pas sur un lab réaliste | `istio-ingressgateway` absent après `minimal`, présent après l'ajout, `istioctl uninstall --purge` laisse zéro CRD |
-| 1.4 | 1 | break-fix | `break/plateforme/11-istio-crd-partielles.sh` | `istiod` repart `Running`, `verify-install` propre |
+| 1.4 | 1 | break-fix | `break/plateforme/06-istio-crd-partielles.sh` | `istiod` repart `Running`, `verify-install` propre |
 | 1.5 | 1 | chronométré | Depuis un cluster vierge : Istio profil `default` installé et vérifié, `bookinfo` déployé hors mesh | 15 min |
 | 2.1 | 2 | guidé | Désinstaller istioctl, `helm repo add istio` épinglé sur la version `istio`, `helm install istio-base` (`--set defaultRevision=default`), `istiod`, `gateway` dans `istio-ingress` ; `helm ls -A`, `helm get values` ; comparer avec `istioctl manifest generate` ce que Helm a rendu | trois releases `deployed`, `istioctl version` identique |
 | 2.2 | 2 | guidé | Mode sidecar : `kubectl label ns bookinfo istio-injection=enabled`, déployer `bookinfo`, lire `istio-proxy` et `istio-init` (`kubectl get pod -o jsonpath`), `istioctl proxy-status`, `sidecar.istio.io/inject=false` sur un pod, règles de précédence des labels | tous les pods à 2/2 sauf celui exclu |
 | 2.3 | 2 | autonome | Enrôler un namespace par label de révision (`istio.io/rev=default`) plutôt que `istio-injection`, redémarrer les Deployments, expliquer la précédence si les deux labels coexistent | pods injectés, `istioctl proxy-status` les liste |
-| 2.4 | 2 | break-fix | `break/plateforme/11-istio-injection-absente.sh` | pods de nouveau 2/2, cause nommée (`IST0102` ou révision inconnue) |
+| 2.4 | 2 | break-fix | `break/plateforme/06-istio-injection-absente.sh` | pods de nouveau 2/2, cause nommée (`IST0102` ou révision inconnue) |
 | 2.5 | 2 | chronométré | Depuis un cluster vierge : installation Helm `base` + `istiod`, namespace enrôlé, `httpbin` injecté et joignable depuis `curl` | 15 min |
 | 3.1 | 3 | guidé | `istioctl uninstall --purge`, `istioctl install --set profile=ambient`, lire `istio-cni-node` et `ztunnel` (DaemonSets), `kubectl label ns bookinfo istio.io/dataplane-mode=ambient`, pods restent 1/1, `istioctl ztunnel-config workloads` montre `HBONE` | charge capturée sans redémarrage des pods |
 | 3.2 | 3 | guidé | Waypoint : `istioctl waypoint apply -n bookinfo --enroll-namespace`, lire la `Gateway` de classe `istio-waypoint` et le pod créé, `istio.io/waypoint-for` (`service`, `workload`, `all`), `istio.io/use-waypoint` sur un seul service, `istioctl waypoint list` | requêtes vers ce service passent par le waypoint (access log du waypoint) |
 | 3.3 | 3 | autonome | Même cluster, deux namespaces : l'un en sidecar, l'autre en ambient ; un `curl` de l'un vers l'autre réussit ; relever pour chaque mode le nombre de pods, la RAM consommée (`kubectl top`) et ce que `istioctl proxy-status` liste | tableau comparatif rempli par mesure, pas récité |
-| 3.4 | 3 | break-fix | `break/plateforme/11-istio-ztunnel-absent.sh` | charges de nouveau capturées, cause expliquée |
+| 3.4 | 3 | break-fix | `break/plateforme/06-istio-ztunnel-absent.sh` | charges de nouveau capturées, cause expliquée |
 | 3.5 | 3 | chronométré | Depuis un cluster vierge : profil `ambient`, namespace enrôlé, waypoint déployé, preuve de capture par ztunnel | 20 min |
 | 4.1 | 4 | guidé | `IstioOperator` : `spec.profile`, `components.ingressGateways`, `meshConfig.accessLogFile: /dev/stdout`, `values.pilot.resources`, `k8s.resources` ; `istioctl install -f` puis `istioctl manifest generate -f` et `diff` entre deux fichiers ; équivalent `--set` ; `istioctl profile diff` | access logs visibles dans `istio-proxy`, limites d'`istiod` posées |
 | 4.2 | 4 | autonome | Reproduire la même personnalisation avec Helm (`values.yaml` de `istiod` et de `gateway`), `helm upgrade`, vérifier avec `helm get values` et `kubectl get deploy istiod -o yaml` ; dire quel champ `IstioOperator` correspond à quelle valeur Helm | deux installations rendues identiques sur les champs choisis |
-| 4.3 | 4 | break-fix | `break/plateforme/11-istio-istiod-ressources.sh` | `istiod` repart, `proxy-status` `SYNCED` |
+| 4.3 | 4 | break-fix | `break/plateforme/06-istio-istiod-ressources.sh` | `istiod` repart, `proxy-status` `SYNCED` |
 | 4.4 | 4 | chronométré | Installer Istio depuis un `IstioOperator` fourni à compléter (profil, access logs, gateway nommée, ressources), vérifier, exposer `bookinfo` sur la gateway avec le manifeste `bookinfo-gateway.yaml` des `samples/` | 20 min |
 
 Les flashcards (15 à 20) couvrent en plus : noms des charts Helm et leur ordre, composants par profil, labels d'injection
@@ -167,7 +167,7 @@ section 1 ≈ 1 h 30, section 2 ≈ 1 h 30, section 3 ≈ 1 h 45, section 4 ≈ 
   `fiches/plateforme/06-istio-installation-sidecar-ambient/manifests/` (`kind-config.yaml` à deux workers, `IstioOperator`
   de démo, `values-istiod.yaml`, `values-gateway.yaml`, waypoint généré)
 - `solutions/fiches/plateforme/06-istio-installation-sidecar-ambient.md` (3 indices puis correction commentée par exercice)
-- `break/plateforme/11-istio-*.sh` (4 scripts) et `break/plateforme/README.md`
+- `break/plateforme/06-istio-*.sh` (4 scripts) et `break/plateforme/README.md`
 - `revision/flashcards/plateforme-06-istio-installation-sidecar-ambient.csv` (15 à 20 cartes)
 - mises à jour : `versions.yaml` (`exam_note`, `supported_lines`), `labs/profiles/kubernetes-ha.yaml`,
   `certifs/ICA/objectifs.md`, `docs/prerequis.md` §6.4, ce plan avec `statut: validé`
