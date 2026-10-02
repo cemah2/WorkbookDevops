@@ -2,7 +2,7 @@
 chapitre: "fiches/gitops/08-opengitops-principes-et-vocabulaire.md"
 domaine: "gitops"
 niveau: "débutant"
-statut: "proposé le 2026-10-02 — en attente de validation (prompts/02), non committé"
+statut: "validé le 2026-10-02 — rédaction à lancer (prompts/03) après fusion de la PR #34"
 duree_estimee: "4 h"
 profil_lab: "linux-base (kind sur une VM, cluster et Argo CD de la fiche 01) ; variante kubernetes-ha"
 versions: "argo_cd, kind, kubernetes, opengitops_documents (à créer)"
@@ -60,7 +60,7 @@ Gateway API sans objet ici.
 - Recommandé : `iac_deb` (Git : `revert`, `reflog`, `push --force`, hooks côté serveur). Aucun chapitre rédigé pour ce nœud
   au 2026-10-02 : le front matter cite le nœud, comme les fiches 01 et 02.
 - Non requis : fiche 02 (Argo Workflows). Le « push côté CI » de la section 1 est simulé par un `CronJob` Kubernetes qui
-  fait `kubectl apply`, pour ne pas ajouter Argo Workflows aux prérequis (question 3).
+  fait `kubectl apply`, pour ne pas ajouter Argo Workflows aux prérequis.
 
 ## Compétences couvertes
 
@@ -119,7 +119,7 @@ lab (garde-fou contre un dépôt réel).
   un dépôt bare supplémentaire : négligeable (< 0,2 vCPU / 100 Mo).
 - Dépôt bare : sur la VM elle-même (`/srv/git/gitops-principes.git`, SSH local), parce que la fiche édite la configuration
   et les hooks **côté serveur**, ce qui demande un shell sur la machine qui héberge le bare. Variante : `core-jump01`
-  derrière `git.lab.home.arpa` (DECISIONS.md), mêmes commandes via SSH (question 2).
+  derrière `git.lab.home.arpa` (DECISIONS.md), mêmes commandes via SSH.
 - Variante `kubernetes-ha` (16 vCPU / 48 Go / 300 Go) : aucune différence de contenu ; l'UI passe par la `Gateway` de la fiche 01.
 - Aucun service du socle `core` requis en chemin principal.
 
@@ -127,7 +127,7 @@ lab (garde-fou contre un dépôt réel).
 
 - `versions.yaml` : ajouter `opengitops_documents` (dépôt `open-gitops/documents`, datasource `github-releases`,
   version `1.0.0`, tag lu par `git ls-remote` le 2026-10-02, `verification: direct`). Ce n'est pas un logiciel mais la fiche
-  cite ses définitions et CLAUDE.md interdit une version en dur dans un chapitre (question 4).
+  cite ses définitions et CLAUDE.md interdit une version en dur dans un chapitre.
 - `certifs/CGOA/objectifs.md` §3 (six compétences nouvelles) et §4 (G1 → rédigé), `docs/prerequis.md` §6.2 (nœud `rédigé`) :
   ces deux fichiers arrivent par la PR de cartographie [cemah2/WorkbookDevops#34](https://github.com/cemah2/WorkbookDevops/pull/34),
   à fusionner avant la PR du chapitre.
@@ -176,19 +176,15 @@ section 1 ≈ 1 h 30, section 2 ≈ 1 h 15, section 3 ≈ 1 h 15, dont 30 min de
 - mises à jour : `versions.yaml` (`opengitops_documents`), `certifs/CGOA/objectifs.md`, `docs/prerequis.md` §6.2,
   `docs/plans/README.md`, ce plan passé en `statut: validé` puis `réalisé`
 
-## Questions dont la réponse change le plan
+## Arbitrages validés le 2026-10-02
 
-1. **Chapitre** : le chemin n'était pas renseigné dans la demande. Ce plan porte sur G1, premier de l'ordre de rédaction
-   de `certifs/CGOA/objectifs.md` §1. Si c'est un autre chapitre (CAPA F2 `04-argo-cd-helm-kustomize-reconciliation`,
-   qui attend `kubernetes-ha`, ou G2 Flux), le plan est à refaire.
-2. **Dépôt bare** : sur la VM `kind` (chemin principal proposé, shell local pour les hooks) ou sur `core-jump01` dès maintenant
-   (fidèle à DECISIONS.md, mais exige le socle `core` levé et un accès `sudo` sur `core-jump01` pour chaque exercice) ?
-3. **Le « push » de la section 1** : `CronJob` Kubernetes avec `kubectl apply` (proposé : aucun prérequis en plus) ou
-   `CronWorkflow` Argo Workflows (plus réaliste, mais la fiche 02 devient un prérequis obligatoire) ?
-4. **Clé `opengitops_documents` dans `versions.yaml`** : acceptable pour un document (proposé, Renovate suivra les tags) ou
-   préfères-tu une mention datée dans la fiche et une entrée `DECISIONS.md` « les référentiels non logiciels sont cités par
-   tag et date » ?
-5. **Signature des commits** (exercice 2.3, option) : la garder en option, la rendre obligatoire, ou la sortir vers une fiche
-   `securite` ? Elle n'est pas nommée par le programme CGOA mais illustre « Versioned and Immutable ».
-6. **Langue des définitions** : citation anglaise mot pour mot suivie de l'explication en français (proposé, l'examen est en
-   anglais), ou français seul avec les termes anglais entre parenthèses ?
+1. Le chapitre est G1, `fiches/gitops/08-opengitops-principes-et-vocabulaire.md`, premier de l'ordre de rédaction
+   de `certifs/CGOA/objectifs.md` §1.
+2. Dépôt bare sur la VM `kind` en chemin principal (hooks édités en shell local) ; `core-jump01` en variante, mêmes
+   commandes via SSH.
+3. Le « push » de la section 1 est un `CronJob` Kubernetes avec `kubectl apply` ; la fiche 02 n'est pas un prérequis.
+4. Clé `opengitops_documents` ajoutée à `versions.yaml` par la PR du chapitre (tag `v1.0.0`, Renovate suit les tags).
+5. Signature SSH des commits : option de l'exercice 2.3, pas obligatoire, pas de fiche `securite` dédiée.
+6. Définitions citées en anglais mot pour mot, puis expliquées en français.
+7. La rédaction attend la fusion de la PR de cartographie CGOA (#34), qui porte `certifs/CGOA/objectifs.md`,
+   `docs/prerequis.md` §6.2 et ce plan ; la PR du chapitre part de `main` ensuite.
