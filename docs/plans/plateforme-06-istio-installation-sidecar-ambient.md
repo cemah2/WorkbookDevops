@@ -2,7 +2,7 @@
 chapitre: "fiches/plateforme/06-istio-installation-sidecar-ambient.md"
 domaine: "plateforme"
 niveau: "débutant"
-statut: "proposé le 2026-10-02 — en attente de validation (prompts/02), questions ouvertes en fin de plan"
+statut: "validé le 2026-10-02 — arbitrages retenus en fin de plan, rédaction à démarrer après fusion de la PR #40"
 duree_estimee: "6 h"
 profil_lab: "linux-base (kind sur une VM) ; variante kubernetes-ha"
 versions: "istio, helm, kind, kubernetes"
@@ -172,20 +172,19 @@ section 1 ≈ 1 h 30, section 2 ≈ 1 h 30, section 3 ≈ 1 h 45, section 4 ≈ 
 - mises à jour : `versions.yaml` (`exam_note`, `supported_lines`), `labs/profiles/kubernetes-ha.yaml`,
   `certifs/ICA/objectifs.md`, `docs/prerequis.md` §6.4, ce plan avec `statut: validé`
 
-## Questions ouvertes (la réponse change le plan)
+## Arbitrages validés le 2026-10-02
 
-1. **Variante `kubernetes-ha`** : acceptes-tu d'ajouter au profil les valeurs Cilium `cni.exclusive=false` et
-   `socketLB.hostNamespaceOnly=true` (et de laisser le masquerading BPF désactivé) ? Sans cela, la variante est `[non testé]`
-   et tout le mode ambient se joue sur `kind`. Cilium recommande aussi `kubeProxyReplacement=false`, contraire au profil :
-   on garde le profil tel quel et on documente la réserve, ou on prévoit un cluster `kind` + Cilium pour tester la combinaison ?
-2. **Ordre istioctl / Helm** : la fiche enseigne istioctl d'abord (section 1) puis Helm (section 2), sidecar en Helm et
-   ambient en istioctl. Préfères-tu l'inverse (Helm comme chemin principal, istioctl en démo), ce qui rapproche la fiche
-   des pratiques GitOps mais éloigne de l'examen où `istioctl` est fourni ?
-3. **Cluster `kind`** : un cluster `istio-lab` dédié à deux workers (recréé à chaque défi « cluster vierge ») ou réutiliser
-   `argocd-lab` des fiches `gitops` ? Dédié recommandé : les défis chronométrés partent d'un cluster vide et ambient
-   veut plusieurs nœuds.
-4. **Version d'examen** : faut-il un lab en Istio 1.29 (ligne encore supportée) pour les défis « format examen », ou
-   1.31.1 partout avec une ligne de différences ? Recommandation : 1.31.1 partout, comme les fiches `gitops` suivent
-   la version stable ; l'examen blanc `exams/ica-01/` pourra épingler 1.29 s'il est confirmé à la veille.
-5. **Branche de départ** : la PR du chapitre part de `main` après fusion de la PR #40 (cartographie ICA), ou de la branche
-   de la PR #40 si tu veux avancer avant ? Recommandation : attendre la fusion, comme pour les fiches `gitops`.
+1. **Variante `kubernetes-ha`** : les valeurs Cilium `cni.exclusive=false` et `socketLB.hostNamespaceOnly=true` sont
+   ajoutées au profil par la PR du chapitre (coût nul pour les autres fiches, masquerading BPF déjà désactivé).
+   `kubeProxyReplacement` reste activé parce que la Gateway API Cilium en dépend (DECISIONS.md, 2026-10-02) ; la réserve
+   de Cilium est citée dans la fiche. La variante est décrite mais reste `[non testé]` tant qu'elle n'a pas tourné sur le
+   profil réel ; le mode ambient se valide sur `kind`.
+2. **Ordre d'enseignement** : istioctl d'abord (sections 1, 3, 4), Helm en section 2. C'est l'outil fourni à l'examen ;
+   Helm est présenté comme le chemin GitOps et sert à prouver que les deux rendent la même chose.
+3. **Cluster `kind`** : cluster dédié `istio-lab` à deux workers (`kind-config.yaml` dans les manifests), recréé pour
+   chaque défi « cluster vierge ». `argocd-lab` n'est pas réutilisé : il n'a qu'un nœud et ses labels de namespace
+   gêneraient les exercices d'injection.
+4. **Version** : Istio 1.31.1 partout (clé `istio`), une ligne « différences avec la version d'examen » par section ;
+   l'examen blanc `exams/ica-01/` pourra épingler 1.29 si la veille le confirme.
+5. **Branche** : la PR du chapitre part de `main` après fusion de la PR #40 (cartographie ICA et ce plan), sur la branche
+   `chapitre/plateforme-06-istio-installation-sidecar-ambient`.
