@@ -4,7 +4,7 @@ titre: "COA — mapping compétences → chapitres"
 programme: "certifs/COA/programme.md (converti le 2026-10-02, page officielle des exigences relevée le 2026-09-28)"
 chapitres_existants: 0
 generated: 2026-10-02
-status: "0 chapitre rédigé sur 11 ; à mettre à jour à chaque PR de chapitre"
+status: "0 chapitre rédigé sur 11, plan de F1 validé le 2026-10-02 ; à mettre à jour à chaque PR de chapitre"
 ---
 
 # COA — objectifs et couverture
@@ -50,16 +50,21 @@ Neutron sécurité et quotas → Nova consoles/snapshots/quotas → Cinder → S
 - **Version d'examen** : `programme.md` et `versions.yaml` annoncent 2026.1 Gazpacho « à confirmer dans le handbook ».
   La fiche F1 déploie la série de `versions.yaml` ; si le handbook dit autre chose, la veille met `versions.yaml` à jour
   et F1 suit sans réécriture (DECISIONS.md, 2026-10-02, « Un seul fichier de versions »).
-- **Object Storage** (COA-05, 5 %) : le profil `labs/profiles/openstack-kolla.yaml` n'a ni Swift ni Ceph, et il ne se
-  combine jamais avec `ceph-3n` (budget RAM). Proposition à trancher par une entrée datée dans `DECISIONS.md` avant F1 :
-  activer Swift dans Kolla-Ansible (`enable_swift`, un disque dédié de 20 Go étiqueté `KOLLA_SWIFT_DATA` sur
-  `ctl01`, `cmp01` et `cmp02`, trois réplicas), soit +60 Go sur le budget disque du profil (400 → 460 Go, NVMe).
-  Le même Swift sert de backend à `cinder-backup` (`enable_cinder_backup`, driver Swift), nécessaire à COA-04-05.
-  L'alternative Ceph RGW est écartée tant que le budget RAM interdit `openstack-kolla` + `ceph-3n`.
+- **Object Storage** (COA-05, 5 %) : **Kolla-Ansible 2026.1 ne déploie plus Swift** (constat du plan de F1, 2026-10-02).
+  Décision (`DECISIONS.md`, 2026-10-02) : une quatrième VM `openstack-kolla-stg01` porte un Ceph mono-nœud avec RadosGW,
+  intégré par `enable_ceph_rgw` (endpoints Swift dans Keystone, `rgw_swift_account_in_url` pour les ACL inter-projets de
+  COA-05-02) ; le RGW est aussi la cible `s3` de `cinder-backup` (COA-04-05). Glance reste `file`, Cinder reste LVM.
+  Le profil passe à 4 VM / 20 vCPU / 96 Go / 480 Go ; `cmp01` et `cmp02` descendent à 28 Go.
 - **Consoles** (COA-02-07) : Kolla-Ansible déploie noVNC par défaut ; SPICE est une variante (`nova_console: spice`,
   `kolla-ansible reconfigure`). F7 enseigne noVNC en chemin principal et SPICE en variante reconfigurée, pas en lecture.
 - **Accès au cloud** : le `openstack` CLI s'exécute depuis `core-jump01` (VLAN `mgmt`) avec un `clouds.yaml` par projet ;
-  Horizon et les API sont servis sur la VIP externe `10.10.40.221` (`*.os.lab.home.arpa`, `labs/network.md` §6).
+  Horizon et les API sont servis sur la VIP externe `10.10.40.221` (`*.os.lab.home.arpa`, `labs/network.md` §6), en HTTP ;
+  le TLS par la CA interne est une variante de F1 (DECISIONS.md, 2026-10-02). `ctl01` a deux NIC VLAN 40 : une avec adresse
+  pour la VIP, une sans adresse pour `br-ex` (DECISIONS.md, 2026-10-02).
+- **Contrainte Ansible** : Kolla-Ansible 22.x exige `ansible-core>=2.19,!=2.19.0,<2.21` et Python ≥ 3.11 ; la clé
+  `ansible_core` (2.21.4) de `versions.yaml` ne s'applique pas au venv Kolla (note à ajouter sur l'entrée `kolla_ansible`).
+- **Création des VM** : aucun `lab up` n'existe ; F1 démarre sur des VM créées à la main avec une annexe de 15 min
+  (DECISIONS.md, 2026-10-02) ; le module OpenTofu du profil viendra d'une fiche `iac`.
   Floating IP dans `10.10.40.230`–`.254`, réseaux projets dans `10.200.0.0/16` (`labs/network.md` §3 et §4).
 - **Virtualisation imbriquée** : les computes tournent en KVM imbriqué (`nested_virtualization: true`). Les fiches
   utilisent l'image `cirros` et des flavors minimales ; aucune mesure de performance n'est demandée.
@@ -149,13 +154,13 @@ donc que des IDs COA. Deux recoupements de contenu, sans ID partagé :
 
 | Chapitre | Recoupement | À signaler dans la fiche |
 |---|---|---|
-| F1 Déploiement Kolla-Ansible | `iac` (Ansible : inventaire, variables, playbooks) | prérequis `iac_deb` recommandé ; aucun ID RHCE cité (Kolla n'est pas AAP) |
+| F1 Déploiement Kolla-Ansible | `iac` (Ansible : inventaire, variables, playbooks) ; `ceph` (RGW mono-nœud sur `stg01`, script fourni) | prérequis `iac_deb` et `ceph_deb` recommandés ; aucun ID RHCE cité (Kolla n'est pas AAP) |
 | F8 Cinder | `ceph` et `sauvegarde` (backend RBD, sauvegarde/restauration mesurée) | section backends en `[lecture + simulation]` ; renvoi vers les futures fiches `ceph/` |
 
 ## 4. Trous et chapitres à créer
 
 Les fiches sont numérotées dans l'ordre de rédaction recommandé (DECISIONS.md, 2026-10-02). Tous les chapitres ciblent
-le profil `openstack-kolla` (18 vCPU alloués / 96 Go / 400 Go, `labs/profiles/openstack-kolla.yaml`, combinable avec
+le profil `openstack-kolla` (4 VM, 20 vCPU alloués / 96 Go / 480 Go, `labs/profiles/openstack-kolla.yaml`, combinable avec
 `linux-base` seulement). Sans alternative légère (pas de DevStack sur le lab : même budget, moins représentatif),
 F1 est le prérequis technique de tous les autres chapitres. Les durées sont des estimations d'apprentissage
 (lecture ≤ 20 %, le reste en manipulation), pas de rédaction. Chaque section de fiche contient une variante Horizon
@@ -163,22 +168,23 @@ quand l'opération existe dans le tableau de bord, parce que l'examen évalue le
 
 ### F1 — `fiches/openstack/01-deployer-openstack-kolla-ansible.md`
 
-- **Titre** : Kolla-Ansible — déployer OpenStack 2026.1 sur trois VM du lab
+- **Titre** : Kolla-Ansible — déployer OpenStack 2026.1 sur quatre VM du lab
 - **Niveau** : débutant (`openstack_deb`)
 - **Couvre** : COA-01-05 (fichiers RC produits par `post-deploy`) ; socle pour les 39 autres compétences
 - **Prérequis** : `linux_conf` (systemd, LVM, conteneurs), `reseau_conf` (VLAN, bridges, routage), `proxmox_conf`
-  (VM, disques supplémentaires, KVM imbriqué) ; `iac_deb` recommandé (inventaire et variables Ansible)
-- **Lab** : `openstack-kolla` complet. Clés `versions.yaml` : `openstack`, `kolla_ansible`, `kolla`, `python_openstackclient`,
-  `ubuntu_lts`, `ansible`, `opentofu`.
-- **Temps** : 8 h en deux séances
+  (VM, disques supplémentaires, KVM imbriqué) ; `iac_deb` et `ceph_deb` recommandés
+- **Lab** : `openstack-kolla` complet (VM créées à la main, annexe). Clés `versions.yaml` : `openstack`, `kolla_ansible`, `kolla`,
+  `python_openstackclient`, `ubuntu_lts`, `ceph`, `cirros` (à créer).
+- **Plan validé** : `docs/plans/openstack-01-deployer-openstack-kolla-ansible.md` (2026-10-02).
+- **Temps** : 9 h en deux séances
 - **3 exercices clés** :
-  1. Lever les trois VM avec `lab up openstack-kolla`, vérifier les quatre VLAN et les disques Cinder/Swift, installer
-     Kolla-Ansible dans un venv sur `ctl01`, écrire `globals.yml` (VIP interne `10.10.10.70`, VIP externe `10.10.40.221`,
-     `neutron_external_interface` sur le VLAN 40, tunnels sur le VLAN 30) et générer `passwords.yml` — socle.
+  1. Vérifier les quatre VM (NIC par VLAN, disques Cinder et OSD), préparer `stg01` (cephadm mono-nœud + RGW, script fourni),
+     installer Kolla-Ansible dans un venv sur `ctl01`, écrire `globals.yml` (VIP interne `10.10.10.70`, VIP externe `10.10.40.221`,
+     `neutron_external_interface` sur la seconde NIC VLAN 40, tunnels sur le VLAN 30, `enable_ceph_rgw`) et générer `passwords.yml` — socle.
   2. `bootstrap-servers`, `prechecks`, `deploy`, `post-deploy` ; installer le CLI sur `core-jump01`, construire
      `admin-openrc.sh` et `clouds.yaml`, vérifier `openstack endpoint list` et Horizon via `*.os.lab.home.arpa` — COA-01-05.
   3. Lire l'architecture déployée : un conteneur par service, `docker ps`, `/var/log/kolla/`, `kolla-ansible reconfigure`
-     après un changement de `globals.yml` ; activer Swift et `cinder-backup` (préalable §2) — socle.
+     après un changement de `/etc/kolla/config/` ; variante TLS externe ; `stop`, `destroy`, redéploiement — socle.
 - **Break-fix** : `break/openstack/01-rabbitmq-arrete.sh` (conteneur RabbitMQ arrêté : `openstack server create` reste en `BUILD`).
 - **Défi chronométré** : relancer un service reconfiguré et prouver le retour à `enabled`/`up` dans `openstack compute service list`
   en moins de 15 min.
@@ -305,7 +311,7 @@ quand l'opération existe dans le tableau de bord, parce que l'examen évalue le
 - **Titre** : Cinder — volumes, attachement, snapshots, sauvegardes et quotas
 - **Niveau** : confirmé (`openstack_conf`)
 - **Couvre** : COA-04-01, COA-04-02, COA-04-03, COA-04-04, COA-04-05, COA-04-06
-- **Prérequis** : F5 ; Swift activé (préalable §2) pour `cinder-backup`
+- **Prérequis** : F5 ; RGW de `stg01` (cible `s3` de `cinder-backup`, F1)
 - **Lab** : `openstack-kolla` (Cinder LVM sur les disques supplémentaires de `cmp01`/`cmp02`). Clés `versions.yaml` :
   `openstack`, `python_openstackclient`.
 - **Temps** : 5 h
@@ -314,7 +320,7 @@ quand l'opération existe dans le tableau de bord, parce que l'examen évalue le
      et monter dans l'instance, vérifier la persistance après `delete` de l'instance ; `volume type` et `volume set`
      (taille, bootable, lecture seule) — COA-04-01, COA-04-02, COA-04-03.
   2. Snapshots : créer, lister, créer un volume depuis un snapshot, restaurer un fichier supprimé ; sauvegardes
-     (`volume backup create`, `--incremental`, `--force` sur volume attaché, `volume backup restore`) avec Swift comme cible,
+     (`volume backup create`, `--incremental`, `--force` sur volume attaché, `volume backup restore`) avec le RGW (`s3`) comme cible,
      mesurer la durée — COA-04-05, COA-04-06.
   3. Quotas de stockage par projet (`quota set --volumes --gigabytes --snapshots --backups`), provoquer un dépassement et le
      lire ; backend Ceph RBD et multi-backends en `[lecture + simulation]` — COA-04-04.
@@ -324,10 +330,11 @@ quand l'opération existe dans le tableau de bord, parce que l'examen évalue le
 
 ### F9 — `fiches/openstack/09-swift-conteneurs-et-acl.md`
 
-- **Titre** : Swift — conteneurs, objets et permissions
+- **Titre** : API Swift (Ceph RGW) — conteneurs, objets et permissions
 - **Niveau** : confirmé (`openstack_conf`)
 - **Couvre** : COA-05-01, COA-05-02
-- **Prérequis** : F5 (bloc débutant terminé) ; Swift activé (préalable §2)
+- **Prérequis** : F5 (bloc débutant terminé) ; RGW de `stg01` intégré à Keystone (F1). La fiche signale les écarts
+  RGW / Swift natif (`ceph_rgw_swift_compatibility`, fonctions absentes) : l'examen tourne sur Swift.
 - **Lab** : `openstack-kolla`. Clés `versions.yaml` : `openstack`, `python_openstackclient`.
 - **Temps** : 3 h
 - **3 exercices clés** :
@@ -381,7 +388,7 @@ quand l'opération existe dans le tableau de bord, parce que l'examen évalue le
 
 | Chapitre | Niveau | Profil de lab | Temps |
 |---|---|---|---|
-| F1 Déployer OpenStack avec Kolla-Ansible | débutant | openstack-kolla | 8 h |
+| F1 Déployer OpenStack avec Kolla-Ansible | débutant | openstack-kolla | 9 h |
 | F2 Keystone identités et fichiers RC | débutant | openstack-kolla | 4 h |
 | F3 Glance images | débutant | openstack-kolla | 3 h |
 | F4 Neutron réseaux, routeurs, floating IP | débutant | openstack-kolla | 5 h |
@@ -389,11 +396,11 @@ quand l'opération existe dans le tableau de bord, parce que l'examen évalue le
 | F6 Neutron security groups, ports, quotas | confirmé | openstack-kolla | 4 h |
 | F7 Nova consoles, snapshots, quotas | confirmé | openstack-kolla | 4 h |
 | F8 Cinder volumes, snapshots, sauvegardes | confirmé | openstack-kolla | 5 h |
-| F9 Swift conteneurs et ACL | confirmé | openstack-kolla | 3 h |
+| F9 API Swift (RGW) conteneurs et ACL | confirmé | openstack-kolla | 3 h |
 | F10 Keystone policies et règles d'accès | confirmé | openstack-kolla | 3 h |
 | S1 Livrer un projet locataire | expert | openstack-kolla | 6 h |
 | Révision (flashcards, quiz, examen blanc `exams/COA/`) | — | openstack-kolla | 6 h |
-| **Total** | | | **56 h** |
+| **Total** | | | **57 h** |
 
 À 5 h par semaine, compter 11 à 12 semaines, soit deux cycles de `docs/roadmap.md` §7. Le bloc COA ferme le parcours
 « Cloud privé OpenStack » ; il ne démarre qu'une fois `linux_conf`, `reseau_conf`, `proxmox_conf` et `iac_conf` atteints
@@ -401,8 +408,10 @@ quand l'opération existe dans le tableau de bord, parce que l'examen évalue le
 
 ## 6. Ce que le lab ne couvre pas
 
-- **Backends de stockage** : Glance et Cinder tournent sur `file` et LVM ; Ceph RBD, multi-backends et migration de volumes
-  entre backends sont `[lecture + simulation]` tant que `openstack-kolla` et `ceph-3n` ne tiennent pas ensemble en RAM.
+- **Backends de stockage** : Glance et Cinder tournent sur `file` et LVM ; le Ceph mono-nœud de `stg01` ne sert qu'au RGW.
+  Ceph RBD pour Glance/Cinder, multi-backends et migration de volumes restent `[lecture + simulation]` (DECISIONS.md, 2026-10-02).
+- **Swift natif** : l'API Swift du lab est celle de RadosGW, pas de Swift ; les commandes `openstack container` / `object` sont
+  les mêmes, les écarts (fonctions non implémentées, `rgw_swift_account_in_url`) sont listés dans F9.
 - **Environnement d'examen** : la version exacte, la distribution et la méthode de déploiement du cloud d'examen ne sont
   pas publiées (`examen.md`). Les chapitres n'enseignent rien qui dépende de Kolla côté API : `docker exec`, `/etc/kolla/`
   et `reconfigure` ne servent qu'au socle (F1), aux policies (F10) et aux pannes.

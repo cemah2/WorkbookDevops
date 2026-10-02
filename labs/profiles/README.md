@@ -19,7 +19,7 @@ Règles :
 | `linux-base` | 4 | 8 | 16 Go | 180 Go | 10 | Linux, réseau, LFCS, RHCSA/RHCE |
 | `kubernetes-ha` | 6 | 16 | 48 Go | 300 Go | 10, 30, 40 | Kubernetes HA kubeadm/Talos, Cilium, GitOps, observabilité |
 | `ceph-3n` | 3 | 12 | 48 Go | 60 Go + 3×200 Go OSD | 10, 20, 21 | Ceph, Rook, Velero/CSI |
-| `openstack-kolla` | 3 | 18 | 96 Go | 400 Go | 10, 20, 30, 40 | OpenStack Kolla-Ansible, COA |
+| `openstack-kolla` | 4 | 20 | 96 Go | 420 Go + 60 Go OSD | 10, 20, 30, 40 | OpenStack Kolla-Ansible (+ Ceph RGW mono-nœud pour l'API Swift), COA |
 | `airgap` | 2 | 6 | 24 Go | 400 Go | 50 | hors-ligne : miroirs, Harbor proxy, cluster déconnecté |
 
 Les vCPU « alloués » peuvent dépasser 10 grâce à la surallocation ; la RAM, jamais.

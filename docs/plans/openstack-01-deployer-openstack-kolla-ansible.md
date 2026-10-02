@@ -2,15 +2,15 @@
 chapitre: "fiches/openstack/01-deployer-openstack-kolla-ansible.md"
 domaine: "openstack"
 niveau: "débutant"
-statut: "proposé le 2026-10-02 — en attente de validation (questions ouvertes en fin de plan)"
-duree_estimee: "8 h en deux séances"
-profil_lab: "openstack-kolla (3 VM) ; CLI depuis core-jump01"
+statut: "validé le 2026-10-02 — arbitrages A/A/A/A en fin de plan, rédaction à lancer (prompts/03)"
+duree_estimee: "9 h en deux séances"
+profil_lab: "openstack-kolla (4 VM dont stg01 Ceph RGW) ; CLI depuis core-jump01"
 versions: "openstack, kolla_ansible, kolla, python_openstackclient, ubuntu_lts, cirros (à créer)"
 certifications:
   - "COA-01-05"
 ---
 
-# Plan — 01 Kolla-Ansible : déployer OpenStack 2026.1 sur trois VM du lab
+# Plan — 01 Kolla-Ansible : déployer OpenStack 2026.1 sur quatre VM du lab
 
 Première fiche du domaine `openstack`, F1 de `certifs/COA/objectifs.md`. Elle ne couvre qu'une compétence d'examen
 (COA-01-05, fichiers RC) mais elle est le prérequis technique des neuf autres fiches : sans cloud, pas de manipulation.
@@ -29,18 +29,18 @@ la session) : `user/quickstart`, `user/support-matrix`, `user/multinode`, `user/
    Le préalable « Swift via Kolla-Ansible, trois disques de 20 Go » écrit dans `certifs/COA/objectifs.md` §2 est faux.
    La seule voie Kolla pour l'API Swift est un **Ceph RadosGW externe** (`enable_ceph_rgw: true`, endpoints Swift
    enregistrés dans Keystone, options `ceph_rgw_swift_compatibility` et `ceph_rgw_swift_account_in_url`, cette dernière
-   indispensable aux ACL inter-projets de COA-05-02). Voir question 1.
+   indispensable aux ACL inter-projets de COA-05-02). Arbitrage 1 ci-dessous : VM `stg01` Ceph mono-nœud + RGW.
 2. **Contrainte Ansible.** `requirements.txt` de Kolla-Ansible 22.x impose `ansible-core>=2.19,!=2.19.0,<2.21` et
    `python>=3.11`. `versions.yaml` porte `ansible_core: 2.21.4` : la fiche ne doit pas le réutiliser. Le venv Kolla
    installe la contrainte de Kolla, et `versions.yaml` gagne une note sur l'entrée `kolla_ansible`.
 
 ## Objectifs mesurables
 
-- Préparer les trois VM (`ctl01`, `cmp01`, `cmp02`), l'inventaire `multinode`, `globals.yml` et `passwords.yml` et obtenir
+- Préparer les quatre VM (`ctl01`, `cmp01`, `cmp02`, `stg01`), l'inventaire `multinode`, `globals.yml` et `passwords.yml` et obtenir
   un `kolla-ansible prechecks` vert en moins de 30 min à partir de VM Ubuntu nues.
 - Déployer OpenStack 2026.1 avec `bootstrap-servers`, `deploy`, `post-deploy` et vérifier que Keystone, Glance, Nova,
-  Neutron, Cinder et Horizon répondent (`openstack endpoint list`, `compute service list`, `network agent list`,
-  `volume service list`) en moins de 10 min après la fin du déploiement.
+  Neutron, Cinder, l'endpoint Swift du RGW et Horizon répondent (`openstack endpoint list`, `compute service list`,
+  `network agent list`, `volume service list`, `container list`) en moins de 10 min après la fin du déploiement.
 - Écrire un fichier RC admin et un `clouds.yaml` sur `core-jump01`, basculer entre les deux (`source`, `--os-cloud`,
   `OS_CLOUD`) et obtenir un token en moins de 5 min.
 - Lancer une première instance de bout en bout (image, réseau de démonstration, flavor, clé) et lire sa console
@@ -58,15 +58,17 @@ la session) : `user/quickstart`, `user/support-matrix`, `user/multinode`, `user/
   inter-VLAN, MTU), `proxmox_conf` (VM multi-NIC, disques supplémentaires, KVM imbriqué). Recommandé : `iac_deb`
   (inventaire, variables et exécution d'un playbook Ansible). Aucun chapitre n'existe pour ces nœuds au 2026-10-02 :
   le front matter cite les nœuds, pas des fichiers.
-- Infrastructure : les trois VM du profil `openstack-kolla` démarrées, résolues par `core-dns01`
-  (`openstack-kolla-ctl01.lab.home.arpa`, etc. : RabbitMQ exige des noms d'hôtes résolus, pas des adresses),
-  `core-jump01` comme poste CLI. Hôte de déploiement : `ctl01` (rôle `deploy host` du profil).
+- Infrastructure : les quatre VM du profil `openstack-kolla` créées à la main dans Proxmox (arbitrage 4, annexe de 15 min
+  dans la fiche) et résolues par `core-dns01` (`openstack-kolla-ctl01.lab.home.arpa`, etc. : RabbitMQ exige des noms
+  d'hôtes résolus, pas des adresses), `core-jump01` comme poste CLI. Hôte de déploiement : `ctl01` (rôle `deploy host` du profil).
+  `stg01` (Ceph mono-nœud, RGW) est préparé par un script fourni en annexe : la fiche n'enseigne pas Ceph (`ceph_deb`
+  reste un prérequis recommandé, pas obligatoire).
 
 ## Compétences couvertes
 
 | Section | COA | Rôle dans la série |
 |---|---|---|
-| 1 Préparer | — | socle : inventaire, `globals.yml`, `passwords.yml`, prechecks |
+| 1 Préparer | — | socle : VM, `stg01` Ceph RGW, inventaire, `globals.yml`, `passwords.yml`, prechecks |
 | 2 Déployer et accéder | COA-01-05 | fichiers RC, `clouds.yaml`, premier accès CLI et Horizon |
 | 3 Exploiter | — | socle : lire l'architecture, logs, `reconfigure`, `stop`, `destroy` ; base des pannes des fiches 02 à 10 |
 
@@ -78,18 +80,19 @@ les refassent à la main, car c'est là que l'examen les évalue.
 
 | # | Section | Type | Énoncé court | Critère |
 |---|---|---|---|---|
-| 1.1 | 1 | guidé | Vérifier les 3 VM : 4 NIC par VLAN (`ip -br a`), disque `/dev/sdb` libre sur les computes, résolution DNS des trois noms, `kvm-ok` ; créer le venv sur `ctl01`, `pip install kolla-ansible==<kolla_ansible>` (tire `ansible-core` dans la fenêtre de Kolla), `kolla-ansible install-deps` | `kolla-ansible --version` égal à `versions.yaml` |
-| 1.2 | 1 | guidé | Copier `globals.yml`, `passwords.yml`, inventaire `multinode` ; renseigner `kolla_base_distro: ubuntu`, `network_interface` (VLAN 10), `tunnel_interface` (VLAN 30), `neutron_external_interface` (VLAN 40, sans IP), VIP interne `10.10.10.70`, VIP externe `10.10.40.221` (question 2), `enable_cinder` + `enable_cinder_backend_lvm`, `cinder_backup_driver` (question 1), `enable_heat: false` ; `kolla-genpwd` ; VG `cinder-volumes` sur `/dev/sdb` des computes | `kolla-ansible prechecks` vert |
-| 1.3 | 1 | autonome | Écrire l'inventaire : `ctl01` dans `control`, `network`, `monitoring` ; `cmp01`, `cmp02` dans `compute` et `storage` ; `cinder-volume:children` = `storage` ; `ansible_user`, clé SSH ; justifier chaque groupe en une ligne | `ansible -i multinode all -m ping` OK |
-| 1.4 | 1 | break-fix | `break/openstack/01-resolution-hotes-cassee.sh` | prechecks à nouveau vert |
-| 1.5 | 1 | chronométré | VM nues → prechecks vert (venv, fichiers, VG) | 30 min |
-| 2.1 | 2 | guidé | `bootstrap-servers`, `prechecks`, `deploy` (durée mesurée et notée), `post-deploy` ; lire `/etc/kolla/clouds.yaml` et `admin-openrc.sh` ; installer `python-openstackclient` sur `core-jump01` avec les `upper-constraints` 2026.1 ; `openstack endpoint list`, `compute service list`, `network agent list`, `volume service list` ; Horizon sur la VIP externe | tous les services `up`/`enabled`, Horizon affiche le tableau de bord |
+| 1.1 | 1 | guidé | Vérifier les 4 VM : NIC par VLAN (`ip -br a`, deux NIC VLAN 40 sur `ctl01` dont une sans adresse), disque `/dev/sdb` libre sur `cmp01`, `cmp02`, `stg01`, résolution DNS des quatre noms, `kvm-ok` ; créer le venv sur `ctl01`, `pip install kolla-ansible==<kolla_ansible>` (tire `ansible-core` dans la fenêtre de Kolla), `kolla-ansible install-deps` | `kolla-ansible --version` égal à `versions.yaml` |
+| 1.2 | 1 | guidé | Préparer `stg01` avec le script d'annexe : `cephadm bootstrap` mono-nœud (version `ceph` de `versions.yaml`), OSD sur `/dev/sdb`, RGW avec `rgw_keystone_*`, `rgw_swift_account_in_url = true` ; lire ce que le script fait, sans plus | `ceph -s` `HEALTH_OK` (ou `HEALTH_WARN` taille de pool 1, expliqué), RGW répond sur `:8080` |
+| 1.3 | 1 | guidé | Copier `globals.yml`, `passwords.yml`, inventaire `multinode` ; renseigner `kolla_base_distro: ubuntu`, `network_interface` (VLAN 10), `tunnel_interface` (VLAN 30), `neutron_external_interface` (seconde NIC VLAN 40, sans IP), `kolla_external_vip_interface` (première NIC VLAN 40), VIP interne `10.10.10.70`, VIP externe `10.10.40.221`, `enable_cinder` + `enable_cinder_backend_lvm`, `enable_ceph_rgw` + `ceph_rgw_hosts` + `ceph_rgw_swift_account_in_url`, `cinder_backup_driver: s3` vers le RGW, `enable_heat: false` ; `kolla-genpwd` ; VG `cinder-volumes` sur `/dev/sdb` des computes | `kolla-ansible prechecks` vert |
+| 1.4 | 1 | autonome | Écrire l'inventaire : `ctl01` dans `control`, `network`, `monitoring` ; `cmp01`, `cmp02` dans `compute` et `storage` ; `cinder-volume:children` = `storage` ; `ansible_user`, clé SSH ; justifier chaque groupe en une ligne | `ansible -i multinode all -m ping` OK |
+| 1.5 | 1 | break-fix | `break/openstack/01-resolution-hotes-cassee.sh` | prechecks à nouveau vert |
+| 1.6 | 1 | chronométré | VM nues → prechecks vert (venv, fichiers, VG ; `stg01` déjà prêt) | 30 min |
+| 2.1 | 2 | guidé | `bootstrap-servers`, `prechecks`, `deploy` (durée mesurée et notée), `post-deploy` ; lire `/etc/kolla/clouds.yaml` et `admin-openrc.sh` ; installer `python-openstackclient` sur `core-jump01` avec les `upper-constraints` 2026.1 ; `openstack endpoint list`, `compute service list`, `network agent list`, `volume service list`, `container create smoke` + `object create` (API Swift du RGW) ; Horizon sur la VIP externe | tous les services `up`/`enabled`, un objet listé, Horizon affiche le tableau de bord |
 | 2.2 | 2 | autonome | Construire à la main un second RC (`OS_AUTH_URL`, `OS_PROJECT_*`, `OS_USER_DOMAIN_NAME`, `OS_IDENTITY_API_VERSION=3`) et un `clouds.yaml` à deux entrées (`lab-admin`, `lab-admin-public` sur la VIP externe) ; comparer `source` / `--os-cloud` / `OS_CLOUD` ; `openstack token issue` ; télécharger le RC depuis Horizon et le diffuser — COA-01-05 | token obtenu par les trois méthodes |
 | 2.3 | 2 | guidé | Validation de bout en bout : `init-runonce` avec les variables du lab (`EXT_NET_CIDR=10.10.40.0/24`, `EXT_NET_RANGE=start=10.10.40.230,end=10.10.40.254`, `EXT_NET_GATEWAY=10.10.40.1`, `DEMO_NET_CIDR=10.200.0.0/24`, `DEMO_NET_DNS=10.10.10.2`, `CIRROS_RELEASE=<cirros>`), `server create demo1`, `console log show`, `ping` depuis le namespace du routeur | instance `ACTIVE`, console affiche le login cirros |
 | 2.4 | 2 | break-fix | `break/openstack/01-rabbitmq-arrete.sh` | `server create` repasse en `ACTIVE` |
 | 2.5 | 2 | chronométré | De `post-deploy` à `openstack token issue` depuis `core-jump01` avec `clouds.yaml` écrit à la main | 10 min |
 | 3.1 | 3 | guidé | Cartographier le déploiement : `docker ps` par hôte, un conteneur = un service, volumes nommés, `/etc/kolla/<service>/` (config rendue), `/var/log/kolla/<service>/` ; schéma Mermaid des flux API → HAProxy (VIP) → service → MariaDB/RabbitMQ ; `kolla-ansible validate-config` | schéma complété par l'apprenant |
-| 3.2 | 3 | autonome | Reconfigurer : déposer `/etc/kolla/config/nova.conf` (`cpu_allocation_ratio` adapté au KVM imbriqué) puis `kolla-ansible reconfigure -t nova` ; vérifier dans le conteneur ; variante TLS externe avec la CA interne (question 3) | option visible dans `nova.conf` rendu, service redémarré une seule fois |
+| 3.2 | 3 | autonome | Reconfigurer : déposer `/etc/kolla/config/nova.conf` (`cpu_allocation_ratio` adapté au KVM imbriqué) puis `kolla-ansible reconfigure -t nova` ; vérifier dans le conteneur ; variante (arbitrage 3) : TLS externe avec la CA interne (`kolla_enable_tls_external`, `kolla_external_fqdn: api.os.lab.home.arpa`, `kolla_copy_ca_into_containers`, `OS_CACERT`) | option visible dans `nova.conf` rendu, service redémarré une seule fois |
 | 3.3 | 3 | break-fix | `break/openstack/01-keepalived-vip-perdue.sh` ; `break/openstack/01-nova-compute-arrete.sh` (optionnel) | VIP de retour, `compute service list` tout `up` |
 | 3.4 | 3 | chronométré | Symptôme donné (API en erreur ou instance en `ERROR`) → conteneur fautif identifié, logs lus, service relancé | 10 min |
 | 3.5 | 3 | guidé | Cycle de vie : `kolla-ansible stop`, `deploy-containers`, `mariadb_backup`, `destroy --yes-i-really-really-mean-it` puis redéploiement ; nettoyage des objets `demo-*` | cloud redéployé, `image list` vide |
@@ -108,16 +111,18 @@ en variable. Ce sont des pannes de **plateforme**, les fiches 02 à 10 injectent
 
 ## Profil de lab et budget
 
-- `openstack-kolla` : `ctl01` 6 vCPU / 32 Go / 120 Go ; `cmp01` et `cmp02` 6 vCPU / 32 Go / 60 Go + 80 Go (VG `cinder-volumes`).
-  Total 18 vCPU alloués / 96 Go / 400 Go, combinable avec `linux-base` seulement (`labs/profiles/README.md`).
+- `openstack-kolla` (profil modifié le 2026-10-02, DECISIONS.md) : `ctl01` 6 vCPU / 32 Go / 120 Go, deux NIC VLAN 40 ;
+  `cmp01` et `cmp02` 6 vCPU / 28 Go / 60 Go + 80 Go (VG `cinder-volumes`) ; `stg01` 2 vCPU / 8 Go / 20 Go + 60 Go OSD sur SSD
+  (Ceph mono-nœud, RGW). Total 20 vCPU alloués (ratio 2,0, plafond de `labs/profiles/README.md`) / 96 Go / 480 Go,
+  combinable avec `linux-base` seulement.
 - Pré-requis Kolla : 2 interfaces, 8 Go, 40 Go par hôte, largement couverts. Les images Kolla et les volumes Docker
   vivent dans `/var/lib/docker` : prévoir qu'il soit sur le disque système de 120 Go de `ctl01` (NVMe).
 - Poste CLI : `core-jump01` (1 vCPU / 1 Go, budget `core` inchangé) ; venv `python-openstackclient`.
 - Réseau (`labs/network.md`) : VIP interne `10.10.10.70` (VLAN 10), VIP externe `10.10.40.221` (VLAN 40), tunnels Geneve
   sur le VLAN 30, floating IP `10.10.40.230`–`.254`, réseaux projets `10.200.0.0/16`, DNS `10.10.10.2`.
-  Enregistrements à créer dans BIND : les trois VM, `api.os.lab.home.arpa` → `10.10.40.221`, `horizon.os.lab.home.arpa`.
-- Option question 1 : une VM `openstack-kolla-stg01` (2 vCPU / 8 Go / 20 Go + 60 Go OSD, VLAN 10 et 20, cephadm mono-nœud,
-  RGW). Budget RAM : 96 + 8 + `core` 8 + hôte 8 = 120 Go ≤ 128 ; vCPU alloués 20 pour 10 disponibles, ratio 2,0 (plafond).
+  Enregistrements à créer dans BIND : les quatre VM, `api.os.lab.home.arpa` → `10.10.40.221`, `horizon.os.lab.home.arpa`,
+  `rgw.os.lab.home.arpa` → `10.10.10.55`.
+- RAM : 96 (profil) + 16 (`linux-base`) + 8 (`core`) + 8 (hôte) = 128 Go, la combinaison autorisée reste exacte.
 
 ## Points de vigilance `versions.yaml`
 
@@ -140,13 +145,17 @@ en variable. Ce sont des pannes de **plateforme**, les fiches 02 à 10 injectent
   la fiche note la version installée par Kolla sans la figer.
 - Neutron : `neutron_plugin_agent: openvswitch` par défaut, conservé. OVN supprimerait les agents DHCP et L3 que
   COA-03-06 fait observer (`network agent list`), et `init-runonce` suppose `physnet1`.
-- Cinder : `cinder_backup_driver` vaut `ceph` par défaut, options `nfs`, `ceph`, `s3` seulement ; sans Ceph il faut `nfs`
-  (export sur `ctl01`) ou désactiver `enable_cinder_backup`. Deux hôtes dans `cinder-volume` déclenchent le precheck HA
+- Cinder : `cinder_backup_driver` vaut `ceph` par défaut, options `nfs`, `ceph`, `s3` seulement ; retenu `s3` vers le RGW de
+  `stg01` (`cinder_backup_s3_url`, bucket dédié, clés S3 d'un utilisateur RGW). Deux hôtes dans `cinder-volume` déclenchent le precheck HA
   (`cinder_cluster_name`) alors que LVM n'est pas actif/actif : vérifier à la rédaction si `cinder_cluster_skip_precheck`
   est nécessaire ou si `storage` doit se limiter à `cmp01`.
 - Nova : `nova_console: novnc` par défaut (F7 bascule en `spice` par `reconfigure`), `nova_compute_virt_type: kvm` en
   KVM imbriqué (`kvm-ok` dans la section 1 ; repli `qemu` documenté, dix fois plus lent).
 - Heat, Fluentd, ProxySQL activés par défaut : `enable_heat: false` (hors COA, 2 Go économisés), le reste conservé.
+- Ceph `ceph` 20.2.4 Tentacle sur `stg01` : `cephadm` mono-nœud exige `--single-host-defaults` (taille de pool 1,
+  `mon_allow_pool_delete`) ; RGW ↔ Keystone selon `docs.ceph.com/en/latest/radosgw/keystone/` (bloqué ici, à relire sur le lab).
+  Le RGW n'est « pas complètement compatible » avec l'API Swift : `ceph_rgw_swift_compatibility: true` côté Kolla et
+  `rgw_swift_account_in_url = true` côté Ceph, sinon pas d'accès public ni inter-projets (COA-05-02).
 
 ## `[lecture + simulation]`
 
@@ -162,32 +171,27 @@ en variable. Ce sont des pannes de **plateforme**, les fiches 02 à 10 injectent
 ## Livrables attendus de la session de rédaction
 
 - `fiches/openstack/01-deployer-openstack-kolla-ansible.md` (gabarit `templates/fiche.md`), avec en annexe les fichiers
-  `multinode`, `globals.yml` (expurgé) et un `globals.d/lab.yml` commentés, dans `fiches/openstack/01-deployer-openstack-kolla-ansible/kolla/`.
+  `multinode`, `globals.yml` (expurgé), un `globals.d/lab.yml` commentés et le script `stg01-ceph-rgw.sh`, dans
+  `fiches/openstack/01-deployer-openstack-kolla-ansible/kolla/` ; annexe « créer les quatre VM dans Proxmox en 15 min ».
 - `solutions/fiches/openstack/01-deployer-openstack-kolla-ansible.md` (3 indices puis correction).
 - `break/openstack/01-*.sh` (3 scripts, 1 optionnel).
 - `revision/flashcards/openstack-01-deployer-openstack-kolla-ansible.csv` (10 à 20 cartes).
-- `versions.yaml` : clé `cirros`, note de contrainte sur `kolla_ansible` ; `labs/profiles/openstack-kolla.yaml` et
-  `labs/network.md` si les questions 1 et 2 l'exigent, avec l'entrée `DECISIONS.md` correspondante.
-- Mise à jour de `certifs/COA/objectifs.md` §2 (Swift), §3 et §4 ; `docs/prerequis.md` §6.2 (nœud `rédigé`) ; ce plan (`statut: réalisé`).
+- `versions.yaml` : clé `cirros`, note de contrainte sur `kolla_ansible`.
+- Mise à jour de `certifs/COA/objectifs.md` §3 et §4 ; `docs/prerequis.md` §6.2 (nœud `rédigé`) ; ce plan (`statut: réalisé`).
+  Le profil, `labs/network.md`, `DECISIONS.md` et `certifs/COA/objectifs.md` §2 ont été mis à jour avec ce plan (2026-10-02).
 
-## Questions ouvertes (la réponse change le plan)
+## Arbitrages validés le 2026-10-02
 
-1. **Object Storage sans Swift.** Options : (A) ajouter `openstack-kolla-stg01` (Ceph mono-nœud cephadm + RGW, 2 vCPU / 8 Go /
-   80 Go) au profil et l'intégrer par `enable_ceph_rgw` ; RGW sert aussi de cible `s3` à `cinder-backup`. Cinder LVM et Glance `file`
-   inchangés. (B) comme A, mais Ceph porte aussi Glance et Cinder (`glance_backend_ceph`, `cinder_backend_ceph`) : plus proche
-   d'une production, débloque COA-06-05 en vrai, mais abandonne le LVM du profil et met Ceph sur le chemin critique d'un débutant.
-   (C) reporter : F1 sans object storage, F9 bloquée tant que la décision n'est pas prise. Recommandation : A, en entrée datée
-   de `DECISIONS.md`, et correction de `certifs/COA/objectifs.md` §2 dans la même PR que ce plan.
-2. **VIP externe et interface Neutron sur le même VLAN 40.** Kolla exige que `neutron_external_interface` n'ait pas d'adresse et
-   que `kolla_external_vip_interface` en ait une. Le profil donne à `ctl01` une seule NIC VLAN 40 avec `10.10.40.51`.
-   Options : (A) deuxième NIC VLAN 40 sur `ctl01` (sans IP, dédiée à `br-ex`), modification du profil ; (B) déplacer la VIP externe
-   sur le VLAN 10 (`10.10.10.71`) et exposer `*.os.lab.home.arpa` par le routeur, modification de `labs/network.md` ; (C) bridge
-   Linux + paire veth sur l'hôte, comme Kayobe, trop fragile pour une fiche débutant. Recommandation : A.
-3. **TLS externe dès F1 ?** (A) HTTP en chemin principal, TLS avec la CA interne (`kolla_enable_tls_external`,
-   `kolla_external_fqdn: api.os.lab.home.arpa`, `kolla_copy_ca_into_containers`) en variante de l'exercice 3.2 ; (B) TLS en chemin
-   principal, conforme à `labs/network.md` §6 mais ajoute PKI et `OS_CACERT` au premier contact. Recommandation : A, l'examen
-   n'évalue pas TLS.
-4. **Création des VM.** Aucun `lab up` n'existe. (A) F1 commence « trois VM Ubuntu 24.04 prêtes » avec une annexe de 15 min
-   « créer les VM dans Proxmox » (NIC, disques, `cpu: host`) ; le module OpenTofu du profil fera l'objet d'une fiche `iac`.
-   (B) F1 inclut l'écriture du module OpenTofu `bpg/proxmox` du profil : fiche à 12 h et deux domaines mélangés.
-   Recommandation : A.
+Les quatre questions posées à la validation ont reçu la réponse recommandée (option A à chaque fois) ; entrées datées
+dans `DECISIONS.md`.
+
+1. **Object Storage sans Swift** : VM `openstack-kolla-stg01` (Ceph mono-nœud cephadm + RGW, 2 vCPU / 8 Go / 20 + 60 Go)
+   ajoutée au profil, intégrée par `enable_ceph_rgw` ; le RGW sert aussi de cible `s3` à `cinder-backup`. Cinder LVM et Glance
+   `file` inchangés. Pour tenir le budget RAM, `cmp01` et `cmp02` passent de 32 à 28 Go. Écartées : Ceph pour Glance et Cinder
+   (met Ceph sur le chemin critique d'un débutant) ; reporter (bloque F9).
+2. **VIP externe et interface Neutron** : deuxième NIC VLAN 40 sur `ctl01`, sans adresse, dédiée à `br-ex` ; la première garde
+   `10.10.40.51` et porte la VIP `10.10.40.221`. Écartées : VIP externe sur le VLAN 10 (change `labs/network.md`) ; pont Linux +
+   veth (fragile).
+3. **TLS externe** : HTTP en chemin principal ; TLS avec la CA interne en variante de l'exercice 3.2. L'examen ne l'évalue pas.
+4. **Création des VM** : la fiche démarre sur quatre VM Ubuntu 24.04 prêtes, annexe de 15 min pour les créer dans Proxmox ;
+   le module OpenTofu du profil (`lab up openstack-kolla`) fera l'objet d'une fiche `iac`.

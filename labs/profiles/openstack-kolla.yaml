@@ -1,15 +1,17 @@
 name: openstack-kolla
-description: "OpenStack Kolla-Ansible : 1 contrôleur all-in-one (API, DB, MQ, Neutron, Horizon) + 2 computes ; stockage Cinder LVM local. Profil le plus lourd, seul."
+description: >-
+  OpenStack Kolla-Ansible : 1 contrôleur all-in-one (API, DB, MQ, Neutron, Horizon) + 2 computes (Cinder LVM local)
+  + 1 nœud Ceph mono-nœud pour RadosGW (API Swift, cible S3 de cinder-backup ; DECISIONS.md 2026-10-02). Profil le plus lourd.
 budget:
-  vcpu: 18
+  vcpu: 20   # ratio 2,0 sur les 10 vCPU disponibles : plafond de labs/profiles/README.md
   ram_gb: 96
-  disk_gb: 400
+  disk_gb: 480
   overcommit_ratio_max: 2.0
 vlans: [10, 20, 30, 40]
 images:
   - ubuntu_lts
   - rocky_linux
-components: [openstack, kolla_ansible, kolla, python_openstackclient]
+components: [openstack, kolla_ansible, kolla, python_openstackclient, ceph]
 network:
   kolla_internal_vip: 10.10.10.70
   kolla_external_vip: 10.10.40.221
@@ -17,6 +19,7 @@ network:
   neutron_external_interface_vlan: 40
   floating_ip_pool: 10.10.40.230-10.10.40.254
   tenant_cidr_pool: 10.200.0.0/16
+  object_storage: "Ceph RadosGW sur stg01 (10.10.10.55:8080), API Swift via enable_ceph_rgw, rgw_swift_account_in_url activé"
 can_run_with: [linux-base]   # jamais avec kubernetes-ha ni ceph-3n
 nested_virtualization: true   # computes en KVM imbriqué (CPU host-passthrough)
 vms:
@@ -27,13 +30,13 @@ vms:
     ram_gb: 32
     disk_gb: 120
     storage: nvme
-    nics: [10, 20, 30, 40]
+    nics: [10, 20, 30, 40, 40]   # deuxième NIC VLAN 40 sans adresse, dédiée à br-ex (neutron_external_interface) ; DECISIONS.md 2026-10-02
     ip: {mgmt: 10.10.10.51, storage: 10.10.20.51, overlay: 10.10.30.51, provider: 10.10.40.51}
   - name: openstack-kolla-cmp01
     vmid: 1061
     role: compute + cinder-volume (LVM sur disque supplémentaire)
     vcpu: 6
-    ram_gb: 32
+    ram_gb: 28   # 32 → 28 le 2026-10-02 pour loger stg01 dans les 96 Go
     disk_gb: 60
     extra_disks_gb: [80]
     storage: nvme
@@ -43,9 +46,20 @@ vms:
     vmid: 1062
     role: compute + cinder-volume (LVM sur disque supplémentaire)
     vcpu: 6
-    ram_gb: 32
+    ram_gb: 28   # 32 → 28 le 2026-10-02 pour loger stg01 dans les 96 Go
     disk_gb: 60
     extra_disks_gb: [80]
     storage: nvme
     nics: [10, 20, 30, 40]
     ip: {mgmt: 10.10.10.62, storage: 10.10.20.62, overlay: 10.10.30.62, provider: 10.10.40.62}
+  - name: openstack-kolla-stg01
+    vmid: 1055
+    role: Ceph mono-nœud (cephadm, mon + mgr + 1 osd) + RadosGW pour l'API Swift ; hors chemin critique (script fourni par la fiche openstack/01)
+    vcpu: 2
+    ram_gb: 8
+    disk_gb: 20
+    extra_disks_gb: [60]
+    storage: nvme
+    extra_disks_storage: ssd
+    nics: [10, 20]
+    ip: {mgmt: 10.10.10.55, storage: 10.10.20.55}

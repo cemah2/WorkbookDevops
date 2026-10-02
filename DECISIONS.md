@@ -118,3 +118,28 @@ activé, programme CCA). Envoy Gateway reste dans le profil comme variante pour 
 fonction absente de Cilium ; la fiche concernée le justifie en une ligne.
 Conséquence : les fiches exposent leurs UI par `Gateway` + `HTTPRoute` Cilium et un certificat cert-manager
 émis par la CA interne ; sur `kind`, l'exposition se fait par `port-forward` et la Gateway est une variante.
+
+## 2026-10-02 — Object Storage du lab : Ceph RadosGW mono-nœud, pas Swift
+
+Kolla-Ansible 2026.1 ne déploie plus Swift (aucune variable `enable_swift`, aucun guide dans `stable/2025.1` ni
+`stable/2026.1`). L'API Swift exigée par COA-05 est fournie par un Ceph mono-nœud (cephadm, 1 OSD) avec RadosGW sur une
+quatrième VM du profil `openstack-kolla`, `openstack-kolla-stg01`, intégrée par `enable_ceph_rgw` (endpoints Swift dans
+Keystone, `rgw_swift_account_in_url` activé pour les ACL inter-projets). Le même RGW est la cible `s3` de `cinder-backup`.
+Glance reste sur `file` et Cinder sur LVM : Ceph n'entre pas dans le chemin critique des fiches débutant.
+Conséquence : `cmp01` et `cmp02` passent de 32 à 28 Go pour garder 96 Go au profil et la combinaison avec `linux-base` ;
+`certifs/COA/objectifs.md` §2 est corrigé ; Ceph RBD pour Glance/Cinder reste `[lecture + simulation]` sur ce profil.
+
+## 2026-10-02 — `ctl01` : deux NIC sur le VLAN 40
+
+Kolla exige une interface **sans adresse** pour `neutron_external_interface` (plongée dans `br-ex`) et une interface
+**avec adresse** pour `kolla_external_vip_interface`. Le nœud réseau `openstack-kolla-ctl01` reçoit donc deux NIC sur le
+VLAN 40 : la première garde `10.10.40.51` et porte la VIP externe `10.10.40.221`, la seconde est dédiée à Neutron.
+Écartés : déplacer la VIP externe sur le VLAN 10 (change `labs/network.md`) ; pont Linux + veth façon Kayobe (fragile).
+
+## 2026-10-02 — Tant que `lab up` n'existe pas, les fiches démarrent sur des VM créées à la main
+
+Aucun module OpenTofu de profil n'est écrit. Les fiches qui ont besoin d'un profil complet (première : `openstack/01`)
+démarrent sur des VM créées à la main dans Proxmox, avec une annexe « créer les VM en 15 min » (NIC par VLAN, disques,
+`cpu: host`). Les modules `lab up <profil>` feront l'objet de fiches `iac` dédiées, qui remplaceront l'annexe.
+Conséquence : le TLS externe des API OpenStack (CA interne, `labs/network.md` §6) est une variante, pas le chemin
+principal, pour ne pas ajouter la PKI au premier contact.

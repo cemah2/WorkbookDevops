@@ -339,14 +339,14 @@ flowchart TB
 
 | Nœud | Niveau | Statut | Certifications | Prérequis |
 |---|---|---|---|---|
-| `openstack/01-deployer-openstack-kolla-ansible` | débutant | planifié | COA-01-05 (socle des 39 autres) | `linux_conf`, `reseau_conf`, `proxmox_conf` ; `iac_deb` recommandé |
+| `openstack/01-deployer-openstack-kolla-ansible` | débutant | planifié (plan validé le 2026-10-02) | COA-01-05 (socle des 39 autres) | `linux_conf`, `reseau_conf`, `proxmox_conf` ; `iac_deb` recommandé |
 | `openstack/02-keystone-domaines-projets-utilisateurs-roles` | débutant | planifié | COA-01-01, 01-02, 01-03, 01-05 | `openstack/01-deployer-openstack-kolla-ansible` |
 | `openstack/03-glance-images` | débutant | planifié | COA-06-01 à 06-05 | `openstack/02-keystone-domaines-projets-utilisateurs-roles` |
 | `openstack/04-neutron-reseaux-sous-reseaux-routeurs` | débutant | planifié | COA-03-01 à 03-05, 03-11 | `openstack/03-glance-images` |
 | `openstack/05-nova-flavors-instances-acces-ssh` | débutant | planifié | COA-02-01 à 02-06, 03-10 à 03-13 | `openstack/04-neutron-reseaux-sous-reseaux-routeurs` |
 | `openstack/06-neutron-security-groups-ports-quotas` | confirmé | planifié | COA-03-06 à 03-10, 02-06 | `openstack/05-nova-flavors-instances-acces-ssh` |
 | `openstack/07-nova-consoles-snapshots-quotas` | confirmé | planifié | COA-02-02, 02-07, 02-08, 02-09 | `openstack/05-nova-flavors-instances-acces-ssh` |
-| `openstack/08-cinder-volumes-snapshots-sauvegardes` | confirmé | planifié | COA-04-01 à 04-06 | `openstack/05-nova-flavors-instances-acces-ssh` ; Swift activé |
-| `openstack/09-swift-conteneurs-et-acl` | confirmé | planifié | COA-05-01, 05-02 | `openstack/05-nova-flavors-instances-acces-ssh` ; Swift activé |
+| `openstack/08-cinder-volumes-snapshots-sauvegardes` | confirmé | planifié | COA-04-01 à 04-06 | `openstack/05-nova-flavors-instances-acces-ssh` ; RGW de `stg01` (cible `s3` de cinder-backup) |
+| `openstack/09-swift-conteneurs-et-acl` | confirmé | planifié | COA-05-01, 05-02 | `openstack/05-nova-flavors-instances-acces-ssh` ; API Swift du RGW de `stg01` |
 | `openstack/10-keystone-policies-et-regles-d-acces` | confirmé | planifié | COA-01-04 | `openstack/02-keystone-domaines-projets-utilisateurs-roles`, `openstack/05-nova-flavors-instances-acces-ssh` |
 | `scenarios/NN-coa-livrer-un-projet-locataire` | expert | planifié | COA (40 compétences) | les dix fiches ci-dessus |

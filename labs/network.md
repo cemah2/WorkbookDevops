@@ -70,6 +70,7 @@ Format : `<profil>-<rôle><nn>` en minuscules, sans underscore. Le profil est un
 | worker Kubernetes | `wk` | `kubernetes-ha-wk01` … `wk03` |
 | nœud Ceph | `osd` | `ceph-3n-osd01` … `osd03` |
 | contrôleur OpenStack | `ctl` | `openstack-kolla-ctl01` |
+| stockage objet OpenStack (Ceph RGW mono-nœud) | `stg` | `openstack-kolla-stg01` |
 | compute OpenStack | `cmp` | `openstack-kolla-cmp01`, `cmp02` |
 | nœud air-gap | `ag` | `airgap-ag01` |
 | bastion / poste de travail | `jump` | `core-jump01` |
@@ -86,7 +87,7 @@ reprennent le même dernier octet) :
 | `linux-base` | `10.10.10.10`–`.19` | `lx01` = `.11` |
 | `kubernetes-ha` | `10.10.10.20`–`.39` | `cp01`–`cp03` = `.21`–`.23`, `wk01`–`wk03` = `.31`–`.33`, VIP API = `10.10.40.220` |
 | `ceph-3n` | `10.10.10.40`–`.49` | `osd01`–`osd03` = `.41`–`.43` (idem en `10.10.20.x` et `10.10.21.x`) |
-| `openstack-kolla` | `10.10.10.50`–`.69` | `ctl01` = `.51`, `cmp01`–`cmp02` = `.61`–`.62`, VIP interne = `.70`, VIP externe = `10.10.40.221` |
+| `openstack-kolla` | `10.10.10.50`–`.69` | `ctl01` = `.51`, `stg01` (Ceph RGW) = `.55`, `cmp01`–`cmp02` = `.61`–`.62`, VIP interne = `.70`, VIP externe = `10.10.40.221` (portée par la première NIC VLAN 40 de `ctl01`, la seconde est sans adresse pour Neutron) |
 | `airgap` | `10.10.50.10`–`.49` | `ag01` = `10.10.50.11`, miroir = `10.10.50.5` |
 
 Pas plus d'un profil « lourd » (`kubernetes-ha`, `openstack-kolla`, `ceph-3n`) actif à la fois : les plages
