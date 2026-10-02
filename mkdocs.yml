@@ -74,5 +74,6 @@ nav:
   - Gabarits:
       - Fiche: templates/fiche.md
       - Scénario: templates/scenario.md
+      - ADR: templates/adr.md
   - Certifications: certifs/README.md
   - Prompts: prompts/README.md
