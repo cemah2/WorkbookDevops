@@ -380,7 +380,8 @@ Chaque fiche se termine par un défi chronométré en conditions d'examen : term
 - **Temps** : 7 h
 - **3 exercices clés** :
   1. Méthode de diagnostic d'un nœud `NotReady` : `kubectl describe node` (conditions, pression), `journalctl -u kubelet`,
-     `systemctl status containerd`,     `crictl ps/logs`, certificats kubelet, `/var/lib/kubelet/config.yaml`, espace disque, `kubelet` arrêté ou mal configuré — CKA-04-01.
+     `systemctl status containerd`, `crictl ps/logs`, certificats kubelet, `/var/lib/kubelet/config.yaml`, espace disque,
+     `kubelet` arrêté ou mal configuré — CKA-04-01.
   2. Composants du control plane : static pods de `/etc/kubernetes/manifests` (mauvais flag, mauvais port, image erronée),
      `kube-scheduler` absent (Pods `Pending` sans événement), `controller-manager` arrêté (Deployments sans ReplicaSet), etcd injoignable ;
      lire les logs avec `crictl` quand `kubectl` ne répond plus — CKA-04-02.
