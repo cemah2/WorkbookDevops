@@ -149,7 +149,7 @@ peut encore apparaître dans les questions. Chaque fiche concernée garde une se
 - **Niveau** : débutant (`plateforme_deb`)
 - **Couvre** : CBA-01-01, CBA-01-02, CBA-01-03, CBA-01-04, CBA-03-01, CBA-03-04
 - **Prérequis** : `linux_deb` (shell, paquets, systemd, ports), `iac_deb` (Git : clone, commit, push).
-  Aucune compétence Kubernetes : voir la justification de l'arête dans `docs/prerequis.md` §6.2.
+  Aucune compétence Kubernetes : voir la justification de l'arête dans `docs/prerequis.md` §6.3.
 - **Lab** : VM de développement sur `linux-base` (Ubuntu LTS). Clés `versions.yaml` : `backstage`, `nodejs` (à créer), `ubuntu_lts`.
 - **Temps** : 5 h
 - **3 exercices clés** :
