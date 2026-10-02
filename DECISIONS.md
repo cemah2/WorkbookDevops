@@ -118,3 +118,20 @@ activé, programme CCA). Envoy Gateway reste dans le profil comme variante pour 
 fonction absente de Cilium ; la fiche concernée le justifie en une ligne.
 Conséquence : les fiches exposent leurs UI par `Gateway` + `HTTPRoute` Cilium et un certificat cert-manager
 émis par la CA interne ; sur `kind`, l'exposition se fait par `port-forward` et la Gateway est une variante.
+
+## 2026-10-02 — Série Cilium numérotée `10` à `16` dans `fiches/reseau/`
+
+Les fiches Cilium (cartographie CCA) sont de niveau confirmé et expert ; elles ne peuvent pas ouvrir la série de lecture
+du domaine `reseau`. Les numéros `01` à `09` sont réservés aux fiches `reseau_deb` (ip/nftables, VLAN, OPNsense, DNS…)
+attendues par LFCS, RHCE et CKA. Règle générale qui en découle : une cartographie peut réserver un bloc de numéros
+pour une série de niveau confirmé/expert quand les fiches débutant du domaine n'existent pas encore ; le bloc est
+noté dans `objectifs.md` et `docs/prerequis.md` §6, et un numéro attribué ne change plus.
+
+## 2026-10-02 — LoadBalancer sur `kubernetes-ha` : Cilium LB-IPAM + BGP, MetalLB en variante
+
+Les Services `LoadBalancer` du profil `kubernetes-ha` reçoivent leurs adresses du LB-IPAM de Cilium
+(`CiliumLoadBalancerIPPool`, pool `10.10.40.200`–`.219`) annoncées en BGP vers `core-rtr01` (OPNsense + plugin `os-frr`,
+AS 65000 ; nœuds en AS 65001 sur le VLAN 40). kube-proxy n'est pas installé (`kubeadm --skip-phases=addon/kube-proxy`),
+Cilium est en `kubeProxyReplacement`. MetalLB reste dans le profil comme variante (annonce L2, comparaison dans la fiche BGP).
+Conséquence : `versions.yaml` gagne `cilium_cli`, `hubble` et `gateway_api` ; `core-rtr01` porte le plugin FRR ;
+`lab up kubernetes-ha` devra configurer le voisin BGP sur OPNsense.

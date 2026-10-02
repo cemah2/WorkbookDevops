@@ -1,0 +1,65 @@
+# Démo fiche reseau/10 : un serveur web sur deux nœuds différents + un Service ClusterIP + un client.
+# Images préchargées sur kind (kind load image-archive) quand les nœuds n'ont pas d'accès registre.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-cilium
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: demo-cilium
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: web
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: nginx
+          image: docker.io/library/nginx:1.29-alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {memory: 64Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: demo-cilium
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client
+  namespace: demo-cilium
+  labels:
+    app: client
+spec:
+  containers:
+    - name: busybox
+      image: docker.io/library/busybox:1.37
+      command: ["sleep", "infinity"]
+      resources:
+        requests: {cpu: 10m, memory: 8Mi}
+        limits: {memory: 32Mi}
