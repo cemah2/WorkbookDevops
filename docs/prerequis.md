@@ -277,3 +277,92 @@ flowchart TB
 | `gitops/05-argo-rollouts` | confirmé | planifié | CAPA-03-01 à 03-03 | `gitops/01-argo-cd-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
 | `gitops/07-argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/02-argo-workflows-fondamentaux`, `kubernetes_conf` |
 | `scenarios/NN-chaine-argo-bout-en-bout` | expert | planifié | CAPA (16 compétences), CGOA-04-01 à 04-04 | les sept fiches ci-dessus |
+
+### 6.2 KCNA (certifs/KCNA/objectifs.md, 2026-10-02)
+
+Onze fiches débutant (neuf `kubernetes`, une `securite`, une `observabilite`) qui constituent le nœud `kubernetes_deb`,
+et un scénario qui ouvre `kubernetes_conf`. Arêtes inter-domaines nouvelles, justifiées dans `certifs/KCNA/objectifs.md` §4 :
+`linux_deb` → F1 (les conteneurs n'exigent que les bases Linux, F1 se commence avant `linux_conf`),
+`ceph_deb` ⇢ F6 (variante Rook sur `ceph-3n`), F9 ⇢ `gitops/01-argo-cd-fondamentaux` (la fiche Argo CD existante
+pratique la partie GitOps de KCNA-03-01). Les cartographies CKA, CKAD, KCSA, PCA et OTCA réutiliseront ces nœuds.
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef deb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+  classDef plan fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef planconf fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+
+  linux_deb[linux_deb]:::ref
+  linux_conf[linux_conf]:::ref
+  reseau_deb[reseau_deb]:::ref
+  proxmox_deb[proxmox_deb]:::ref
+  kubernetes_deb[kubernetes_deb]:::ref
+  kubernetes_conf[kubernetes_conf]:::ref
+  securite_deb[securite_deb]:::ref
+  observabilite_deb[observabilite_deb]:::ref
+  ceph_deb[ceph_deb]:::ref
+
+  k01["kubernetes/01-conteneurs-et-images-oci (déb.)"]:::plan
+  k02["kubernetes/02-architecture-api-et-objets-kubernetes (déb.)"]:::plan
+  k03["kubernetes/03-administration-kubeadm (déb.)"]:::plan
+  k04["kubernetes/04-ordonnancement-des-pods (déb.)"]:::plan
+  k05["kubernetes/05-reseau-services-et-gateway-api (déb.)"]:::plan
+  k06["kubernetes/06-stockage-volumes-pv-pvc (déb.)"]:::plan
+  s01["securite/01-securite-kubernetes-fondamentaux (déb.)"]:::plan
+  k07["kubernetes/07-depannage-cluster-et-applications (déb.)"]:::plan
+  k08["kubernetes/08-livraison-applicative-helm-kustomize-strategies (déb.)"]:::plan
+  o01["observabilite/01-observabilite-fondamentaux (déb.)"]:::plan
+  k09["kubernetes/09-ecosysteme-cloud-native-et-communaute (déb.)"]:::plan
+  argocd_fond["gitops/01-argo-cd-fondamentaux (déb., rédigé)"]:::deb
+  s_3tiers["scenarios/NN-application-trois-tiers-sur-kubernetes (conf.)"]:::planconf
+
+  %% rattachement aux nœuds de référence
+  linux_deb --> k01
+  proxmox_deb --> k01
+  linux_conf --> kubernetes_deb
+  reseau_deb --> kubernetes_deb
+  proxmox_deb --> kubernetes_deb
+  kubernetes_deb --> k02
+  reseau_deb --> k05
+  ceph_deb -.-> k06
+  s01 --> securite_deb
+  o01 --> observabilite_deb
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  k01 --> k02
+  k02 --> k03
+  k02 --> k04
+  k02 --> k05
+  k02 --> k06
+  k02 --> s01
+  k01 --> s01
+  k03 --> k07
+  k05 --> k07
+  k02 --> k08
+  k08 -.-> argocd_fond
+  k04 --> o01
+  k04 --> k09
+  k07 --> s_3tiers
+  k06 --> s_3tiers
+  s01 --> s_3tiers
+  o01 --> s_3tiers
+  k09 --> s_3tiers
+  argocd_fond --> s_3tiers
+  s_3tiers --> kubernetes_conf
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `kubernetes/01-conteneurs-et-images-oci` | débutant | planifié | KCNA-01-04 | `linux_deb`, `proxmox_deb` |
+| `kubernetes/02-architecture-api-et-objets-kubernetes` | débutant | planifié | KCNA-01-01, KCNA-01-02 | `kubernetes/01`, `kubernetes_deb` (`linux_conf`, `reseau_deb`, `proxmox_deb`) |
+| `kubernetes/03-administration-kubeadm` | débutant | planifié | KCNA-01-02 | `kubernetes/02` |
+| `kubernetes/04-ordonnancement-des-pods` | débutant | planifié | KCNA-01-03 | `kubernetes/02` |
+| `kubernetes/05-reseau-services-et-gateway-api` | débutant | planifié | KCNA-02-01 | `kubernetes/02`, `reseau_deb` |
+| `kubernetes/06-stockage-volumes-pv-pvc` | débutant | planifié | KCNA-02-04 | `kubernetes/02` ; `ceph_deb` recommandé |
+| `securite/01-securite-kubernetes-fondamentaux` | débutant | planifié | KCNA-02-02 | `kubernetes/01`, `kubernetes/02` |
+| `kubernetes/07-depannage-cluster-et-applications` | débutant | planifié | KCNA-02-03, KCNA-03-02 | `kubernetes/03`, `kubernetes/05` |
+| `kubernetes/08-livraison-applicative-helm-kustomize-strategies` | débutant | planifié | KCNA-03-01 | `kubernetes/02` ; recommandée avant `gitops/01` |
+| `observabilite/01-observabilite-fondamentaux` | débutant | planifié | KCNA-04-01 | `kubernetes/04` |
+| `kubernetes/09-ecosysteme-cloud-native-et-communaute` | débutant | planifié | KCNA-04-02, KCNA-04-03 | `kubernetes/04` |
+| `scenarios/NN-application-trois-tiers-sur-kubernetes` | confirmé | planifié | KCNA (13 compétences) | les onze fiches ci-dessus et `gitops/01-argo-cd-fondamentaux` |
