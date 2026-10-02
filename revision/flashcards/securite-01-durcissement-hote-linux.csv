@@ -1,0 +1,21 @@
+question;réponse;tags
+Trois verbes de la réduction de surface d'attaque ?;Lister (services, ports, paquets, modules, setuid), justifier, retirer, puis mettre à jour automatiquement ce qui reste;securite,cks-03-01
+Commande pour voir tous les ports en écoute avec le processus ?;ss -lntup (l listen, n numérique, t tcp, u udp, p processus), en root pour voir les processus des autres;securite,cks-03-01
+Différence entre systemctl disable et systemctl mask ?;disable retire le démarrage automatique, mask lie l'unité à /dev/null et plus personne ne peut la démarrer, même une dépendance;securite,cks-03-01
+Comment interdire un module noyau même à un modprobe explicite ?;install <module> /bin/false dans /etc/modprobe.d/ (blacklist seul n'empêche que le chargement automatique), vérifier avec modprobe -n -v;securite,cks-03-01
+Commande pour lister les binaires setuid d'un système ?;find / -xdev -perm -4000 -type f, tout ce qui est hors des chemins système (/usr/local, /opt, /home, /tmp) est suspect;securite,cks-03-01
+Shell d'un compte de service et pourquoi ?;/usr/sbin/nologin bloque toute connexion interactive, mais sudo -u <compte> et systemd peuvent toujours exécuter des processus sous ce compte;securite,cks-03-02
+Forme d'une règle sudo limitée à une commande ?;user ALL=(root) NOPASSWD: /chemin/absolu/commande arguments exacts, validée avec visudo -cf, fichier en 0440 dans /etc/sudoers.d/;securite,cks-03-02
+Dans sshd_config, quelle valeur gagne quand une directive apparaît deux fois ?;La première rencontrée, et comme Include sshd_config.d/*.conf est en tête, un drop-in nommé 00-… l'emporte sur 50-cloud-init.conf;securite,cks-03-02
+Deux commandes pour vérifier une configuration sshd avant de recharger ?;sshd -t (syntaxe) et sshd -T (valeurs effectives, à filtrer avec grep), en gardant une session ouverte pendant le test;securite,cks-03-02
+Quatre directives sshd d'un durcissement de base ?;PermitRootLogin no, PasswordAuthentication no, KbdInteractiveAuthentication no, AllowGroups <groupe> (plus MaxAuthTries 3);securite,cks-03-02
+Pourquoi changer Port dans sshd_config peut ne rien faire sur Ubuntu récent ?;ssh est activé par socket (ssh.socket) et le port est tenu par systemd, il faut daemon-reload puis restart ssh.socket, et vérifier avec ss -lntp;securite,cks-03-02
+Trois commandes ufw pour un pare-feu deny par défaut avec SSH et un port depuis un CIDR ?;ufw default deny incoming, ufw allow 22/tcp, ufw allow from 10.10.10.0/24 to any port 8080 proto tcp, puis ufw enable;securite,cks-03-03
+Où lire les paquets refusés par ufw ?;journalctl -k (préfixe [UFW BLOCK], champs SRC DST DPT) ou /var/log/ufw.log, après ufw logging on;securite,cks-03-03
+Trois sysctl de durcissement et le sysctl à ne PAS toucher sur un nœud Kubernetes ?;kernel.dmesg_restrict=1, kernel.kptr_restrict=2, fs.protected_regular=2 (dans /etc/sysctl.d/, sysctl --system), ne jamais mettre net.ipv4.ip_forward à 0;securite,cks-03-03
+Ports à ouvrir sur un control plane Kubernetes ?;6443 API server, 2379-2380 etcd, 10250 kubelet, 10257 controller manager, 10259 scheduler, et sur un worker 10250 et 30000-32767 (NodePort);securite,cks-03-03,kcsa-02-04
+DAC vs MAC en une phrase chacun ?;DAC : les permissions Unix disent qui peut lire quoi. MAC (AppArmor, SELinux) : le noyau dit ce qu'un programme peut toucher, même lancé par root;securite,cks-03-04
+Trois modes d'un profil AppArmor ?;enforce (bloque et journalise), complain (journalise seulement, pour écrire le profil), unconfined (pas de profil), changés par aa-enforce, aa-complain, aa-disable;securite,cks-03-04
+Où lire un refus AppArmor ?;journalctl -k (ou dmesg) : apparmor=DENIED operation=open profile=… name=/etc/shadow, et en complain la ligne dit ALLOWED;securite,cks-03-04
+Quelle directive systemd pose un filtre seccomp et comment éviter de tuer le processus ?;SystemCallFilter=@system-service (liste blanche) ou ~@privileged (liste noire), avec SystemCallErrorNumber=EPERM pour renvoyer une erreur au lieu de SIGSYS;securite,cks-03-04
+Commande qui note l'exposition d'un service systemd ?;systemd-analyze security <unité> : score de 0 (SAFE) à 10 (UNSAFE), une ligne ✗ par directive manquante, --offline=true analyse un fichier sans systemd actif;securite,cks-03-04

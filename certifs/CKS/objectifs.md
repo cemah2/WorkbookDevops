@@ -2,16 +2,17 @@
 code: CKS
 titre: "CKS — mapping compétences → chapitres"
 programme: "certifs/CKS/programme.md (converti le 2026-10-02 depuis CKS_Curriculum v1.34.pdf, commit cncf/curriculum du 2025-10-30)"
-chapitres_existants: 0
+chapitres_existants: 1
 generated: 2026-10-02
-status: "0 chapitre rédigé sur 15 ; à mettre à jour à chaque PR de chapitre"
+status: "1 chapitre rédigé (brouillon) sur 15 ; à mettre à jour à chaque PR de chapitre"
 ---
 
 # CKS — objectifs et couverture
 
 Mapping entre les 26 compétences de [`programme.md`](programme.md) et les chapitres du workbook.
-État au 2026-10-02 : aucun chapitre `securite` ni `kubernetes` n'existe ; les deux fiches `gitops` rédigées
-touchent deux compétences de façon indirecte (section 3). Les 26 compétences sont donc des trous.
+État au 2026-10-02 : une fiche rédigée (`fiches/securite/01-durcissement-hote-linux.md`, statut brouillon, domaine CKS-03
+côté hôte) ; aucun chapitre `kubernetes` ; les deux fiches `gitops` rédigées touchent deux compétences de façon
+indirecte (section 3). 22 compétences sur 26 restent des trous complets.
 Ce fichier sert de plan de création ; chaque PR de chapitre remplit les colonnes « chapitre » et « exercices »
 et marque le chapitre « rédigé » dans la section 4.
 
@@ -99,10 +100,10 @@ la notion sans viser la compétence ; ne compte pas comme couverture. La colonne
 
 | ID | Compétence | Poids | Chapitre existant | Exercices existants | Chapitre cible |
 |---|---|---|---|---|---|
-| CKS-03-01 | Minimize host OS footprint (reduce attack surface) | 2,5 % | — | — | F1 |
-| CKS-03-02 | Using least-privilege identity and access management | 2,5 % | — | — | F1 |
-| CKS-03-03 | Minimize external access to the network | 2,5 % | — | — | F1 |
-| CKS-03-04 | Appropriately use kernel hardening tools such as AppArmor, seccomp | 2,5 % | — | — | F1 (hôte), F8 (pods) |
+| CKS-03-01 | Minimize host OS footprint (reduce attack surface) | 2,5 % | `fiches/securite/01-durcissement-hote-linux.md` (brouillon) | S1 : démo, autonome, break-fix service-fantome, défi 10 min | F1 (rédigé) |
+| CKS-03-02 | Using least-privilege identity and access management | 2,5 % | `fiches/securite/01-durcissement-hote-linux.md` (brouillon) | S2 : démo, autonome, break-fix sudo-ouvert, défi 8 min | F1 (rédigé) |
+| CKS-03-03 | Minimize external access to the network | 2,5 % | `fiches/securite/01-durcissement-hote-linux.md` (brouillon) | S3 : démo, autonome, break-fix pare-feu-ouvert, défi 8 min | F1 (rédigé) |
+| CKS-03-04 | Appropriately use kernel hardening tools such as AppArmor, seccomp | 2,5 % | `fiches/securite/01-durcissement-hote-linux.md` (brouillon, partie hôte) | S4 : démo, autonome, break-fix apparmor-complain, défi 10 min | F1 (rédigé, hôte), F8 (pods) |
 
 ### CKS-04 — Minimize Microservice Vulnerabilities (20 %)
 
@@ -171,15 +172,16 @@ Les durées sont des estimations d'apprentissage (lecture ≤ 20 %, le reste en 
 Chaque fiche se termine par un défi au format examen : énoncé en anglais, contexte `kubectl config use-context`,
 hôte désigné, minuteur.
 
-### F1 — `fiches/securite/01-durcissement-hote-linux.md`
+### F1 — `fiches/securite/01-durcissement-hote-linux.md` — rédigé (brouillon, 2026-10-02)
 
 - **Titre** : Durcir un hôte Linux — surface d'attaque, comptes, réseau, AppArmor et seccomp
 - **Niveau** : débutant (`securite_deb`)
 - **Couvre** : CKS-03-01, CKS-03-02, CKS-03-03, CKS-03-04 (partie hôte)
 - **Prérequis** : `linux_deb` (systemd, paquets, utilisateurs, SSH) ; `reseau_deb` recommandé (ports, nftables)
 - **Lab** : `linux-base` (`linux-base-lx01` Ubuntu, `linux-base-lx02` Rocky pour la variante EL). kind : sans objet.
-  Clés `versions.yaml` : `ubuntu_lts`, `rocky_linux`, `compliance_as_code` (variante OpenSCAP).
-- **Temps** : 4 h
+  Clés `versions.yaml` : `ubuntu_lts`, `rocky_linux` (OpenSCAP reporté à F6, plan validé).
+- **Plan validé** : `docs/plans/securite-01-durcissement-hote-linux.md` (2026-10-02).
+- **Temps** : 5 h (4 h sans la variante Rocky)
 - **3 exercices clés** :
   1. Inventorier et réduire : `systemctl list-units --type=service`, `ss -lntup`, `apt list --installed`, désactiver et
      masquer les services inutiles, retirer les paquets, désactiver un module noyau (`/etc/modprobe.d/`), vérifier avec
@@ -189,10 +191,11 @@ hôte désigné, minuteur.
   3. Réseau et noyau : pare-feu nftables/ufw en deny-all entrant sauf SSH et le port kubelet, `aa-status`,
      `aa-enforce` d'un profil fourni, `aa-complain` et lecture de `/var/log/syslog`, `SystemCallFilter=` d'un service
      systemd comme première rencontre avec seccomp — CKS-03-03, CKS-03-04.
-- **Break-fix** : `break/securite/01-hote-port-ouvert.sh` (service inconnu en écoute sur toutes les interfaces, profil
-  AppArmor passé en complain).
-- **Défi chronométré** : réduire un hôte livré « gras » à SSH + kubelet en écoute, root interdit en SSH, profil AppArmor
-  en enforce, en moins de 15 min.
+- **Break-fix** : `break/securite/01-hote-service-fantome.sh`, `01-hote-sudo-ouvert.sh`, `01-hote-pare-feu-ouvert.sh`,
+  `01-hote-apparmor-complain.sh`, `01-hote-module-noyau.sh` (optionnel).
+- **État initial et vérification** : `scripts/host-livre.sh` et `scripts/check.sh` dans le dossier de la fiche.
+- **Défi chronométré** : remettre un hôte livré « gras » au vert de `check.sh` (SSH + demo-app en écoute, root et mots de
+  passe interdits en SSH, pare-feu deny par défaut, profil AppArmor en enforce, service confiné) en moins de 15 min.
 
 ### F2 — `fiches/securite/02-rbac-serviceaccounts-moindre-privilege.md`
 
@@ -509,7 +512,7 @@ killer.sh incluses dans l'achat de l'examen ; ne les remplace pas.
 
 | Chapitre | Niveau | Profil de lab | kind possible | Temps |
 |---|---|---|---|---|
-| F1 Durcissement de l'hôte | débutant | linux-base | sans objet | 4 h |
+| F1 Durcissement de l'hôte (rédigé, brouillon) | débutant | linux-base | sans objet | 5 h |
 | F2 RBAC et ServiceAccounts | confirmé | kubernetes-ha | oui | 5 h |
 | F3 API server et upgrade | confirmé | kubernetes-ha | partiel | 5 h |
 | F4 NetworkPolicy | confirmé | kubernetes-ha | oui (Cilium) | 4 h |
@@ -525,7 +528,7 @@ killer.sh incluses dans l'achat de l'examen ; ne les remplace pas.
 | F14 Audit logs et immutabilité | confirmé | kubernetes-ha | partiel | 4 h |
 | S1 Durcir un cluster livré | expert | kubernetes-ha + airgap | non | 8 h |
 | Révision (flashcards, checklists), examen blanc `exams/CKS/`, deux sessions killer.sh | — | — | — | 10 h |
-| **Total** | | | | **85 h** |
+| **Total** | | | | **86 h** |
 
 À 5 h par semaine, compter 17 semaines ; à 8 h par semaine, 11 semaines. C'est trois cycles de 4 à 6 semaines de
 `docs/roadmap.md` §7, à placer juste après CKA et CKAD (CKA est le prérequis officiel, la validité de 2 ans court

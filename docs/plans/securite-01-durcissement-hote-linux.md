@@ -2,7 +2,7 @@
 chapitre: "fiches/securite/01-durcissement-hote-linux.md"
 domaine: "securite"
 niveau: "débutant"
-statut: "validé le 2026-10-02 — rédaction à lancer (prompts/03)"
+statut: "réalisé le 2026-10-02 — chapitre en brouillon, relecture critique à faire (prompts/04)"
 duree_estimee: "5 h (4 h sans la variante Rocky / SELinux)"
 profil_lab: "linux-base (deux VM : lx01 Ubuntu cible, lx02 Rocky comme poste d'attaque et variante EL)"
 versions: "ubuntu_lts, rocky_linux, compliance_as_code (optionnel)"
