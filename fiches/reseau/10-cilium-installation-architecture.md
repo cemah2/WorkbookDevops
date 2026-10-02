@@ -431,7 +431,7 @@ Critère : six composants nommés, l'ordre de création d'un Pod correct, zéro 
 
 À cocher honnêtement, en conditions réelles (terminal seul, documentation officielle, minuteur).
 
-- [ ] Je sais installer Cilium à la version `cilium` par le CLI sur un cluster sans CNI ni kube-proxy, `status --wait` vert, en moins de 15 min
+- [ ] Je sais installer Cilium (version `cilium`) par le CLI sur un cluster sans CNI ni kube-proxy, `status` vert, en moins de 15 min
 - [ ] Je sais prouver en trois commandes que les Services fonctionnent sans kube-proxy
 - [ ] Je sais lire la configuration dans ses trois couches et dire laquelle `cilium config set` modifie, en moins de 5 min
 - [ ] Je sais produire un sysdump et y retrouver la ConfigMap et les logs d'un agent en moins de 5 min
