@@ -1,0 +1,21 @@
+# Configuration markdownlint-cli2 (CI et local : `npx markdownlint-cli2`).
+config:
+  default: true
+  MD013:
+    line_length: 140
+    code_blocks: false
+    tables: false
+    headings: false
+  MD024:
+    siblings_only: true
+  MD033: false   # HTML autorisé (admonitions MkDocs, <details>)
+  MD041: false   # front matter YAML avant le premier titre
+  MD036: false   # emphase utilisée comme sous-titre dans les gabarits
+  MD060: false   # style des tableaux : les délimiteurs |---| sans espaces sont acceptés
+ignores:
+  - node_modules/**
+  - site/**
+  - certifs/_sources_pdf/**
+  # programme.md : générés par certifs/_sources_pdf/generer_programmes.py et jamais édités à la main
+  # (CLAUDE.md) ; leurs ancres internes sont à corriger dans le générateur, pas dans les fichiers.
+  - certifs/*/programme.md

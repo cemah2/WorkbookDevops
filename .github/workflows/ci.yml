@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  markdownlint:
+    name: markdownlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: DavidAnson/markdownlint-cli2-action@v20
+        with:
+          globs: |
+            **/*.md
+            !node_modules/**
+            !site/**
+
+  yamllint:
+    name: yamllint (versions.yaml, profils, workflows)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: pipx install yamllint
+      - run: yamllint -c .yamllint.yaml versions.yaml labs/profiles/ .github/ mkdocs.yml
+
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Lint every shell script (none yet is fine)
+        run: |
+          mapfile -t files < <(git ls-files '*.sh' '*.bash')
+          if [ "${#files[@]}" -eq 0 ]; then echo "no shell scripts yet"; exit 0; fi
+          shellcheck -S warning "${files[@]}"
+
+  kubeconform:
+    name: kubeconform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install kubeconform
+        run: go install github.com/yannh/kubeconform/cmd/kubeconform@latest
+      - name: Validate Kubernetes manifests (dirs named k8s/ or manifests/)
+        run: |
+          mapfile -t files < <(git ls-files '*.yaml' '*.yml' | grep -E '(^|/)(k8s|manifests)/' || true)
+          if [ "${#files[@]}" -eq 0 ]; then echo "no Kubernetes manifests yet"; exit 0; fi
+          "$(go env GOPATH)/bin/kubeconform" -strict -summary -ignore-missing-schemas "${files[@]}"
+
+  mkdocs:
+    name: build MkDocs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-docs.txt
+      - run: mkdocs build --strict
