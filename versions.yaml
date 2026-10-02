@@ -16,7 +16,7 @@ meta:
   checked_by: "session d'amorçage (prompts/00-amorcage-depot.md)"
   next_review: "veille mensuelle (prompts/07-veille.md)"
   lab_target_summary: >
-    Proxmox VE 9.2 / Ubuntu 24.04 LTS / Rocky 10.2 / Kubernetes 1.37 / Ceph 20.2 Tentacle /
+    Proxmox VE 9.2 / Ubuntu 24.04 LTS / Rocky 10.2 / Kubernetes 1.37 / Cilium 1.20 / Ceph 20.2 Tentacle /
     OpenStack 2026.1 Gazpacho (Kolla-Ansible 22) / OpenTofu 1.13 / OpenBao 2.7 / Helm 4 / OPNsense 26.7 / BIND 9.20.
 
 components:
@@ -124,6 +124,42 @@ components:
     channel: stable
     source_url: "https://github.com/cilium/cilium/releases"
     verification: direct
+    checked_on: "2026-10-02"
+
+  cilium_cli:
+    name: "Cilium CLI (cilium install / status / connectivity test / clustermesh)"
+    # renovate: datasource=github-releases depName=cilium/cilium-cli extractVersion=^v(?<version>.*)$
+    version: "0.20.1"
+    note: "numérotation indépendante de cilium ; la CLI installe la version de cilium par défaut, --version force celle de versions.yaml"
+    channel: stable
+    source_url: "https://github.com/cilium/cilium-cli/releases"
+    verification: direct
+    verification_detail: "tags git via proxy.golang.org (v0.20.1, 2026-09-24) + page releases du dépôt officiel"
+    checked_on: "2026-10-02"
+
+  hubble:
+    name: "Hubble CLI"
+    # renovate: datasource=github-releases depName=cilium/hubble extractVersion=^v(?<version>.*)$
+    version: "1.20.2"
+    note: "la CLI suit le numéro de cilium depuis la série 1.17 ; garder hubble == cilium à chaque mise à jour"
+    channel: stable
+    source_url: "https://github.com/cilium/hubble/releases"
+    verification: direct
+    verification_detail: "tag v1.20.2 (2026-10-01) via proxy.golang.org ; page releases du dépôt officiel partiellement chargée"
+    checked_on: "2026-10-02"
+
+  gateway_api:
+    name: "Gateway API (CRD kubernetes-sigs/gateway-api, standard channel)"
+    # renovate: datasource=github-releases depName=kubernetes-sigs/gateway-api extractVersion=^v(?<version>.*)$
+    version: "1.6.1"
+    note: >
+      version des CRD imposée par la documentation de cilium 1.20 (Documentation/conf.py : gateway_api_version = v1.6.1) ;
+      1.6.2 existe (2026-09-03) mais n'est pas suivie tant que cilium ne la référence pas ;
+      ne pas fusionner une PR Renovate sans vérifier conf.py de la version cilium
+    channel: stable
+    source_url: "https://github.com/kubernetes-sigs/gateway-api/releases"
+    verification: direct
+    verification_detail: "tags git via proxy.golang.org (v1.6.1 2026-07-16, v1.6.2 2026-09-03) ; raw.githubusercontent.com/cilium/cilium/v1.20.2/Documentation/conf.py lu le 2026-10-02"
     checked_on: "2026-10-02"
 
   helm:
@@ -412,6 +448,16 @@ components:
     source_url: "https://github.com/argoproj/argo-workflows/releases"
     verification: indirect
     verification_detail: "API GitHub bloquée depuis la session ; tags git du dépôt officiel (git ls-remote) et binaire argo v4.1.4 téléchargé depuis la release"
+    checked_on: "2026-10-02"
+
+  opengitops_documents:
+    name: "OpenGitOps — principes et glossaire (document de référence, pas un logiciel)"
+    # renovate: datasource=github-releases depName=open-gitops/documents extractVersion=^v(?<version>.*)$
+    version: "1.0.0"
+    channel: stable
+    source_url: "https://github.com/open-gitops/documents/releases"
+    verification: direct
+    verification_detail: "tag v1.0.0 lu par git ls-remote et PRINCIPLES.md / GLOSSARY.md du tag lus sur raw.githubusercontent.com ; cité par les fiches gitops 08+ (CGOA)"
     checked_on: "2026-10-02"
 
   flux:

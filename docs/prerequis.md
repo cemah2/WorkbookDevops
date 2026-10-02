@@ -278,7 +278,296 @@ flowchart TB
 | `gitops/07-argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/02-argo-workflows-fondamentaux`, `kubernetes_conf` |
 | `scenarios/NN-chaine-argo-bout-en-bout` | expert | planifié | CAPA (16 compétences), CGOA-04-01 à 04-04 | les sept fiches ci-dessus |
 
-### 6.2 CKAD (certifs/CKAD/objectifs.md, 2026-10-02)
+### 6.2 CGOA (certifs/CGOA/objectifs.md, 2026-10-02)
+
+Cinq fiches `gitops` numérotées `08` à `12`, à la suite des sept fiches CAPA (la `08` est rédigée, brouillon) ; la révision
+(quiz, examen blanc) et le scénario expert sont partagés avec CAPA. Arêtes inter-domaines nouvelles, justifiées dans
+`certifs/CGOA/objectifs.md` §4 :
+`iac_deb` → G4 (OpenTofu et Ansible pilotés par Git), `securite_deb` ⇢ G4 (Kyverno, cosign, sops),
+`observabilite_deb` → G5 (métriques et alertes des moteurs GitOps), `ceph_deb` ⇢ G2 (`Bucket` Flux sur RGW).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef deb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+  classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  kubernetes_deb[kubernetes_deb]:::ref
+  kubernetes_conf[kubernetes_conf]:::ref
+  iac_deb[iac_deb]:::ref
+  gitops_deb[gitops_deb]:::ref
+  gitops_conf[gitops_conf]:::ref
+  gitops_exp[gitops_exp]:::ref
+  observabilite_deb[observabilite_deb]:::ref
+  securite_deb[securite_deb]:::ref
+  ceph_deb[ceph_deb]:::ref
+
+  argocd_fond["gitops/01-argo-cd-fondamentaux (déb., rédigé, CAPA)"]:::deb
+  wf_fond["gitops/02-argo-workflows-fondamentaux (déb., rédigé, CAPA)"]:::deb
+  argocd_helm["gitops/04-argo-cd-helm-kustomize-reconciliation (conf., CAPA)"]:::plan
+  g1["gitops/08-opengitops-principes-et-vocabulaire (déb., rédigé)"]:::deb
+  g2["gitops/09-flux-fondamentaux (déb.)"]:::plandeb
+  g3["gitops/10-architectures-gitops-depots-reconciliateurs (conf.)"]:::plan
+  g4["gitops/11-pratiques-associees-iac-cac-devsecops (conf.)"]:::plan
+  g5["gitops/12-notifications-observabilite-ci (conf.)"]:::plan
+  s_argo["scenarios/NN-chaine-argo-bout-en-bout (exp., CAPA)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  kubernetes_deb --> gitops_deb
+  iac_deb --> gitops_deb
+  gitops_deb --> argocd_fond
+  gitops_deb --> wf_fond
+  gitops_deb --> g1
+  kubernetes_conf --> g3
+  kubernetes_conf --> g4
+  kubernetes_conf --> g5
+  iac_deb --> g4
+  securite_deb -.-> g4
+  observabilite_deb --> g5
+  ceph_deb -.-> g2
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  argocd_fond --> g1
+  argocd_fond --> g2
+  g1 -.-> g2
+  argocd_fond --> argocd_helm
+  g2 --> g3
+  argocd_helm --> g3
+  g2 --> g4
+  wf_fond --> g4
+  g2 --> g5
+  wf_fond --> g5
+  g3 --> gitops_conf
+  g4 --> gitops_conf
+  g5 --> gitops_conf
+  gitops_conf --> s_argo --> gitops_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `gitops/08-opengitops-principes-et-vocabulaire` | débutant | rédigé (brouillon) | CGOA-01-01, 01-06, 01-07, 01-08, 02-01, 02-02 (+ consolidation CGOA-01-02 à 01-05, 01-09, 02-03, 02-04) | `gitops/01-argo-cd-fondamentaux`, `gitops_deb` ; `iac_deb` recommandé |
+| `gitops/09-flux-fondamentaux` | débutant | planifié | CGOA-05-03, 05-02, 05-01, 01-05, 01-07, 02-03, 02-04 | `gitops/01-argo-cd-fondamentaux`, `kubernetes_deb` ; `gitops/08-…` et `ceph_deb` recommandés |
+| `gitops/10-architectures-gitops-depots-reconciliateurs` | confirmé | planifié | CGOA-04-04, 04-03, 04-01, 01-07, 05-02, CAPA-02-05 | `gitops/09-flux-fondamentaux`, `gitops/04-argo-cd-helm-kustomize-reconciliation`, `kubernetes_conf` |
+| `gitops/11-pratiques-associees-iac-cac-devsecops` | confirmé | planifié | CGOA-03-01, 03-02, 03-03 | `gitops/09-flux-fondamentaux`, `gitops/02-argo-workflows-fondamentaux`, `iac_deb`, `kubernetes_conf` ; `securite_deb` recommandé |
+| `gitops/12-notifications-observabilite-ci` | confirmé | planifié | CGOA-05-04, 01-08, 03-04, CAPA-02-02 | `gitops/09-flux-fondamentaux`, `gitops/02-argo-workflows-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
+
+Les nœuds CAPA cités (`01`, `02`, `04`, scénario) sont définis en §6.1 ; leurs IDs CGOA y sont confirmés par `certifs/CGOA/objectifs.md` §3.
+
+### 6.3 CBA (certifs/CBA/objectifs.md, 2026-10-02)
+
+Cinq fiches `plateforme` et un scénario. Première cartographie du domaine : la série `fiches/plateforme/NN-` démarre
+à `01`. Arêtes inter-domaines nouvelles, justifiées ici : `linux_deb` → premier lancement et `iac_deb` → premier lancement
+(Backstage est une application Node.js lancée sur une VM, versionnée dans Git ; les deux fiches débutant n'ont pas besoin
+de Kubernetes). L'arête de référence `kubernetes_conf` → `plateforme_deb` de §2 reste valable pour le reste du domaine
+(mesh, opérateurs) et n'est pas retirée. `kubernetes_conf` → configuration et production (déploiement sur `kubernetes-ha`) ;
+`services_deb` ⇢ ingestion automatisée et ⇢ configuration et production (Keycloak du socle `core`, recommandé).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  linux_deb[linux_deb]:::ref
+  iac_deb[iac_deb]:::ref
+  kubernetes_conf[kubernetes_conf]:::ref
+  services_deb[services_deb]:::ref
+  gitops_deb[gitops_deb]:::ref
+  observabilite_conf[observabilite_conf]:::ref
+  securite_conf[securite_conf]:::ref
+  plateforme_deb[plateforme_deb]:::ref
+  plateforme_conf[plateforme_conf]:::ref
+  plateforme_exp[plateforme_exp]:::ref
+
+  bs_lancement["plateforme/01-backstage-premier-lancement (déb.)"]:::plandeb
+  bs_catalogue["plateforme/02-backstage-catalogue (déb.)"]:::plandeb
+  bs_plugins["plateforme/03-backstage-plugins-et-personnalisation (conf.)"]:::plan
+  bs_ingestion["plateforme/04-backstage-ingestion-automatisee (conf.)"]:::plan
+  bs_prod["plateforme/05-backstage-configuration-et-production (conf.)"]:::plan
+  s_portail["scenarios/NN-portail-developpeur-backstage (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  linux_deb --> bs_lancement
+  iac_deb --> bs_lancement
+  plateforme_deb --> bs_lancement
+  kubernetes_conf --> bs_prod
+  services_deb -.-> bs_ingestion
+  services_deb -.-> bs_prod
+  gitops_deb --> s_portail
+  observabilite_conf --> s_portail
+  securite_conf --> s_portail
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  bs_lancement --> bs_catalogue
+  bs_catalogue --> bs_plugins
+  bs_plugins --> bs_ingestion
+  bs_plugins --> bs_prod
+  bs_ingestion --> plateforme_conf
+  bs_prod --> plateforme_conf
+  plateforme_conf --> s_portail --> plateforme_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `plateforme/01-backstage-premier-lancement` | débutant | planifié | CBA-01-01 à 01-04, 03-01, 03-04 | `linux_deb`, `iac_deb` |
+| `plateforme/02-backstage-catalogue` | débutant | planifié | CBA-02-01 à 02-05, CNPA-05-02 | `plateforme/01-backstage-premier-lancement` |
+| `plateforme/03-backstage-plugins-et-personnalisation` | confirmé | planifié | CBA-04-01 à 04-04 (+ 01-02, 01-03) | `plateforme/01-…`, `plateforme/02-…` |
+| `plateforme/04-backstage-ingestion-automatisee` | confirmé | planifié | CBA-02-05, 02-06, CNPA-05-02 | `plateforme/02-…`, `plateforme/03-…`, `services_deb` (recommandé) |
+| `plateforme/05-backstage-configuration-et-production` | confirmé | planifié | CBA-01-03, 01-05, 03-02, 03-03, CNPA-05-03 | `plateforme/01-…`, `plateforme/03-…`, `kubernetes_conf`, `services_deb` (recommandé) |
+| `scenarios/NN-portail-developpeur-backstage` | expert | planifié | CBA (19 compétences), CNPA-05-01 à 05-03, CNPE-03-02, 03-04 | les cinq fiches ci-dessus, `gitops/01-argo-cd-fondamentaux`, `observabilite_conf`, `securite_conf` |
+
+### 6.4 ICA (certifs/ICA/objectifs.md, 2026-10-02)
+
+Huit fiches `plateforme` (numéros 06 à 13, à la suite des cinq fiches Backstage de la cartographie CBA, §6.3), un scénario
+et un examen blanc (`exams/ica-01/`, hors graphe). Aucun chapitre rédigé au 2026-10-02.
+Arêtes inter-domaines nouvelles, justifiées dans `certifs/ICA/objectifs.md` §4 :
+`securite_deb` ⇢ sécurité mTLS/JWT (TLS, certificats, JWT), `services_deb` ⇢ TLS en bordure (CA interne, cert-manager),
+`observabilite_deb` ⇢ troubleshooting (Prometheus, lecture de métriques Istio), `gitops_deb` ⇢ personnalisation et
+mises à jour (valeurs Helm dans Git), `gitops/05-argo-rollouts` ⇢ scénario (moteur de canary, si la fiche CAPA existe).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  kubernetes_conf[kubernetes_conf]:::ref
+  gitops_deb[gitops_deb]:::ref
+  plateforme_deb[plateforme_deb]:::ref
+  plateforme_conf[plateforme_conf]:::ref
+  plateforme_exp[plateforme_exp]:::ref
+  securite_deb[securite_deb]:::ref
+  services_deb[services_deb]:::ref
+  observabilite_deb[observabilite_deb]:::ref
+  rollouts["gitops/05-argo-rollouts (conf., planifié CAPA)"]:::plan
+
+  i06["plateforme/06-istio-installation-sidecar-ambient (déb.)"]:::plandeb
+  i07["plateforme/07-istio-ingress-et-routage (déb.)"]:::plandeb
+  i08["plateforme/08-istio-traffic-shifting-resilience-fault-injection (conf.)"]:::plan
+  i09["plateforme/09-istio-services-externes-et-egress (conf.)"]:::plan
+  i10["plateforme/10-istio-securite-mtls-jwt-autorisation (conf.)"]:::plan
+  i11["plateforme/11-istio-tls-en-bordure (conf.)"]:::plan
+  i12["plateforme/12-istio-personnalisation-et-mises-a-jour (conf.)"]:::plan
+  i13["plateforme/13-istio-troubleshooting (conf.)"]:::plan
+  s_mesh["scenarios/NN-service-mesh-bout-en-bout (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  kubernetes_conf --> plateforme_deb
+  gitops_deb --> plateforme_deb
+  plateforme_deb --> i06
+  securite_deb -.-> i10
+  services_deb -.-> i11
+  observabilite_deb -.-> i13
+  gitops_deb -.-> i12
+  rollouts -.-> s_mesh
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  i06 --> i07
+  i07 --> i08
+  i07 --> i09
+  i07 --> i10
+  i10 --> i11
+  i06 --> i12
+  i07 --> i12
+  i08 --> i13
+  i09 --> i13
+  i10 --> i13
+  i11 --> i13
+  i12 --> i13
+  i13 --> plateforme_conf
+  plateforme_conf --> s_mesh --> plateforme_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `plateforme/06-istio-installation-sidecar-ambient` | débutant | planifié | ICA-01-01, 01-02, 01-03 ; KCSA-05-04 | `plateforme_deb` (donc `kubernetes_conf`) |
+| `plateforme/07-istio-ingress-et-routage` | débutant | planifié | ICA-02-01, 02-02, 02-03 ; CKA-03-04, CCA-03-01 à 03-03 | `plateforme/06-…` |
+| `plateforme/08-istio-traffic-shifting-resilience-fault-injection` | confirmé | planifié | ICA-02-04, 02-06, 02-07 | `plateforme/07-…` |
+| `plateforme/09-istio-services-externes-et-egress` | confirmé | planifié | ICA-02-05, 02-01 (egress) | `plateforme/07-…` |
+| `plateforme/10-istio-securite-mtls-jwt-autorisation` | confirmé | planifié | ICA-03-01, 03-02 ; CKS-04-04, KCSA-05-04 | `plateforme/07-…` ; `securite_deb` recommandé |
+| `plateforme/11-istio-tls-en-bordure` | confirmé | planifié | ICA-03-03 ; CKA-03-04 | `plateforme/10-…` ; `services_deb` recommandé |
+| `plateforme/12-istio-personnalisation-et-mises-a-jour` | confirmé | planifié | ICA-01-03, 01-04 | `plateforme/06-…`, `plateforme/07-…` ; `gitops_deb` recommandé |
+| `plateforme/13-istio-troubleshooting` | confirmé | planifié | ICA-04-01 à 04-03 | `plateforme/08-…` à `12-…` ; `observabilite_deb` recommandé |
+| `scenarios/NN-service-mesh-bout-en-bout` | expert | planifié | ICA (17 compétences), CKS-04-04, CKA-03-04 ; CAPA-03-02 si Argo Rollouts | les huit fiches ci-dessus ; `gitops/05-argo-rollouts` recommandé |
+
+### 6.5 CCA (certifs/CCA/objectifs.md, 2026-10-02)
+
+Sept fiches `reseau` (numéros `10` à `16`, les `01` à `09` restant aux fiches `reseau_deb`) et un scénario ; la fiche 10 est rédigée (brouillon).
+Aucune fiche Cilium au niveau débutant : `reseau_deb` est un prérequis de `kubernetes_deb`, dont Cilium a besoin.
+Arêtes inter-domaines nouvelles, justifiées dans `certifs/CCA/objectifs.md` §2 et §4 : `kubernetes_deb` → Cilium installation
+(cluster existant, kubectl, Services) ; `linux_conf` ⇢ IPAM/datapath/eBPF (namespaces réseau, `nft`, `tcpdump`) ;
+`securite_deb` ⇢ Network Policy (moindre privilège) ; `observabilite_deb` ⇢ Hubble (Prometheus, Grafana) ;
+`services_deb` ⇢ Gateway API (PKI interne, DNS `*.apps.lab.home.arpa`) ; `proxmox_conf` ⇢ BGP (OPNsense `core-rtr01`, plugin FRR).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef conf fill:#fff8e1,stroke:#f9a825,color:#6d4c00
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  reseau_deb[reseau_deb]:::ref
+  reseau_conf[reseau_conf]:::ref
+  reseau_exp[reseau_exp]:::ref
+  kubernetes_deb[kubernetes_deb]:::ref
+  linux_conf[linux_conf]:::ref
+  securite_deb[securite_deb]:::ref
+  observabilite_deb[observabilite_deb]:::ref
+  services_deb[services_deb]:::ref
+  proxmox_conf[proxmox_conf]:::ref
+
+  cil_install["reseau/10-cilium-installation-architecture (conf., rédigé)"]:::conf
+  cil_datapath["reseau/11-cilium-ipam-datapath-ebpf (conf.)"]:::plan
+  cil_policy["reseau/12-cilium-network-policy (conf.)"]:::plan
+  cil_hubble["reseau/13-cilium-hubble-observabilite (conf.)"]:::plan
+  cil_gateway["reseau/14-cilium-gateway-api-service-mesh (conf.)"]:::plan
+  cil_bgp["reseau/15-cilium-bgp-egress-gateway (exp.)"]:::planexp
+  cil_mesh["reseau/16-cilium-cluster-mesh (exp.)"]:::planexp
+  s_cilium["scenarios/NN-plateforme-reseau-cilium (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  reseau_deb --> cil_install
+  kubernetes_deb --> cil_install
+  linux_conf -.-> cil_datapath
+  securite_deb -.-> cil_policy
+  observabilite_deb -.-> cil_hubble
+  services_deb -.-> cil_gateway
+  proxmox_conf -.-> cil_bgp
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  cil_install --> cil_datapath
+  cil_install --> cil_policy
+  cil_policy --> cil_hubble
+  cil_hubble --> cil_gateway
+  cil_datapath --> cil_gateway
+  cil_datapath --> reseau_conf
+  cil_policy --> reseau_conf
+  cil_hubble --> reseau_conf
+  cil_gateway --> reseau_conf
+  reseau_conf --> cil_bgp
+  reseau_conf --> cil_mesh
+  cil_bgp -.-> cil_mesh
+  cil_bgp --> s_cilium
+  cil_mesh --> s_cilium
+  s_cilium --> reseau_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `reseau/10-cilium-installation-architecture` | confirmé | rédigé (brouillon) | CCA-01-01, 01-02, 01-04, 05-01, 05-02 | `reseau_deb`, `kubernetes_deb` |
+| `reseau/11-cilium-ipam-datapath-ebpf` | confirmé | planifié | CCA-01-03, 01-05, 07-01 à 07-03 | `reseau/10-cilium-installation-architecture`, `linux_conf` (recommandé) |
+| `reseau/12-cilium-network-policy` | confirmé | planifié | CCA-02-01 à 02-05 | `reseau/10-cilium-installation-architecture`, `securite_deb` (recommandé) |
+| `reseau/13-cilium-hubble-observabilite` | confirmé | planifié | CCA-04-01 à 04-03 | `reseau/12-cilium-network-policy`, `observabilite_deb` (recommandé) |
+| `reseau/14-cilium-gateway-api-service-mesh` | confirmé | planifié | CCA-03-01 à 03-05 | `reseau/12-cilium-network-policy`, `reseau/13-cilium-hubble-observabilite`, `reseau/11-cilium-ipam-datapath-ebpf`, `services_deb` (recommandé) |
+| `reseau/15-cilium-bgp-egress-gateway` | expert | planifié | CCA-08-01, 08-02 | `reseau_conf` (les quatre fiches confirmé), `proxmox_conf` (recommandé) |
+| `reseau/16-cilium-cluster-mesh` | expert | planifié | CCA-06-01, 06-02 | `reseau_conf`, `reseau/15-cilium-bgp-egress-gateway` (recommandé) |
+| `scenarios/NN-plateforme-reseau-cilium` | expert | planifié | CCA (28 compétences), CKA-03-02, 03-04, CKS-01-01, 04-04 (à confirmer) | les sept fiches ci-dessus |
+
+### 6.6 CKAD (certifs/CKAD/objectifs.md, 2026-10-02)
 
 Treize fiches `kubernetes` (sept débutant, six confirmé) et un scénario ; la première est rédigée (brouillon, 2026-10-02). Ces nœuds forment
 le contenu de `kubernetes_deb` et de `kubernetes_conf`, partagé avec CKA et KCNA (la cartographie CKA réutilise les nœuds

@@ -12,6 +12,7 @@ vms:
   - name: core-rtr01
     vmid: 100
     role: routeur / pare-feu virtuel OPNsense (DECISIONS.md 2026-10-02)
+    plugins: [os-frr]   # BGP avec le cluster kubernetes-ha (AS 65000, DECISIONS.md 2026-10-02)
     vcpu: 2
     ram_gb: 1
     disk_gb: 10

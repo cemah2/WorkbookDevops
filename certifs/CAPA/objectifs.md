@@ -98,7 +98,7 @@ Les chapitres ci-dessous citent les deux programmes dans leur front matter pour 
 | F6 Argo Rollouts | CAPA-03-01 à 03-03 | CGOA-04-01, 04-02 |
 | F7 Argo Events | CAPA-04-01, 04-02 | CGOA-04-03 |
 
-Le mapping CGOA lui-même sera fait par sa propre session `prompts/01-cartographie-certification.md`.
+Le mapping CGOA complet est dans `certifs/CGOA/objectifs.md` (2026-10-02) ; il confirme les IDs ci-dessus et y ajoute CGOA-05-03 pour F1.
 
 ## 4. Trous et chapitres à créer
 
