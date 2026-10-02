@@ -2,7 +2,7 @@
 chapitre: "fiches/reseau/10-cilium-installation-architecture.md"
 domaine: "reseau"
 niveau: "confirmé"
-statut: "proposé le 2026-10-02 — en attente de validation (six questions posées, voir §10)"
+statut: "réalisé le 2026-10-02 — plan validé (recommandations des six questions retenues), chapitre en brouillon, relecture critique à faire (prompts/04)"
 duree_estimee: "5 h"
 profil_lab: "linux-base (kind sur une VM) ; variante kubernetes-ha (kubeadm sans kube-proxy)"
 versions: "cilium, cilium_cli, hubble, kubernetes, kubeadm, kind, helm"
@@ -18,6 +18,11 @@ certifications:
 ---
 
 # Plan — 10 Cilium : installer avec le CLI, lire l'architecture, tester la connectivité
+
+Réalisé : `fiches/reseau/10-cilium-installation-architecture.md` (2026-10-02). Écarts constatés à la rédaction :
+la panne CNI vise le binaire `cilium-cni` et non le fichier de configuration (que l'agent réécrit) ; la panne « agent »
+passe par la variable `KUBERNETES_SERVICE_HOST` du DaemonSet, pas par la ConfigMap ; l'exercice 3.2 ne supprime plus
+de `CiliumNode` (l'agent ne le recrée pas sans redémarrage, constaté) mais retire l'agent d'un nœud par `nodeSelector`.
 
 Chapitre `F1` de `certifs/CCA/objectifs.md` §4, nœud `reseau/10-cilium-installation-architecture` de `docs/prerequis.md` §6.5
 (numéro `10` attribué par la cartographie CCA, DECISIONS.md 2026-10-02 « série Cilium numérotée 10 à 16 »).
@@ -149,7 +154,7 @@ Le `--undo` de la panne CNI redémarre l'agent du nœud, qui réécrit le fichie
 - mise à jour de `certifs/CCA/objectifs.md` §3 et §4, de `docs/prerequis.md` §6.5 (nœud `rédigé`), de `docs/plans/README.md`
   et de ce plan (`statut: réalisé`)
 
-## 10. Questions dont la réponse change le plan
+## 10. Questions posées à la validation (réponses du 2026-10-02 : recommandation retenue dans les six cas)
 
 Recommandation en premier dans chaque cas.
 

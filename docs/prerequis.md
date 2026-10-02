@@ -496,7 +496,7 @@ flowchart TB
 
 ### 6.5 CCA (certifs/CCA/objectifs.md, 2026-10-02)
 
-Sept fiches `reseau` (numéros `10` à `16`, les `01` à `09` restant aux fiches `reseau_deb`) et un scénario.
+Sept fiches `reseau` (numéros `10` à `16`, les `01` à `09` restant aux fiches `reseau_deb`) et un scénario ; la fiche 10 est rédigée (brouillon).
 Aucune fiche Cilium au niveau débutant : `reseau_deb` est un prérequis de `kubernetes_deb`, dont Cilium a besoin.
 Arêtes inter-domaines nouvelles, justifiées dans `certifs/CCA/objectifs.md` §2 et §4 : `kubernetes_deb` → Cilium installation
 (cluster existant, kubectl, Services) ; `linux_conf` ⇢ IPAM/datapath/eBPF (namespaces réseau, `nft`, `tcpdump`) ;
@@ -506,6 +506,7 @@ Arêtes inter-domaines nouvelles, justifiées dans `certifs/CCA/objectifs.md` §
 ```mermaid
 flowchart TB
   classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef conf fill:#fff8e1,stroke:#f9a825,color:#6d4c00
   classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
   classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
 
@@ -519,7 +520,7 @@ flowchart TB
   services_deb[services_deb]:::ref
   proxmox_conf[proxmox_conf]:::ref
 
-  cil_install["reseau/10-cilium-installation-architecture (conf.)"]:::plan
+  cil_install["reseau/10-cilium-installation-architecture (conf., rédigé)"]:::conf
   cil_datapath["reseau/11-cilium-ipam-datapath-ebpf (conf.)"]:::plan
   cil_policy["reseau/12-cilium-network-policy (conf.)"]:::plan
   cil_hubble["reseau/13-cilium-hubble-observabilite (conf.)"]:::plan
@@ -557,7 +558,7 @@ flowchart TB
 
 | Nœud | Niveau | Statut | Certifications | Prérequis |
 |---|---|---|---|---|
-| `reseau/10-cilium-installation-architecture` | confirmé | planifié | CCA-01-01, 01-02, 01-04, 05-01, 05-02 | `reseau_deb`, `kubernetes_deb` |
+| `reseau/10-cilium-installation-architecture` | confirmé | rédigé (brouillon) | CCA-01-01, 01-02, 01-04, 05-01, 05-02 | `reseau_deb`, `kubernetes_deb` |
 | `reseau/11-cilium-ipam-datapath-ebpf` | confirmé | planifié | CCA-01-03, 01-05, 07-01 à 07-03 | `reseau/10-cilium-installation-architecture`, `linux_conf` (recommandé) |
 | `reseau/12-cilium-network-policy` | confirmé | planifié | CCA-02-01 à 02-05 | `reseau/10-cilium-installation-architecture`, `securite_deb` (recommandé) |
 | `reseau/13-cilium-hubble-observabilite` | confirmé | planifié | CCA-04-01 à 04-03 | `reseau/12-cilium-network-policy`, `observabilite_deb` (recommandé) |
