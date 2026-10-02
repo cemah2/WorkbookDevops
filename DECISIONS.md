@@ -118,3 +118,11 @@ activé, programme CCA). Envoy Gateway reste dans le profil comme variante pour 
 fonction absente de Cilium ; la fiche concernée le justifie en une ligne.
 Conséquence : les fiches exposent leurs UI par `Gateway` + `HTTPRoute` Cilium et un certificat cert-manager
 émis par la CA interne ; sur `kind`, l'exposition se fait par `port-forward` et la Gateway est une variante.
+
+## 2026-10-02 — VM `kind` du profil `linux-base` : `lx01` à 4 vCPU / 8 Go / 60 Go
+
+Les fiches débutant Kubernetes et GitOps tournent sur un cluster `kind` à trois nœuds (plus Cilium) hébergé sur `linux-base-lx01`.
+Les fiches `gitops/01` et `02` supposaient déjà 4 vCPU / 8 Go / 60 Go alors que le profil donnait 2 vCPU / 4 Go / 40 Go à `lx01`.
+Le profil est aligné : `lx01` passe à 4 vCPU / 8 Go / 60 Go, budget `linux-base` à 10 vCPU / 20 Go / 200 Go.
+Conséquence : `linux-base` + `kubernetes-ha` restent combinables (20 + 48 Go, plus 8 Go d'hôte et 8 Go de `core`, soit 84 Go ≤ 128) ;
+la VM `kind` n'est pas un profil à part, elle vit dans `linux-base`.

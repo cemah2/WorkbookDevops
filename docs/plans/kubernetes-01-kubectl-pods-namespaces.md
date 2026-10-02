@@ -2,7 +2,7 @@
 chapitre: "fiches/kubernetes/01-kubectl-pods-namespaces.md"
 domaine: "kubernetes"
 niveau: "débutant"
-statut: "validé le 2026-10-02 — rédaction à lancer (prompts/03-redaction-chapitre.md)"
+statut: "réalisé le 2026-10-02 — chapitre en brouillon, relecture critique à faire (prompts/04)"
 duree_estimee: "5 h"
 profil_lab: "linux-base (kind sur une VM) ; variante kubernetes-ha"
 versions: "kubernetes, kind, cilium"

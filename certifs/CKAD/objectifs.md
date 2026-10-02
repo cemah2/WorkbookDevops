@@ -2,16 +2,17 @@
 code: CKAD
 titre: "CKAD — mapping compétences → chapitres"
 programme: "certifs/CKAD/programme.md (converti le 2026-10-02 depuis CKAD_v1.35.pdf ; le curriculum v1.37 publié le 2026-10-01 a le même texte, voir §7)"
-chapitres_existants: 0
+chapitres_existants: 1
 generated: 2026-10-02
-status: "0 chapitre Kubernetes rédigé sur 13 fiches + 1 scénario planifiés ; à mettre à jour à chaque PR de chapitre"
+status: "1 chapitre rédigé (brouillon) sur 13 fiches + 1 scénario planifiés ; à mettre à jour à chaque PR de chapitre"
 ---
 
 # CKAD — objectifs et couverture
 
 Mapping entre les 24 compétences de [`programme.md`](programme.md) et les chapitres du workbook.
-État au 2026-10-02 : `fiches/kubernetes/` est vide. Les deux seules fiches rédigées (`fiches/gitops/01` et `02`, Argo CD et
-Argo Workflows, brouillons) touchent trois compétences CKAD de façon indirecte, ce qui ne compte pas comme une couverture.
+État au 2026-10-02 : une fiche rédigée (`fiches/kubernetes/01-kubectl-pods-namespaces.md`, statut brouillon), les douze autres
+fiches et le scénario sont des trous. Les deux fiches `fiches/gitops/01` et `02` (Argo CD et Argo Workflows, brouillons) touchent
+trois compétences CKAD de façon indirecte, ce qui ne compte pas comme une couverture.
 Ce fichier sert de plan de création ; chaque PR de chapitre remplit les colonnes « chapitre » et « exercices » et marque
 le chapitre « rédigé » dans la section 4.
 
@@ -72,7 +73,7 @@ manipule l'objet sans l'enseigner. La colonne « chapitre cible » renvoie à la
 | ID | Compétence | Poids | Chapitre existant | Exercices existants | Chapitre cible | Partagé avec |
 |---|---|---|---|---|---|---|
 | CKAD-01-01 | Define, build and modify container images | 5,0 % | — | — | K2 | CKS-05-01, KCNA-01-04 |
-| CKAD-01-02 | Choose and use the right workload resource (Deployment, DaemonSet, CronJob, etc.) | 5,0 % | — | — | K1 (Pods), K3 | CKA-02-04, KCNA-01-01 |
+| CKAD-01-02 | Choose and use the right workload resource (Deployment, DaemonSet, CronJob, etc.) | 5,0 % | `fiches/kubernetes/01-kubectl-pods-namespaces.md` (brouillon), Pods seulement | S2 : démo, autonome 1-4, défi 6 min | K1 (rédigé, Pods), K3 | CKA-02-04, KCNA-01-01 |
 | CKAD-01-03 | Understand multi-container Pod design patterns (e.g. sidecar, init and others) | 5,0 % | — | — | K5 | — |
 | CKAD-01-04 | Utilize persistent and ephemeral volumes | 5,0 % | — | — | K5 | CKA-01-02, CKA-01-03 |
 
@@ -91,8 +92,8 @@ manipule l'objet sans l'enseigner. La colonne « chapitre cible » renvoie à la
 |---|---|---|---|---|---|---|
 | CKAD-03-01 | Understand API deprecations | 3,0 % | — | — | K10 | CKA-05 (à confirmer) |
 | CKAD-03-02 | Implement probes and health checks | 3,0 % | — | — | K9 | CKA-02-04 |
-| CKAD-03-03 | Use built-in CLI tools to monitor Kubernetes applications | 3,0 % | — | — | K1 (bases), K9 | CKA-04-04 (à confirmer) |
-| CKAD-03-04 | Utilize container logs | 3,0 % | indirect : `fiches/gitops/02-argo-workflows-fondamentaux.md` (brouillon) lit les logs de pods de workflow | S1 démo (`argo logs`, `kubectl logs` sur les pods `wait`/`main`) : usage, pas enseignement | K1 (bases), K9 | CKA-04 |
+| CKAD-03-03 | Use built-in CLI tools to monitor Kubernetes applications | 3,0 % | `fiches/kubernetes/01-kubectl-pods-namespaces.md` (brouillon) | S1 : démo, autonome 1-3, break-fix kubeconfig, défi 15 min ; S2 : démo (formats de sortie), break-fix namespace ; S3 : démo (describe, events), autonome 1-4, défi 10 min | K1 (rédigé, bases), K9 | CKA-04-04 (à confirmer) |
+| CKAD-03-04 | Utilize container logs | 3,0 % | `fiches/kubernetes/01-kubectl-pods-namespaces.md` (brouillon) ; indirect : `fiches/gitops/02` (brouillon) | S3 : démo (`logs` et ses drapeaux, `[non testé]` sans nœud), autonome 1-3, break-fix crashloop (logs --previous) | K1 (rédigé, bases), K9 | CKA-04 |
 | CKAD-03-05 | Debugging in Kubernetes | 3,0 % | indirect : `fiches/gitops/02` break-fix `image-pull` (ImagePullBackOff) et `quota` (pod jamais créé) | S3 break-fix : diagnostic guidé, sans la méthode générale | K9 | CKA-04-03, CKA-04-04 (à confirmer) |
 
 ### CKAD-04 — Application Environment, Configuration and Security (25 %)
@@ -138,14 +139,15 @@ chaque fiche ajoute un objet. Le scénario S1 la reconstruit de zéro sous contr
 Règle d'examen rappelée dans chaque fiche : tout se fait au terminal avec `kubectl`, la documentation `kubernetes.io/docs`
 ouverte dans un seul onglet (`examen.md` §1) ; les défis chronométrés interdisent tout autre outil (pas de `k9s`, pas d'IDE).
 
-### K1 — `fiches/kubernetes/01-kubectl-pods-namespaces.md`
+### K1 — `fiches/kubernetes/01-kubectl-pods-namespaces.md` — rédigé (brouillon, 2026-10-02)
 
 - **Titre** : kubectl, Pods et namespaces — le poste de travail de l'examen
 - **Niveau** : débutant (`kubernetes_deb`, première fiche du domaine)
 - **Couvre** : CKAD-01-02 (Pods seulement), CKAD-03-03 (bases), CKAD-03-04 (bases) ; aussi KCNA-01-01, CKA-02-04 (partiel)
 - **Prérequis** : `linux_conf` (shell, vim, SSH, systemd), `reseau_deb` (IP, ports, DNS) ; aucune fiche Kubernetes
-- **Lab** : `kind` sur `linux-base-lx01`. Clés `versions.yaml` : `kubernetes`, `kind`, `cilium` (CNI de la VM `kind`,
-  nécessaire dès K13 ; installé ici pour ne pas recréer le cluster).
+- **Lab** : `kind` sur `linux-base-lx01` (4 vCPU / 8 Go / 60 Go depuis DECISIONS.md 2026-10-02). Clés `versions.yaml` :
+  `kubernetes`, `kind`, `cilium` (CNI de la VM `kind`, nécessaire dès K13 ; installé ici pour ne pas recréer le cluster).
+- **Plan validé** : `docs/plans/kubernetes-01-kubectl-pods-namespaces.md` (2026-10-02).
 - **Temps** : 5 h
 - **3 exercices clés** :
   1. Créer le cluster `kind` à la version d'examen, configurer `~/.kube/config`, `alias k=kubectl`, complétion bash,
@@ -155,8 +157,9 @@ ouverte dans un seul onglet (`examen.md` §1) ; les défis chronométrés interd
      `kubectl config set-context --current --namespace` — CKAD-01-02, CKAD-03-03.
   3. Lire un Pod : `describe`, `logs` (`-c`, `--previous`, `-f`, `--since`), `events --for`, `exec`, `cp`, `port-forward`,
      `delete --force --grace-period=0` ; chronométrer chaque geste — CKAD-03-03, CKAD-03-04.
-- **Break-fix** : `break/kubernetes/01-kubeconfig-casse.sh` (contexte pointant sur un mauvais port, `kubectl` répond
-  `connection refused`), `break/kubernetes/01-pod-crashloop.sh` (commande du conteneur fausse, `CrashLoopBackOff`).
+- **Break-fix** : `break/kubernetes/01-kubeconfig-casse.sh` (port du serveur faux, `connection refused`),
+  `01-namespace-fantome.sh` (namespace du contexte inexistant), `01-pod-crashloop.sh` (commande qui sort en erreur,
+  `CrashLoopBackOff`), `01-pod-pending.sh` (`nodeSelector` sans nœud, `Pending`).
 - **Défi chronométré** : créer un namespace, y lancer trois Pods avec labels et images précises, récupérer les logs
   du second dans un fichier, en moins de 6 min, sans `-h` ni documentation.
 
@@ -466,7 +469,7 @@ ouverte dans un seul onglet (`examen.md` §1) ; les défis chronométrés interd
 
 | Chapitre | Niveau | Profil de lab | Temps |
 |---|---|---|---|
-| K1 kubectl, Pods et namespaces | débutant | linux-base (kind) | 5 h |
+| K1 kubectl, Pods et namespaces (rédigé, brouillon) | débutant | linux-base (kind) | 5 h |
 | K2 Images de conteneurs avec Podman | débutant | linux-base (+ kind) | 4 h |
 | K3 Workloads | débutant | linux-base (kind) | 5 h |
 | K4 Rolling update, blue/green, canary | confirmé | kubernetes-ha | 5 h |
