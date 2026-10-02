@@ -277,3 +277,67 @@ flowchart TB
 | `gitops/05-argo-rollouts` | confirmé | planifié | CAPA-03-01 à 03-03 | `gitops/01-argo-cd-fondamentaux`, `observabilite_deb`, `kubernetes_conf` |
 | `gitops/07-argo-events` | confirmé | planifié | CAPA-04-01, 04-02 | `gitops/02-argo-workflows-fondamentaux`, `kubernetes_conf` |
 | `scenarios/NN-chaine-argo-bout-en-bout` | expert | planifié | CAPA (16 compétences), CGOA-04-01 à 04-04 | les sept fiches ci-dessus |
+
+### 6.2 CBA (certifs/CBA/objectifs.md, 2026-10-02)
+
+Cinq fiches `plateforme` et un scénario. Première cartographie du domaine : la série `fiches/plateforme/NN-` démarre
+à `01`. Arêtes inter-domaines nouvelles, justifiées ici : `linux_deb` → premier lancement et `iac_deb` → premier lancement
+(Backstage est une application Node.js lancée sur une VM, versionnée dans Git ; les deux fiches débutant n'ont pas besoin
+de Kubernetes). L'arête de référence `kubernetes_conf` → `plateforme_deb` de §2 reste valable pour le reste du domaine
+(mesh, opérateurs) et n'est pas retirée. `kubernetes_conf` → configuration et production (déploiement sur `kubernetes-ha`) ;
+`services_deb` ⇢ ingestion automatisée et ⇢ configuration et production (Keycloak du socle `core`, recommandé).
+
+```mermaid
+flowchart TB
+  classDef ref fill:#eceff1,stroke:#546e7a,color:#263238
+  classDef plandeb fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20,stroke-dasharray: 4 2
+  classDef plan fill:#fff8e1,stroke:#f9a825,color:#6d4c00,stroke-dasharray: 4 2
+  classDef planexp fill:#fbe9e7,stroke:#d84315,color:#7f2a0f,stroke-dasharray: 4 2
+
+  linux_deb[linux_deb]:::ref
+  iac_deb[iac_deb]:::ref
+  kubernetes_conf[kubernetes_conf]:::ref
+  services_deb[services_deb]:::ref
+  gitops_deb[gitops_deb]:::ref
+  observabilite_conf[observabilite_conf]:::ref
+  securite_conf[securite_conf]:::ref
+  plateforme_deb[plateforme_deb]:::ref
+  plateforme_conf[plateforme_conf]:::ref
+  plateforme_exp[plateforme_exp]:::ref
+
+  bs_lancement["plateforme/01-backstage-premier-lancement (déb.)"]:::plandeb
+  bs_catalogue["plateforme/02-backstage-catalogue (déb.)"]:::plandeb
+  bs_plugins["plateforme/03-backstage-plugins-et-personnalisation (conf.)"]:::plan
+  bs_ingestion["plateforme/04-backstage-ingestion-automatisee (conf.)"]:::plan
+  bs_prod["plateforme/05-backstage-configuration-et-production (conf.)"]:::plan
+  s_portail["scenarios/NN-portail-developpeur-backstage (exp.)"]:::planexp
+
+  %% rattachement aux nœuds de référence
+  linux_deb --> bs_lancement
+  iac_deb --> bs_lancement
+  plateforme_deb --> bs_lancement
+  kubernetes_conf --> bs_prod
+  services_deb -.-> bs_ingestion
+  services_deb -.-> bs_prod
+  gitops_deb --> s_portail
+  observabilite_conf --> s_portail
+  securite_conf --> s_portail
+
+  %% progression intra-domaine (jamais déb. -> exp.)
+  bs_lancement --> bs_catalogue
+  bs_catalogue --> bs_plugins
+  bs_plugins --> bs_ingestion
+  bs_plugins --> bs_prod
+  bs_ingestion --> plateforme_conf
+  bs_prod --> plateforme_conf
+  plateforme_conf --> s_portail --> plateforme_exp
+```
+
+| Nœud | Niveau | Statut | Certifications | Prérequis |
+|---|---|---|---|---|
+| `plateforme/01-backstage-premier-lancement` | débutant | planifié | CBA-01-01 à 01-04, 03-01, 03-04 | `linux_deb`, `iac_deb` |
+| `plateforme/02-backstage-catalogue` | débutant | planifié | CBA-02-01 à 02-05, CNPA-05-02 | `plateforme/01-backstage-premier-lancement` |
+| `plateforme/03-backstage-plugins-et-personnalisation` | confirmé | planifié | CBA-04-01 à 04-04 (+ 01-02, 01-03) | `plateforme/01-…`, `plateforme/02-…` |
+| `plateforme/04-backstage-ingestion-automatisee` | confirmé | planifié | CBA-02-05, 02-06, CNPA-05-02 | `plateforme/02-…`, `plateforme/03-…`, `services_deb` (recommandé) |
+| `plateforme/05-backstage-configuration-et-production` | confirmé | planifié | CBA-01-03, 01-05, 03-02, 03-03, CNPA-05-03 | `plateforme/01-…`, `plateforme/03-…`, `kubernetes_conf`, `services_deb` (recommandé) |
+| `scenarios/NN-portail-developpeur-backstage` | expert | planifié | CBA (19 compétences), CNPA-05-01 à 05-03, CNPE-03-02, 03-04 | les cinq fiches ci-dessus, `gitops/01-argo-cd-fondamentaux`, `observabilite_conf`, `securite_conf` |
