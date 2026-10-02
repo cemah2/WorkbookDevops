@@ -1,0 +1,19 @@
+# Projet du workbook : deux dépôts sources, une destination (cluster local), namespaces guestbook et demo-*.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: lab
+  namespace: argocd
+spec:
+  description: "Projet du workbook : exemples et dépôt du lab"
+  sourceRepos:
+    - https://github.com/argoproj/argocd-example-apps.git
+    - git@git.lab.home.arpa:/srv/git/gitops-demo.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: guestbook
+    - server: https://kubernetes.default.svc
+      namespace: "demo-*"
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace

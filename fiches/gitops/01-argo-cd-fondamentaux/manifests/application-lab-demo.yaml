@@ -1,0 +1,18 @@
+# Dépôt du lab (bare SSH, DECISIONS.md 2026-10-02). Sur la VM kind, remplace l'hôte par l'adresse de la VM.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lab-demo
+  namespace: argocd
+spec:
+  project: lab
+  source:
+    repoURL: git@git.lab.home.arpa:/srv/git/gitops-demo.git
+    targetRevision: main
+    path: demo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo-web
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
