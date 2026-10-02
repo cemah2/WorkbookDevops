@@ -2,7 +2,7 @@
 chapitre: "fiches/gitops/08-opengitops-principes-et-vocabulaire.md"
 domaine: "gitops"
 niveau: "débutant"
-statut: "validé le 2026-10-02 — rédaction à lancer (prompts/03) après fusion de la PR #34"
+statut: "réalisé le 2026-10-02 — chapitre en brouillon, relecture critique à faire (prompts/04)"
 duree_estimee: "4 h"
 profil_lab: "linux-base (kind sur une VM, cluster et Argo CD de la fiche 01) ; variante kubernetes-ha"
 versions: "argo_cd, kind, kubernetes, opengitops_documents (à créer)"

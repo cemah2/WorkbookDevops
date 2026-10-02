@@ -1,0 +1,43 @@
+# Le « pipeline CI » qui pousse : un ServiceAccount dans ci-legacy, autorisé à écrire dans demo-push seulement.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ci-legacy
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-push
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ci-push
+  namespace: ci-legacy
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ci-push
+  namespace: demo-push
+rules:
+  - apiGroups: [""]
+    resources: [configmaps, services]
+    verbs: [get, list, create, patch, update, delete]
+  - apiGroups: [apps]
+    resources: [deployments]
+    verbs: [get, list, create, patch, update, delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ci-push
+  namespace: demo-push
+subjects:
+  - kind: ServiceAccount
+    name: ci-push
+    namespace: ci-legacy
+roleRef:
+  kind: Role
+  name: ci-push
+  apiGroup: rbac.authorization.k8s.io
