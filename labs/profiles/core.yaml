@@ -11,7 +11,7 @@ vlans: [lan, 10, 20, 50]
 vms:
   - name: core-rtr01
     vmid: 100
-    role: routeur virtuel (VyOS ou OPNsense, à décider)
+    role: routeur / pare-feu virtuel OPNsense (DECISIONS.md 2026-10-02)
     vcpu: 2
     ram_gb: 1
     disk_gb: 10

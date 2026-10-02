@@ -8,7 +8,7 @@ LAN existant : `192.168.0.0/24`, passerelle `192.168.0.254` (box/routeur du site
 
 - Le LAN `192.168.0.0/24` reste le réseau **domestique** : on n'y met que l'hôte Proxmox, le poste
   de travail et quelques services exposés. Tout le reste vit dans des réseaux internes au serveur.
-- Un **routeur virtuel** (VyOS ou OPNsense, à décider) route entre les réseaux internes et fait NAT vers le LAN.
+- Un **routeur virtuel OPNsense** (`core-rtr01`, décision du 2026-10-02) route entre les réseaux internes et fait NAT vers le LAN.
   C'est lui qui porte les règles de filtrage inter-VLAN et la coupure du VLAN air-gap.
 - Les réseaux internes sont des VLAN sur un bridge dédié `vmbr1` (VLAN-aware), sans carte physique :
   rien ne sort du serveur sans passer par le routeur virtuel. Le SDN Proxmox (zone VLAN, puis EVPN/VXLAN
@@ -102,7 +102,8 @@ ne se chevauchent pas pour permettre de les combiner quand le budget le permet (
   `mirror.lab.home.arpa`, `registry.lab.home.arpa`, `git.lab.home.arpa`, `api.k8s.lab.home.arpa` (VIP),
   `*.apps.lab.home.arpa` (wildcard vers le pool MetalLB / Gateway API), `*.os.lab.home.arpa` (OpenStack).
 - Reverse DNS (`PTR`) maintenu pour `10.10.0.0/16`.
-- Serveur : `core-dns01` (`10.10.10.2`, PowerDNS ou BIND, à décider) ; récurseur vers le LAN pour Internet,
+- Serveur : `core-dns01` (`10.10.10.2`, PowerDNS ou BIND, à décider ; OPNsense ne porte que le relais DHCP/DNS).
+  Récurseur vers le LAN pour Internet,
   sauf dans le VLAN `airgap` où `core-mirror01` fait autorité sans récursion.
 - Le routeur virtuel distribue `10.10.10.2` comme DNS en DHCP ; le LAN domestique n'est pas modifié.
 - PKI : CA interne `Lab Root CA` (step-ca ou OpenBao PKI) émettant pour `*.lab.home.arpa` ; la CA est
@@ -122,6 +123,5 @@ ne se chevauchent pas pour permettre de les combiner quand le budget le permet (
 
 ## 8. Ce qui n'est pas tranché
 
-- Routeur virtuel : VyOS ou OPNsense (décision à consigner dans `DECISIONS.md`).
 - Serveur DNS : PowerDNS (API, NetBox) ou BIND (classique, LFCS/RHCE).
 - Un second NIC physique pour `vmbr1` si un switch managé est disponible (non requis).
